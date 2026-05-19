@@ -1,4 +1,4 @@
-package org.uorderflow.service;
+package org.uorderflow.service.foodCategory;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -17,6 +17,7 @@ import java.util.List;
 public class FoodCategoryService {
 
     @Autowired FoodCategoryRepository foodCategoryRepository;
+    @Autowired FoodCategoryValidation foodCategoryValidation;
 
     @Transactional
     public FoodCategoryResponseDTO create(FoodCategoryCreateDTO data){
@@ -30,49 +31,27 @@ public class FoodCategoryService {
     }
 
     public FoodCategoryResponseDTO findById(Long id){
-        FoodCategory foodCategory = foodCategoryRepository.
-                findById(id).orElseThrow(() -> new EntityNotFoundException("FoodCategory not found."));
-
-        if(Boolean.FALSE.equals(foodCategory.getIsAvailable())){
-            throw new BusinessRuleException("FoodCategory is not available with id " + foodCategory.getId());
-        }
-
+        FoodCategory foodCategory = foodCategoryValidation.validadeFoodCategory(id, FoodCategoryAction.ACTIVE_CHECK);
         return new FoodCategoryResponseDTO(foodCategory);
     }
 
     @Transactional
     public FoodCategoryResponseDTO update(Long id, FoodCategoryUpdateDTO data){
-        FoodCategory foodCategory = foodCategoryRepository.
-                findById(id).orElseThrow(() -> new EntityNotFoundException("FoodCategory not found."));
-
-        if(Boolean.FALSE.equals(foodCategory.getIsAvailable())){
-            throw new BusinessRuleException("FoodCategory is not available with id " + foodCategory.getId());
-        }
-
+        FoodCategory foodCategory = foodCategoryValidation.validadeFoodCategory(id, FoodCategoryAction.ACTIVE_CHECK);
         foodCategory.update(data);
-
         return new FoodCategoryResponseDTO(foodCategory);
     }
 
     @Transactional
     public void delete(Long id){
-        FoodCategory foodCategory = foodCategoryRepository.
-                findById(id).orElseThrow(() -> new EntityNotFoundException("FoodCategory not found."));
-
-        if(Boolean.FALSE.equals(foodCategory.getIsAvailable())){
-            throw new BusinessRuleException("FoodCategory is already not available with id " + foodCategory.getId());
-        }
+        FoodCategory foodCategory = foodCategoryValidation.validadeFoodCategory(id, FoodCategoryAction.DELETE);
+        foodCategory.delete();
     }
 
     @Transactional
     public FoodCategoryResponseDTO reactivate(Long id){
-        FoodCategory foodCategory = foodCategoryRepository.
-                findById(id).orElseThrow(() -> new EntityNotFoundException("FoodCategory not found."));
-
-        if(Boolean.TRUE.equals(foodCategory.getIsAvailable())){
-            throw new BusinessRuleException("FoodCategory is already available with id " + foodCategory.getId());
-        }
-
+        FoodCategory foodCategory = foodCategoryValidation.validadeFoodCategory(id, FoodCategoryAction.REACTIVATE);
+        foodCategory.reactivate();
         return new FoodCategoryResponseDTO(foodCategory);
     }
 }

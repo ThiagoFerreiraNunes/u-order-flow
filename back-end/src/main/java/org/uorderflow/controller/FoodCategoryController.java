@@ -8,7 +8,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import org.uorderflow.dto.foodCategory.FoodCategoryCreateDTO;
 import org.uorderflow.dto.foodCategory.FoodCategoryResponseDTO;
 import org.uorderflow.dto.foodCategory.FoodCategoryUpdateDTO;
-import org.uorderflow.service.FoodCategoryService;
+import org.uorderflow.service.foodCategory.FoodCategoryService;
 
 import java.net.URI;
 import java.util.List;
