@@ -7,10 +7,10 @@ import org.uorderflow.dto.food.FoodCreateDTO;
 import org.uorderflow.dto.food.FoodResponseDTO;
 import org.uorderflow.dto.food.FoodUpdateDTO;
 import org.uorderflow.model.Food;
-import org.uorderflow.model.FoodCategory;
+import org.uorderflow.model.ProductCategory;
 import org.uorderflow.repository.FoodRepository;
 import org.uorderflow.service.Action;
-import org.uorderflow.service.foodCategory.FoodCategoryValidation;
+import org.uorderflow.service.productCategory.ProductCategoryValidation;
 
 import java.util.List;
 
@@ -19,12 +19,13 @@ public class FoodService {
 
     @Autowired FoodRepository foodRepository;
     @Autowired FoodValidation foodValidation;
-    @Autowired FoodCategoryValidation foodCategoryValidation;
+    @Autowired
+    ProductCategoryValidation productCategoryValidation;
 
     @Transactional
     public FoodResponseDTO create(FoodCreateDTO data){
-        FoodCategory foodCategory = foodCategoryValidation.validateFoodCategory(data.foodCategoryId(), Action.ACTIVE_CHECK);
-        Food food = new Food(data, foodCategory);
+        ProductCategory productCategory = productCategoryValidation.validateProductCategory(data.foodCategoryId(), Action.ACTIVE_CHECK);
+        Food food = new Food(data, productCategory);
         foodRepository.save(food);
         return new FoodResponseDTO(food);
     }
@@ -40,12 +41,12 @@ public class FoodService {
 
     @Transactional
     public FoodResponseDTO update(Long id, FoodUpdateDTO data){
-        FoodCategory foodCategory = null;
+        ProductCategory productCategory = null;
         if(data.foodCategoryId() != null){
-            foodCategory = foodCategoryValidation.validateFoodCategory(id, Action.ACTIVE_CHECK);
+            productCategory = productCategoryValidation.validateProductCategory(id, Action.ACTIVE_CHECK);
         }
         Food food = foodValidation.validateFood(id, Action.ACTIVE_CHECK);
-        food.update(data, foodCategory);
+        food.update(data, productCategory);
         return new FoodResponseDTO(food);
     }
 

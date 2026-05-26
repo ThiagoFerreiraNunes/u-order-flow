@@ -4,19 +4,18 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.uorderflow.dto.drinkCategory.DrinkCategoryCreateDTO;
-import org.uorderflow.dto.drinkCategory.DrinkCategoryUpdateDTO;
+import org.uorderflow.dto.productCategory.ProductCategoryCreateDTO;
+import org.uorderflow.dto.productCategory.ProductCategoryUpdateDTO;
 
-@Table(name = "tb_drink_categories")
-@Entity(name = "DrinkCategory")
+@Table(name = "tb_product_categories")
+@Entity(name = "ProductCategory")
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class DrinkCategory {
+public class ProductCategory {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "drink_category_id")
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "category_id")
     private Long id;
 
     @Column(name = "category_name")
@@ -25,12 +24,12 @@ public class DrinkCategory {
     @Column(name = "is_available")
     private Boolean isAvailable;
 
-    public DrinkCategory(DrinkCategoryCreateDTO data){
+    public ProductCategory(ProductCategoryCreateDTO data){
         this.name = data.name();
         this.isAvailable = true;
     }
 
-    public void update(DrinkCategoryUpdateDTO data){
+    public void update(ProductCategoryUpdateDTO data){
         if(data.name() != null) this.name = data.name();
     }
 
@@ -41,5 +40,4 @@ public class DrinkCategory {
     public void reactivate(){
         this.isAvailable = true;
     }
-
 }

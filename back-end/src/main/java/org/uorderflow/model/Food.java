@@ -35,9 +35,9 @@ public class Food {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "food_category_id")
-    private FoodCategory foodCategory;
+    private ProductCategory foodCategory;
 
-    public Food(FoodCreateDTO data, FoodCategory foodCategory){
+    public Food(FoodCreateDTO data, ProductCategory foodCategory){
         this.name = data.name();
         this.description = data.description();
         this.image = data.image();
@@ -46,7 +46,7 @@ public class Food {
         this.isAvailable = true;
     }
 
-    public void update(FoodUpdateDTO data, FoodCategory foodCategory){
+    public void update(FoodUpdateDTO data, ProductCategory foodCategory){
         if(data.name() != null) this.name = data.name();
         if(data.description() != null) this.description = data.description();
         if(data.image() != null) this.image = data.image();
