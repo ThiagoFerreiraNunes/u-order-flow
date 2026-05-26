@@ -1,6 +1,6 @@
 package org.uorderflow.dto.food;
 
-import org.uorderflow.dto.foodCategory.FoodCategoryResponseDTO;
+import org.uorderflow.dto.productCategory.ProductCategoryResponseDTO;
 import org.uorderflow.model.Food;
 
 public record FoodResponseDTO(
@@ -9,7 +9,7 @@ public record FoodResponseDTO(
         String description,
         String image,
         Double price,
-        FoodCategoryResponseDTO foodCategory
+        ProductCategoryResponseDTO foodCategory
 ) {
     public FoodResponseDTO(Food food){
         this(
@@ -18,7 +18,7 @@ public record FoodResponseDTO(
                 food.getDescription(),
                 food.getImage(),
                 food.getPrice(),
-                new FoodCategoryResponseDTO(food.getFoodCategory())
+                new ProductCategoryResponseDTO(food.getFoodCategory())
         );
     }
 }

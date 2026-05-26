@@ -1,8 +1,8 @@
-package org.uorderflow.dto.foodCategory;
+package org.uorderflow.dto.productCategory;
 
 import jakarta.validation.constraints.NotBlank;
 
-public record FoodCategoryCreateDTO(
+public record ProductCategoryUpdateDTO(
         @NotBlank String name
 ) {
 }
