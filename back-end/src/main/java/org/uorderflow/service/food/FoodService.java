@@ -23,7 +23,7 @@ public class FoodService {
 
     @Transactional
     public FoodResponseDTO create(FoodCreateDTO data){
-        FoodCategory foodCategory = foodCategoryValidation.validadeFoodCategory(data.foodCategoryId(), Action.ACTIVE_CHECK);
+        FoodCategory foodCategory = foodCategoryValidation.validateFoodCategory(data.foodCategoryId(), Action.ACTIVE_CHECK);
         Food food = new Food(data, foodCategory);
         foodRepository.save(food);
         return new FoodResponseDTO(food);
@@ -42,7 +42,7 @@ public class FoodService {
     public FoodResponseDTO update(Long id, FoodUpdateDTO data){
         FoodCategory foodCategory = null;
         if(data.foodCategoryId() != null){
-            foodCategory = foodCategoryValidation.validadeFoodCategory(id, Action.ACTIVE_CHECK);
+            foodCategory = foodCategoryValidation.validateFoodCategory(id, Action.ACTIVE_CHECK);
         }
         Food food = foodValidation.validateFood(id, Action.ACTIVE_CHECK);
         food.update(data, foodCategory);

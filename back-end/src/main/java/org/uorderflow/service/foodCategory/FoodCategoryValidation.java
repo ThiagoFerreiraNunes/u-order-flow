@@ -13,7 +13,7 @@ public class FoodCategoryValidation {
     @Autowired
     FoodCategoryRepository foodCategoryRepository;
 
-    public FoodCategory validadeFoodCategory(Long id, Action action){
+    public FoodCategory validateFoodCategory(Long id, Action action){
         FoodCategory foodCategory = foodCategoryRepository
                 .findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("FoodCategory not found with id " + id + "."));

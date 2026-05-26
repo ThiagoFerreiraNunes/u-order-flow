@@ -23,7 +23,7 @@ public class DrinkService {
 
     @Transactional
     public DrinkResponseDTO create(DrinkCreateDTO data){
-        DrinkCategory drinkCategory = drinkCategoryValidation.validadeDrinkCategory(data.drinkCategoryId(), Action.ACTIVE_CHECK);
+        DrinkCategory drinkCategory = drinkCategoryValidation.validateDrinkCategory(data.drinkCategoryId(), Action.ACTIVE_CHECK);
         Drink drink = new Drink(data, drinkCategory);
         drinkRepository.save(drink);
         return new DrinkResponseDTO(drink);
@@ -42,7 +42,7 @@ public class DrinkService {
     public DrinkResponseDTO update(Long id, DrinkUpdateDTO data){
         DrinkCategory drinkCategory = null;
         if(data.drinkCategoryId() != null){
-            drinkCategory = drinkCategoryValidation.validadeDrinkCategory(data.drinkCategoryId(), Action.ACTIVE_CHECK);
+            drinkCategory = drinkCategoryValidation.validateDrinkCategory(data.drinkCategoryId(), Action.ACTIVE_CHECK);
         }
         
         Drink drink = drinkValidation.validateDrink(id, Action.ACTIVE_CHECK);

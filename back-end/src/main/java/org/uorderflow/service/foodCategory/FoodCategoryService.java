@@ -30,26 +30,26 @@ public class FoodCategoryService {
     }
 
     public FoodCategoryResponseDTO findById(Long id){
-        FoodCategory foodCategory = foodCategoryValidation.validadeFoodCategory(id, Action.ACTIVE_CHECK);
+        FoodCategory foodCategory = foodCategoryValidation.validateFoodCategory(id, Action.ACTIVE_CHECK);
         return new FoodCategoryResponseDTO(foodCategory);
     }
 
     @Transactional
     public FoodCategoryResponseDTO update(Long id, FoodCategoryUpdateDTO data){
-        FoodCategory foodCategory = foodCategoryValidation.validadeFoodCategory(id, Action.ACTIVE_CHECK);
+        FoodCategory foodCategory = foodCategoryValidation.validateFoodCategory(id, Action.ACTIVE_CHECK);
         foodCategory.update(data);
         return new FoodCategoryResponseDTO(foodCategory);
     }
 
     @Transactional
     public void delete(Long id){
-        FoodCategory foodCategory = foodCategoryValidation.validadeFoodCategory(id, Action.DELETE);
+        FoodCategory foodCategory = foodCategoryValidation.validateFoodCategory(id, Action.DELETE);
         foodCategory.delete();
     }
 
     @Transactional
     public FoodCategoryResponseDTO reactivate(Long id){
-        FoodCategory foodCategory = foodCategoryValidation.validadeFoodCategory(id, Action.REACTIVATE);
+        FoodCategory foodCategory = foodCategoryValidation.validateFoodCategory(id, Action.REACTIVATE);
         foodCategory.reactivate();
         return new FoodCategoryResponseDTO(foodCategory);
     }
