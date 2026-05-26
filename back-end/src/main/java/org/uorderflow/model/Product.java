@@ -4,24 +4,24 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.uorderflow.dto.food.FoodCreateDTO;
-import org.uorderflow.dto.food.FoodUpdateDTO;
+import org.uorderflow.dto.product.ProductCreateDTO;
+import org.uorderflow.dto.product.ProductUpdateDTO;
 
-@Table(name = "tb_foods")
-@Entity(name = "Food")
+@Table(name = "tb_products")
+@Entity(name = "Product")
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Food {
+public class Product {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "food_id")
+    @Column(name = "product_id")
     private Long id;
 
-    @Column(name = "food_name")
+    @Column(name = "product_name")
     private String name;
 
-    @Column(name = "food_description")
+    @Column(name = "product_description")
     private String description;
 
     @Column(name = "image_url")
@@ -34,24 +34,24 @@ public class Food {
     private Boolean isAvailable;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "food_category_id")
-    private ProductCategory foodCategory;
+    @JoinColumn(name = "category_id")
+    private ProductCategory productCategory;
 
-    public Food(FoodCreateDTO data, ProductCategory foodCategory){
+    public Product(ProductCreateDTO data, ProductCategory productCategory){
         this.name = data.name();
         this.description = data.description();
         this.image = data.image();
         this.price = data.price();
-        this.foodCategory = foodCategory;
+        this.productCategory = productCategory;
         this.isAvailable = true;
     }
 
-    public void update(FoodUpdateDTO data, ProductCategory foodCategory){
+    public void update(ProductUpdateDTO data, ProductCategory productCategory){
         if(data.name() != null) this.name = data.name();
         if(data.description() != null) this.description = data.description();
         if(data.image() != null) this.image = data.image();
         if(data.price() != null) this.price = data.price();
-        if(foodCategory != null) this.foodCategory = foodCategory;
+        if(productCategory != null) this.productCategory = productCategory;
     }
 
     public void delete(){

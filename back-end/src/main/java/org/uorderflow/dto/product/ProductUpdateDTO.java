@@ -1,10 +1,10 @@
-package org.uorderflow.dto.food;
+package org.uorderflow.dto.product;
 
-public record FoodUpdateDTO(
+public record ProductUpdateDTO(
         String name,
         String description,
         String image,
         Double price,
-        Long foodCategoryId
+        Long productCategoryId
 ) {
 }
