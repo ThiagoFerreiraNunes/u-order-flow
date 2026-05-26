@@ -13,7 +13,7 @@ public class DrinkCategoryValidation {
     @Autowired
     DrinkCategoryRepository drinkCategoryRepository;
 
-    public DrinkCategory validadeDrinkCategory(Long id, Action action){
+    public DrinkCategory validateDrinkCategory(Long id, Action action){
         DrinkCategory drinkCategory = drinkCategoryRepository
                 .findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("DrinkCategory not found with id " + id + "."));

@@ -30,26 +30,26 @@ public class DrinkCategoryService {
     }
 
     public DrinkCategoryResponseDTO findById(Long id){
-        DrinkCategory drinkCategory = drinkCategoryValidation.validadeDrinkCategory(id, Action.ACTIVE_CHECK);
+        DrinkCategory drinkCategory = drinkCategoryValidation.validateDrinkCategory(id, Action.ACTIVE_CHECK);
         return new DrinkCategoryResponseDTO(drinkCategory);
     }
 
     @Transactional
     public DrinkCategoryResponseDTO update(Long id, DrinkCategoryUpdateDTO data){
-        DrinkCategory drinkCategory = drinkCategoryValidation.validadeDrinkCategory(id, Action.ACTIVE_CHECK);
+        DrinkCategory drinkCategory = drinkCategoryValidation.validateDrinkCategory(id, Action.ACTIVE_CHECK);
         drinkCategory.update(data);
         return new DrinkCategoryResponseDTO(drinkCategory);
     }
 
     @Transactional
     public void delete(Long id){
-        DrinkCategory drinkCategory = drinkCategoryValidation.validadeDrinkCategory(id, Action.DELETE);
+        DrinkCategory drinkCategory = drinkCategoryValidation.validateDrinkCategory(id, Action.DELETE);
         drinkCategory.delete();
     }
 
     @Transactional
     public DrinkCategoryResponseDTO reactivate(Long id){
-        DrinkCategory drinkCategory = drinkCategoryValidation.validadeDrinkCategory(id, Action.REACTIVATE);
+        DrinkCategory drinkCategory = drinkCategoryValidation.validateDrinkCategory(id, Action.REACTIVATE);
         drinkCategory.reactivate();
         return new DrinkCategoryResponseDTO(drinkCategory);
     }
