@@ -1,0 +1,56 @@
+package org.uorderflow.service.table;
+
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.uorderflow.dto.restaurantTable.RestaurantTableCreateDTO;
+import org.uorderflow.dto.restaurantTable.RestaurantTableResponseDTO;
+import org.uorderflow.dto.restaurantTable.RestaurantTableUpdateDTO;
+import org.uorderflow.model.RestaurantTable;
+import org.uorderflow.repository.RestaurantTableRepository;
+import org.uorderflow.service.Action;
+
+import java.util.List;
+
+@Service
+public class RestaurantTableService {
+
+    @Autowired RestaurantTableRepository restaurantTableRepository;
+    @Autowired RestaurantTableValidation restaurantTableValidation;
+
+    @Transactional
+    public RestaurantTableResponseDTO create(RestaurantTableCreateDTO data){
+        RestaurantTable restaurantTable = new RestaurantTable(data);
+        restaurantTableRepository.save(restaurantTable);
+        return new RestaurantTableResponseDTO(restaurantTable);
+    }
+
+    public List<RestaurantTableResponseDTO> findAll(){
+        return restaurantTableRepository.findAllByAvailableAndSortByNumber().stream().map(RestaurantTableResponseDTO::new).toList();
+    }
+
+    public RestaurantTableResponseDTO findById(Long id){
+        RestaurantTable restaurantTable = restaurantTableValidation.validateRestaurantTable(id, Action.ACTIVE_CHECK);
+        return new RestaurantTableResponseDTO(restaurantTable);
+    }
+
+    @Transactional
+    public RestaurantTableResponseDTO update(Long id, RestaurantTableUpdateDTO data){
+        RestaurantTable restaurantTable = restaurantTableValidation.validateRestaurantTable(id, Action.ACTIVE_CHECK);
+        restaurantTable.update(data);
+        return new RestaurantTableResponseDTO(restaurantTable);
+    }
+
+    @Transactional
+    public void delete(Long id){
+        RestaurantTable restaurantTable = restaurantTableValidation.validateRestaurantTable(id, Action.DELETE);
+        restaurantTable.delete();
+    }
+
+    @Transactional
+    public RestaurantTableResponseDTO reactivate(Long id){
+        RestaurantTable restaurantTable = restaurantTableValidation.validateRestaurantTable(id, Action.REACTIVATE);
+        restaurantTable.reactivate();
+        return new RestaurantTableResponseDTO(restaurantTable);
+    }
+}
