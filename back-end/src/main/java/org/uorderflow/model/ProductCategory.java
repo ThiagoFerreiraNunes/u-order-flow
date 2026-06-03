@@ -18,10 +18,10 @@ public class ProductCategory {
     @Column(name = "category_id")
     private Long id;
 
-    @Column(name = "category_name")
+    @Column(nullable = false, name = "category_name")
     private String name;
 
-    @Column(name = "is_available")
+    @Column(nullable = false, name = "is_available")
     private Boolean isAvailable;
 
     public ProductCategory(ProductCategoryCreateDTO data){
