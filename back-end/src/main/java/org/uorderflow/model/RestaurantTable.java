@@ -18,10 +18,10 @@ public class RestaurantTable {
     @Column(name = "restaurant_table_id")
     private Long id;
 
-    @Column(name = "restaurant_table_number")
+    @Column(nullable = false, name = "restaurant_table_number")
     private Integer number;
 
-    @Column(name = "is_available")
+    @Column(nullable = false, name = "is_available")
     private Boolean isAvailable;
 
     public RestaurantTable(RestaurantTableCreateDTO data){

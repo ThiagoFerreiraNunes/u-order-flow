@@ -18,23 +18,23 @@ public class Product {
     @Column(name = "product_id")
     private Long id;
 
-    @Column(name = "product_name")
+    @Column(nullable = false, name = "product_name")
     private String name;
 
-    @Column(name = "product_description")
+    @Column(nullable = false, name = "product_description")
     private String description;
 
-    @Column(name = "image_url")
+    @Column(nullable = false, name = "image_url")
     private String image;
 
-    @Column(name = "price")
+    @Column(nullable = false, name = "price")
     private Double price;
 
-    @Column(name = "is_available")
+    @Column(nullable = false, name = "is_available")
     private Boolean isAvailable;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
+    @JoinColumn(nullable = false, name = "category_id")
     private ProductCategory productCategory;
 
     public Product(ProductCreateDTO data, ProductCategory productCategory){
