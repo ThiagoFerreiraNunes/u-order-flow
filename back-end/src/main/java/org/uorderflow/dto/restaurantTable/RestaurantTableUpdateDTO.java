@@ -1,6 +1,8 @@
 package org.uorderflow.dto.restaurantTable;
 
+import jakarta.validation.constraints.Positive;
+
 public record RestaurantTableUpdateDTO(
-        Integer number
+        @Positive Integer number
 ) {
 }
