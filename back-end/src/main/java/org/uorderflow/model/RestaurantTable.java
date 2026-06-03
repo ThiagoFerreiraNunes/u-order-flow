@@ -26,6 +26,7 @@ public class RestaurantTable {
 
     public RestaurantTable(RestaurantTableCreateDTO data){
         this.number = data.number();
+        this.isAvailable = true;
     }
 
     public void update(RestaurantTableUpdateDTO data){
