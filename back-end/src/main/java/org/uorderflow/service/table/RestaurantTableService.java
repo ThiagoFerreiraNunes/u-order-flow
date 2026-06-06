@@ -8,7 +8,7 @@ import org.uorderflow.dto.restaurantTable.RestaurantTableResponseDTO;
 import org.uorderflow.dto.restaurantTable.RestaurantTableUpdateDTO;
 import org.uorderflow.model.RestaurantTable;
 import org.uorderflow.repository.RestaurantTableRepository;
-import org.uorderflow.enums.ValidateAction;
+import org.uorderflow.service.Action;
 
 import java.util.List;
 
@@ -30,26 +30,26 @@ public class RestaurantTableService {
     }
 
     public RestaurantTableResponseDTO findById(Long id){
-        RestaurantTable restaurantTable = restaurantTableValidation.validateRestaurantTable(id, ValidateAction.ACTIVE_CHECK);
+        RestaurantTable restaurantTable = restaurantTableValidation.validateRestaurantTable(id, Action.ACTIVE_CHECK);
         return new RestaurantTableResponseDTO(restaurantTable);
     }
 
     @Transactional
     public RestaurantTableResponseDTO update(Long id, RestaurantTableUpdateDTO data){
-        RestaurantTable restaurantTable = restaurantTableValidation.validateRestaurantTable(id, ValidateAction.ACTIVE_CHECK);
+        RestaurantTable restaurantTable = restaurantTableValidation.validateRestaurantTable(id, Action.ACTIVE_CHECK);
         restaurantTable.update(data);
         return new RestaurantTableResponseDTO(restaurantTable);
     }
 
     @Transactional
     public void delete(Long id){
-        RestaurantTable restaurantTable = restaurantTableValidation.validateRestaurantTable(id, ValidateAction.DELETE);
+        RestaurantTable restaurantTable = restaurantTableValidation.validateRestaurantTable(id, Action.DELETE);
         restaurantTable.delete();
     }
 
     @Transactional
     public RestaurantTableResponseDTO reactivate(Long id){
-        RestaurantTable restaurantTable = restaurantTableValidation.validateRestaurantTable(id, ValidateAction.REACTIVATE);
+        RestaurantTable restaurantTable = restaurantTableValidation.validateRestaurantTable(id, Action.REACTIVATE);
         restaurantTable.reactivate();
         return new RestaurantTableResponseDTO(restaurantTable);
     }

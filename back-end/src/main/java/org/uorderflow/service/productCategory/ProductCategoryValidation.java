@@ -6,14 +6,14 @@ import org.springframework.stereotype.Component;
 import org.uorderflow.exception.BusinessRuleException;
 import org.uorderflow.model.ProductCategory;
 import org.uorderflow.repository.ProductCategoryRepository;
-import org.uorderflow.enums.ValidateAction;
+import org.uorderflow.service.Action;
 
 @Component
 public class ProductCategoryValidation {
     @Autowired
     ProductCategoryRepository productCategoryRepository;
 
-    public ProductCategory validateProductCategory(Long id, ValidateAction action){
+    public ProductCategory validateProductCategory(Long id, Action action){
         ProductCategory productCategory = productCategoryRepository
                 .findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("ProductCategory not found with id " + id + "."));

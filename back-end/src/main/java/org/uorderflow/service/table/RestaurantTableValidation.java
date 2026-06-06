@@ -6,14 +6,14 @@ import org.springframework.stereotype.Component;
 import org.uorderflow.exception.BusinessRuleException;
 import org.uorderflow.model.RestaurantTable;
 import org.uorderflow.repository.RestaurantTableRepository;
-import org.uorderflow.enums.ValidateAction;
+import org.uorderflow.service.Action;
 
 @Component
 public class RestaurantTableValidation {
 
     @Autowired RestaurantTableRepository restaurantTableRepository;
 
-    public RestaurantTable validateRestaurantTable(Long id, ValidateAction action) {
+    public RestaurantTable validateRestaurantTable(Long id, Action action) {
         RestaurantTable restaurantTable = restaurantTableRepository
                 .findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("RestaurantTable not found with id " + id + "."));

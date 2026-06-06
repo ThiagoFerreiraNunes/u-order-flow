@@ -4,12 +4,12 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.uorderflow.dto.product.ProductCreateDTO;
-import org.uorderflow.dto.product.ProductDetailsResponseDTO;
+import org.uorderflow.dto.product.ProductResponseDTO;
 import org.uorderflow.dto.product.ProductUpdateDTO;
 import org.uorderflow.model.Product;
 import org.uorderflow.model.ProductCategory;
 import org.uorderflow.repository.ProductRepository;
-import org.uorderflow.enums.ValidateAction;
+import org.uorderflow.service.Action;
 import org.uorderflow.service.productCategory.ProductCategoryValidation;
 
 import java.util.List;
@@ -22,43 +22,43 @@ public class ProductService {
     @Autowired ProductCategoryValidation productCategoryValidation;
 
     @Transactional
-    public ProductDetailsResponseDTO create(ProductCreateDTO data){
-        ProductCategory productCategory = productCategoryValidation.validateProductCategory(data.productCategoryId(), ValidateAction.ACTIVE_CHECK);
+    public ProductResponseDTO create(ProductCreateDTO data){
+        ProductCategory productCategory = productCategoryValidation.validateProductCategory(data.productCategoryId(), Action.ACTIVE_CHECK);
         Product product = new Product(data, productCategory);
         productRepository.save(product);
-        return new ProductDetailsResponseDTO(product);
+        return new ProductResponseDTO(product);
     }
 
-    public List<ProductDetailsResponseDTO> findAll(){
-        return productRepository.findAllByAvailableAndSortByName().stream().map(ProductDetailsResponseDTO::new).toList();
+    public List<ProductResponseDTO> findAll(){
+        return productRepository.findAllByAvailableAndSortByName().stream().map(ProductResponseDTO::new).toList();
     }
 
-    public ProductDetailsResponseDTO findById(Long id){
-        Product product = productValidation.validateProduct(id, ValidateAction.ACTIVE_CHECK);
-        return new ProductDetailsResponseDTO(product);
+    public ProductResponseDTO findById(Long id){
+        Product product = productValidation.validateProduct(id, Action.ACTIVE_CHECK);
+        return new ProductResponseDTO(product);
     }
 
     @Transactional
-    public ProductDetailsResponseDTO update(Long id, ProductUpdateDTO data){
+    public ProductResponseDTO update(Long id, ProductUpdateDTO data){
         ProductCategory productCategory = null;
         if(data.productCategoryId() != null){
-            productCategory = productCategoryValidation.validateProductCategory(data.productCategoryId(), ValidateAction.ACTIVE_CHECK);
+            productCategory = productCategoryValidation.validateProductCategory(id, Action.ACTIVE_CHECK);
         }
-        Product product = productValidation.validateProduct(id, ValidateAction.ACTIVE_CHECK);
+        Product product = productValidation.validateProduct(id, Action.ACTIVE_CHECK);
         product.update(data, productCategory);
-        return new ProductDetailsResponseDTO(product);
+        return new ProductResponseDTO(product);
     }
 
     @Transactional
     public void delete(Long id){
-        Product product = productValidation.validateProduct(id, ValidateAction.DELETE);
+        Product product = productValidation.validateProduct(id, Action.DELETE);
         product.delete();
     }
 
     @Transactional
-    public ProductDetailsResponseDTO reactivate(Long id){
-        Product product = productValidation.validateProduct(id, ValidateAction.REACTIVATE);
+    public ProductResponseDTO reactivate(Long id){
+        Product product = productValidation.validateProduct(id, Action.REACTIVATE);
         product.reactivate();
-        return new ProductDetailsResponseDTO(product);
+        return new ProductResponseDTO(product);
     }
 }
