@@ -2,22 +2,23 @@ package org.uorderflow.dto.product;
 
 import org.uorderflow.dto.productCategory.ProductCategoryResponseDTO;
 import org.uorderflow.model.Product;
+import org.uorderflow.utils.FormatUtils;
 
-public record ProductResponseDTO(
+public record ProductDetailsResponseDTO(
         Long id,
         String name,
         String description,
         String image,
-        Double price,
+        String price,
         ProductCategoryResponseDTO productCategory
 ) {
-    public ProductResponseDTO(Product product){
+    public ProductDetailsResponseDTO(Product product){
         this(
                 product.getId(),
                 product.getName(),
                 product.getDescription(),
                 product.getImage(),
-                product.getPrice(),
+                FormatUtils.formatToBRL(product.getPrice()),
                 new ProductCategoryResponseDTO(product.getProductCategory())
         );
     }

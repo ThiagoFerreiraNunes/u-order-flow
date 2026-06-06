@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.uorderflow.dto.product.ProductCreateDTO;
-import org.uorderflow.dto.product.ProductResponseDTO;
+import org.uorderflow.dto.product.ProductDetailsResponseDTO;
 import org.uorderflow.dto.product.ProductUpdateDTO;
 import org.uorderflow.service.product.ProductService;
 
@@ -21,24 +21,24 @@ public class ProductController {
     ProductService productService;
 
     @PostMapping
-    public ResponseEntity<ProductResponseDTO> create(@RequestBody @Valid ProductCreateDTO data, UriComponentsBuilder builder){
-        ProductResponseDTO product = productService.create(data);
+    public ResponseEntity<ProductDetailsResponseDTO> create(@RequestBody @Valid ProductCreateDTO data, UriComponentsBuilder builder){
+        ProductDetailsResponseDTO product = productService.create(data);
         URI uri = builder.path("/{id}").buildAndExpand(product.id()).toUri();
         return ResponseEntity.created(uri).body(product);
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductResponseDTO>> findAll(){
+    public ResponseEntity<List<ProductDetailsResponseDTO>> findAll(){
         return ResponseEntity.ok(productService.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductResponseDTO> findById(@PathVariable Long id){
+    public ResponseEntity<ProductDetailsResponseDTO> findById(@PathVariable Long id){
         return ResponseEntity.ok(productService.findById(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProductResponseDTO> update(@PathVariable Long id, @RequestBody @Valid ProductUpdateDTO data){
+    public ResponseEntity<ProductDetailsResponseDTO> update(@PathVariable Long id, @RequestBody @Valid ProductUpdateDTO data){
         return ResponseEntity.ok(productService.update(id, data));
     }
 
@@ -49,7 +49,7 @@ public class ProductController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<ProductResponseDTO> reactivate(@PathVariable Long id){
+    public ResponseEntity<ProductDetailsResponseDTO> reactivate(@PathVariable Long id){
         return ResponseEntity.ok(productService.reactivate(id));
     }
 }
