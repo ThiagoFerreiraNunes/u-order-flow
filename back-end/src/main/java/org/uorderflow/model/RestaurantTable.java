@@ -1,6 +1,7 @@
 package org.uorderflow.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,7 @@ public class RestaurantTable {
     private Long id;
 
     @Column(nullable = false, name = "restaurant_table_number")
+    @Positive
     private Integer number;
 
     @Column(nullable = false, name = "is_available")
