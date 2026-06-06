@@ -1,6 +1,7 @@
 package org.uorderflow.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,16 +19,17 @@ public class Product {
     @Column(name = "product_id")
     private Long id;
 
-    @Column(nullable = false, name = "product_name")
+    @Column(nullable = false, length = 100, name = "product_name")
     private String name;
 
-    @Column(nullable = false, name = "product_description")
+    @Column(nullable = false, length = 255, name = "product_description")
     private String description;
 
-    @Column(nullable = false, name = "image_url")
+    @Column(nullable = false, length = 2048, name = "image_url")
     private String image;
 
-    @Column(nullable = false, name = "price")
+    @Column(nullable = false, precision = 6, scale = 2, name = "price")
+    @Positive
     private Double price;
 
     @Column(nullable = false, name = "is_available")
