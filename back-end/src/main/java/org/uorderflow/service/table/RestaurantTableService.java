@@ -26,7 +26,7 @@ public class RestaurantTableService {
     }
 
     public List<RestaurantTableResponseDTO> findAll(){
-        return restaurantTableRepository.findAllByAvailableAndSortByNumber().stream().map(RestaurantTableResponseDTO::new).toList();
+        return restaurantTableRepository.findAllByNotDeletedAndSortByNumber().stream().map(RestaurantTableResponseDTO::new).toList();
     }
 
     public RestaurantTableResponseDTO findById(Long id){

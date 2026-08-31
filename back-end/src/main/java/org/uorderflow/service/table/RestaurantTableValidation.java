@@ -20,18 +20,18 @@ public class RestaurantTableValidation {
 
         switch (action){
             case ACTIVE_CHECK -> {
-                if(Boolean.FALSE.equals(restaurantTable.getIsAvailable())){
-                    throw new BusinessRuleException("RestaurantTable not available with id " + id + ".");
+                if(Boolean.TRUE.equals(restaurantTable.getIsDeleted())){
+                    throw new BusinessRuleException("RestaurantTable is deleted with id " + id + ".");
                 }
             }
             case DELETE -> {
-                if(Boolean.FALSE.equals(restaurantTable.getIsAvailable())){
-                    throw new BusinessRuleException("RestaurantTable is already not available with id " + id + ".");
+                if(Boolean.TRUE.equals(restaurantTable.getIsDeleted())){
+                    throw new BusinessRuleException("RestaurantTable is already deleted with id " + id + ".");
                 }
             }
             case REACTIVATE -> {
-                if(Boolean.TRUE.equals(restaurantTable.getIsAvailable())){
-                    throw new BusinessRuleException("RestaurantTable is already available with id " + id + ".");
+                if(Boolean.FALSE.equals(restaurantTable.getIsDeleted())){
+                    throw new BusinessRuleException("RestaurantTable is already activated with id " + id + ".");
                 }
             }
         }
