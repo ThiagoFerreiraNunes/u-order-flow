@@ -17,7 +17,7 @@ public record OrderSummaryResponseDTO(
         this(
                 order.getId(),
                 FormatUtils.formatDateTime(order.getCreatedAt()),
-                order.getCustomer(),
+                order.getBill().getCustomer(),
                 order.getRestaurantTable().getNumber(),
                 order.getItems().stream().map(OrderProductResponseDTO::new).toList()
         );

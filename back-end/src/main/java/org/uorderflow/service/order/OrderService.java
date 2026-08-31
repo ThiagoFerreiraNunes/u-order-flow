@@ -11,13 +11,10 @@ import org.uorderflow.dto.order.OrderSummaryResponseDTO;
 import org.uorderflow.dto.order.OrderUpdateDTO;
 import org.uorderflow.dto.orderProduct.OrderProductCreateDTO;
 import org.uorderflow.enums.OrderAction;
-import org.uorderflow.enums.OrderStatus;
-import org.uorderflow.model.Order;
-import org.uorderflow.model.OrderProduct;
-import org.uorderflow.model.Product;
-import org.uorderflow.model.RestaurantTable;
+import org.uorderflow.model.*;
 import org.uorderflow.repository.OrderRepository;
 import org.uorderflow.enums.ValidateAction;
+import org.uorderflow.service.bill.BillValidation;
 import org.uorderflow.service.product.ProductValidation;
 import org.uorderflow.service.table.RestaurantTableValidation;
 
@@ -26,11 +23,13 @@ public class OrderService {
 
     @Autowired OrderRepository orderRepository;
     @Autowired OrderValidation orderValidation;
+    @Autowired BillValidation billValidation;
     @Autowired RestaurantTableValidation restaurantTableValidation;
     @Autowired ProductValidation productValidation;
 
     @Transactional
-    public OrderDetailsResponseDTO create(OrderCreateDTO data){
+    public OrderDetailsResponseDTO createOrder(Long billId, OrderCreateDTO data){
+        Bill bill = billValidation.validateBill(billId, null);
         RestaurantTable restaurantTable = restaurantTableValidation.validateRestaurantTable(data.restaurantTableId(), ValidateAction.ACTIVE_CHECK);
         Order order = new Order(data, restaurantTable);
 
@@ -40,9 +39,11 @@ public class OrderService {
             order.addItem(orderProduct);
         }
 
+        bill.addOrder(order);
         orderRepository.save(order);
         return new OrderDetailsResponseDTO(order);
     }
+
 
     public Page<OrderSummaryResponseDTO> findAll(Pageable pageable){
         return orderRepository.findAllPaged(pageable).map(OrderSummaryResponseDTO::new);
@@ -94,19 +95,7 @@ public class OrderService {
     @Transactional
     public OrderDetailsResponseDTO cancelOrder(Long id){
         Order order = orderValidation.validateOrder(id, OrderAction.CANCEL);
-
-        if (order.getStatus() == OrderStatus.PREPARING){
-            order.addCancellationFee();
-        }
-
         order.cancelOrder();
-        return new OrderDetailsResponseDTO(order);
-    }
-
-    @Transactional
-    public OrderDetailsResponseDTO payOrder(Long id){
-        Order order = orderValidation.validateOrder(id, OrderAction.PAY);
-        order.payOrder();
         return new OrderDetailsResponseDTO(order);
     }
 }
