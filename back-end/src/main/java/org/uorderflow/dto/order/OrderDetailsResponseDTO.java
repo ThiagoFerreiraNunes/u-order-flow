@@ -1,17 +1,15 @@
 package org.uorderflow.dto.order;
 
 import org.uorderflow.dto.orderProduct.OrderProductResponseDTO;
+import org.uorderflow.enums.OrderStatus;
 import org.uorderflow.model.Order;
 import org.uorderflow.utils.FormatUtils;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public record OrderDetailsResponseDTO(
         Long id,
         String status,
-        Boolean isPaid,
-        Boolean cancellationFee,
         String createdAt,
         String deliveredAt,
         String customer,
@@ -22,13 +20,22 @@ public record OrderDetailsResponseDTO(
         this(
                 order.getId(),
                 order.getStatus().getDescription(),
-                order.getIsPaid(),
-                order.getCancellationFee(),
                 FormatUtils.formatDateTime(order.getCreatedAt()),
-                FormatUtils.formatDateTime(order.getDeliveredAt()),
-                order.getCustomer(),
+                resolveDeliveredAt(order),
+                order.getBill().getCustomer(),
                 order.getRestaurantTable().getNumber(),
                 order.getItems().stream().map(OrderProductResponseDTO::new).toList()
         );
+    }
+
+    private static String resolveDeliveredAt(Order order) {
+        if (order.getStatus() == OrderStatus.DELIVERED) {
+            return FormatUtils.formatDateTime(order.getDeliveredAt());
+        }
+        if (order.getStatus() == OrderStatus.CANCELLED) {
+            return "Order cancelled.";
+        }
+
+        return "Not delivered yet.";
     }
 }

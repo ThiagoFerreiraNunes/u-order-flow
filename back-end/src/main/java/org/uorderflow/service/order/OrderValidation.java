@@ -43,13 +43,8 @@ public class OrderValidation {
                 if(order.getStatus() == OrderStatus.CANCELLED){
                     throw new BusinessRuleException("An order cannot be cancelled if its status is already CANCELLED.");
                 }
-                if(order.getStatus() == OrderStatus.PREPARING){
-                    order.addCancellationFee();
-                }
-            }
-            case PAY -> {
-                if(order.getStatus() == OrderStatus.CANCELLED && !order.getCancellationFee()){
-                    throw new BusinessRuleException("An order with CANCELLED status can only be paid if the cancellation fee has been applied.");
+                if(order.getStatus() == OrderStatus.DELIVERED){
+                    throw new BusinessRuleException("An order cannot be cancelled if its status is DELIVERED.");
                 }
             }
         }

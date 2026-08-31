@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.uorderflow.dto.order.OrderCreateDTO;
 import org.uorderflow.dto.order.OrderUpdateDTO;
 import org.uorderflow.enums.OrderStatus;
@@ -15,6 +16,7 @@ import java.util.List;
 @Table(name = "tb_orders")
 @Entity(name = "Order")
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Order {
@@ -23,23 +25,15 @@ public class Order {
     @Column(name = "order_id")
     private Long id;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "order_status")
     private OrderStatus status;
-
-    @Column(nullable = false, name = "is_paid")
-    private Boolean isPaid;
-
-    @Column(nullable = false, name = "cancellation_fee")
-    private Boolean cancellationFee;
 
     @Column(nullable = false, name = "created_at")
     private LocalDateTime createdAt;
 
     @Column(name = "delivered_at")
     private LocalDateTime deliveredAt;
-
-    @Column(nullable = false, length = 100, name = "customer_name")
-    private String customer;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "restaurant_table_id")
@@ -48,13 +42,14 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderProduct> items = new ArrayList<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false, name = "bill_id")
+    private Bill bill;
+
     public Order(OrderCreateDTO data, RestaurantTable restaurantTable){
         this.status = OrderStatus.WAITING;
-        this.isPaid = false;
-        this.cancellationFee = false;
         this.createdAt = LocalDateTime.now();
         this.deliveredAt = null;
-        this.customer = data.customer();
         this.restaurantTable = restaurantTable;
     }
 
@@ -64,8 +59,11 @@ public class Order {
     }
 
     public void update(OrderUpdateDTO data, RestaurantTable restaurantTable){
-        if(data.customer() != null) this.customer = data.customer();
         if(restaurantTable != null) this.restaurantTable = restaurantTable;
+    }
+
+    public void cancelOrder(){
+        this.status = OrderStatus.CANCELLED;
     }
 
     public void prepareOrder(){
@@ -77,15 +75,5 @@ public class Order {
         this.deliveredAt = LocalDateTime.now();
     }
 
-    public void cancelOrder(){
-        this.status = OrderStatus.CANCELLED;
-    }
 
-    public void payOrder(){
-        this.isPaid = true;
-    }
-
-    public void addCancellationFee() {
-        this.cancellationFee = true;
-    }
 }

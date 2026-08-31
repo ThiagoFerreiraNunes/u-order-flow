@@ -11,11 +11,14 @@ import java.util.Optional;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    @Query(value = "SELECT o FROM Order o JOIN FETCH o.restaurantTable",
-            countQuery = "SELECT count(0) FROM Order o")
+    @Query(value = "SELECT o FROM Order o " +
+            "JOIN FETCH o.bill" +
+            "JOIN FETCH o.restaurantTable",
+            countQuery = "SELECT count(o) FROM Order o")
     Page<Order> findAllPaged(Pageable pageable);
 
     @Query("SELECT DISTINCT o FROM Order o " +
+            "JOIN FETCH o.bill " +
             "JOIN FETCH o.restaurantTable " +
             "JOIN FETCH o.items " +
             "WHERE o.id = :id")
