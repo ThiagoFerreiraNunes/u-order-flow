@@ -28,7 +28,7 @@ public class ProductCategoryService {
     }
 
     public List<ProductCategoryResponseDTO> findAll(){
-        return productCategoryRepository.findAllByAvailableAndSortByName().stream().map(ProductCategoryResponseDTO::new).toList();
+        return productCategoryRepository.findAllByNotDeletedAndSortByName().stream().map(ProductCategoryResponseDTO::new).toList();
     }
 
     public ProductCategoryResponseDTO findById(Long id){

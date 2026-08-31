@@ -20,18 +20,18 @@ public class ProductCategoryValidation {
 
         switch (action){
             case ACTIVE_CHECK -> {
-                if(Boolean.FALSE.equals(productCategory.getIsAvailable())){
-                    throw new BusinessRuleException("ProductCategory not available with id " + id + ".");
+                if(Boolean.TRUE.equals(productCategory.getIsDeleted())){
+                    throw new BusinessRuleException("ProductCategory is deleted with id " + id + ".");
                 }
             }
             case DELETE -> {
-                if(Boolean.FALSE.equals(productCategory.getIsAvailable())){
-                    throw new BusinessRuleException("ProductCategory is already not available with id " + id + ".");
+                if(Boolean.TRUE.equals(productCategory.getIsDeleted())){
+                    throw new BusinessRuleException("ProductCategory is already deleted with id " + id + ".");
                 }
             }
             case REACTIVATE -> {
-                if(Boolean.TRUE.equals(productCategory.getIsAvailable())){
-                    throw new BusinessRuleException("ProductCategory is already available with id " + id + ".");
+                if(Boolean.FALSE.equals(productCategory.getIsDeleted())){
+                    throw new BusinessRuleException("ProductCategory is already activated with id " + id + ".");
                 }
             }
         }
