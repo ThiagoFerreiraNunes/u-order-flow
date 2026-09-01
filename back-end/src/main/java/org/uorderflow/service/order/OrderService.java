@@ -1,10 +1,10 @@
 package org.uorderflow.service.order;
 
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.uorderflow.dto.order.OrderCreateDTO;
 import org.uorderflow.dto.order.OrderDetailsResponseDTO;
 import org.uorderflow.dto.order.OrderSummaryResponseDTO;
@@ -45,11 +45,12 @@ public class OrderService {
         return new OrderDetailsResponseDTO(order);
     }
 
-
+    @Transactional(readOnly = true)
     public Page<OrderSummaryResponseDTO> findAll(Pageable pageable){
         return orderRepository.findAllPaged(pageable).map(OrderSummaryResponseDTO::new);
     }
 
+    @Transactional(readOnly = true)
     public OrderDetailsResponseDTO findById(Long id){
         Order order = orderValidation.validateOrder(id, null);
         return new OrderDetailsResponseDTO(order);
