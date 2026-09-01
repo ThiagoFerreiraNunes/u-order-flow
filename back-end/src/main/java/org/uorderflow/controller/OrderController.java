@@ -36,17 +36,17 @@ public class OrderController {
         return ResponseEntity.ok(orderService.update(id, data));
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/{id}/cancel")
     public ResponseEntity<OrderDetailsResponseDTO> cancelOrder(@PathVariable Long id){
         return ResponseEntity.ok(orderService.cancelOrder(id));
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/{id}/prepare")
     public ResponseEntity<OrderDetailsResponseDTO> prepareOrder(@PathVariable Long id){
         return ResponseEntity.ok(orderService.prepareOrder(id));
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/{id}/deliver")
     public ResponseEntity<OrderDetailsResponseDTO> deliverOrder(@PathVariable Long id){
         return ResponseEntity.ok(orderService.deliverOrder(id));
     }
