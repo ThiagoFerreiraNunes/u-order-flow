@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ProductCategoryRepository extends JpaRepository<ProductCategory, Long> {
     @Query("SELECT p FROM ProductCategory p " +
-            "WHERE p.isAvailable = TRUE " +
+            "WHERE p.isDeleted = FALSE " +
             "ORDER BY p.name")
-    List<ProductCategory> findAllByAvailableAndSortByName();
+    List<ProductCategory> findAllByNotDeletedAndSortByName();
 }

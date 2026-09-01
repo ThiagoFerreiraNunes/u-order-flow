@@ -11,6 +11,7 @@ import org.uorderflow.dto.order.OrderSummaryResponseDTO;
 import org.uorderflow.dto.order.OrderUpdateDTO;
 import org.uorderflow.dto.orderProduct.OrderProductCreateDTO;
 import org.uorderflow.enums.OrderAction;
+import org.uorderflow.enums.ProductAction;
 import org.uorderflow.model.*;
 import org.uorderflow.repository.OrderRepository;
 import org.uorderflow.enums.ValidateAction;
@@ -34,7 +35,7 @@ public class OrderService {
         Order order = new Order(data, restaurantTable);
 
         for (OrderProductCreateDTO item : data.items()){
-            Product product = productValidation.validateProduct(item.productId(), ValidateAction.ACTIVE_CHECK);
+            Product product = productValidation.validateProduct(item.productId(), ProductAction.CREATE_ORDER_PRODUCT);
             OrderProduct orderProduct = new OrderProduct(item, product);
             order.addItem(orderProduct);
         }
@@ -69,7 +70,7 @@ public class OrderService {
             order.getItems().clear();
 
             for (OrderProductCreateDTO item : data.items()) {
-                Product product = productValidation.validateProduct(item.productId(), ValidateAction.ACTIVE_CHECK);
+                Product product = productValidation.validateProduct(item.productId(), ProductAction.CREATE_ORDER_PRODUCT);
                 OrderProduct orderProduct = new OrderProduct(item, product);
                 order.addItem(orderProduct);
             }

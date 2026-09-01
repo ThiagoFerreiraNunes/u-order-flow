@@ -12,9 +12,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query("SELECT p FROM Product p " +
             "JOIN FETCH p.productCategory " +
-            "WHERE p.isAvailable = TRUE " +
+            "WHERE p.isDeleted = false " +
             "ORDER BY p.name")
-    List<Product> findAllByAvailableAndSortByName();
+    List<Product> findAllByNotDeletedAndSortByName();
 
     @Query("SELECT p FROM Product p " +
             "JOIN FETCH p.productCategory " +

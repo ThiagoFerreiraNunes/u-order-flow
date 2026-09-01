@@ -9,7 +9,7 @@ import java.util.List;
 public interface RestaurantTableRepository extends JpaRepository<RestaurantTable, Long> {
 
     @Query("SELECT r FROM RestaurantTable r " +
-            "WHERE r.isAvailable = TRUE " +
+            "WHERE r.isDeleted = FALSE " +
             "ORDER BY r.number")
-    List<RestaurantTable> findAllByAvailableAndSortByNumber();
+    List<RestaurantTable> findAllByNotDeletedAndSortByNumber();
 }

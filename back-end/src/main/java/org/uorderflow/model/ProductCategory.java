@@ -21,12 +21,12 @@ public class ProductCategory {
     @Column(nullable = false, length = 50, name = "category_name")
     private String name;
 
-    @Column(nullable = false, name = "is_available")
-    private Boolean isAvailable;
+    @Column(nullable = false, name = "is_deleted")
+    private Boolean isDeleted;
 
     public ProductCategory(ProductCategoryCreateDTO data){
         this.name = data.name();
-        this.isAvailable = true;
+        this.isDeleted = false;
     }
 
     public void update(ProductCategoryUpdateDTO data){
@@ -34,10 +34,10 @@ public class ProductCategory {
     }
 
     public void delete(){
-        this.isAvailable = false;
+        this.isDeleted = true;
     }
 
     public void reactivate(){
-        this.isAvailable = true;
+        this.isDeleted = false;
     }
 }

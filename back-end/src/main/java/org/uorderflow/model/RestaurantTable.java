@@ -23,12 +23,12 @@ public class RestaurantTable {
     @Positive
     private Integer number;
 
-    @Column(nullable = false, name = "is_available")
-    private Boolean isAvailable;
+    @Column(nullable = false, name = "is_deleted")
+    private Boolean isDeleted;
 
     public RestaurantTable(RestaurantTableCreateDTO data){
         this.number = data.number();
-        this.isAvailable = true;
+        this.isDeleted = false;
     }
 
     public void update(RestaurantTableUpdateDTO data){
@@ -36,10 +36,10 @@ public class RestaurantTable {
     }
 
     public void delete(){
-        this.isAvailable = false;
+        this.isDeleted = true;
     }
 
     public void reactivate(){
-        this.isAvailable = true;
+        this.isDeleted = false;
     }
 }
