@@ -29,7 +29,7 @@ public class BillController {
     @PostMapping
     public ResponseEntity<BillResponseDTO> createBill(@RequestBody @Valid BillCreateDTO data, UriComponentsBuilder builder){
         BillResponseDTO bill = billService.createBill(data);
-        URI uri = builder.path("/{id}").buildAndExpand(bill.id()).toUri();
+        URI uri = builder.replacePath("/api/bills/{id}").buildAndExpand(bill.id()).toUri();
         return ResponseEntity.created(uri).body(bill);
     }
 
