@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.uorderflow.dto.order.OrderCreateDTO;
 import org.uorderflow.dto.order.OrderUpdateDTO;
-import org.uorderflow.enums.OrderStatus;
+import org.uorderflow.enums.order.OrderStatus;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

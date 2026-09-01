@@ -1,4 +1,4 @@
-package org.uorderflow.enums;
+package org.uorderflow.enums.order;
 
 import lombok.Getter;
 

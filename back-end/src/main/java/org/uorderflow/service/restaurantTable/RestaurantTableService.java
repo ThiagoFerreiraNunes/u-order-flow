@@ -8,7 +8,7 @@ import org.uorderflow.dto.restaurantTable.RestaurantTableResponseDTO;
 import org.uorderflow.dto.restaurantTable.RestaurantTableUpdateDTO;
 import org.uorderflow.model.RestaurantTable;
 import org.uorderflow.repository.RestaurantTableRepository;
-import org.uorderflow.enums.ValidateAction;
+import org.uorderflow.enums.generic.ValidateAction;
 
 import java.util.List;
 

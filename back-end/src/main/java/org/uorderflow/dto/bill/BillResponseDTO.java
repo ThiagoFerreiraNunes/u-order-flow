@@ -1,7 +1,7 @@
 package org.uorderflow.dto.bill;
 
 import org.uorderflow.dto.order.OrderSummaryResponseDTO;
-import org.uorderflow.enums.BillStatus;
+import org.uorderflow.enums.bill.BillStatus;
 import org.uorderflow.model.Bill;
 import org.uorderflow.utils.FormatUtils;
 

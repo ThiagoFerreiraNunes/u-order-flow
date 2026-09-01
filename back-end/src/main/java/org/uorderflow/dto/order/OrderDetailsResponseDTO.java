@@ -1,7 +1,7 @@
 package org.uorderflow.dto.order;
 
 import org.uorderflow.dto.orderProduct.OrderProductResponseDTO;
-import org.uorderflow.enums.OrderStatus;
+import org.uorderflow.enums.order.OrderStatus;
 import org.uorderflow.model.Order;
 import org.uorderflow.utils.FormatUtils;
 

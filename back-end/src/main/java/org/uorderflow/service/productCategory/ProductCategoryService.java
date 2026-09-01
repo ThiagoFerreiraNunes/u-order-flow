@@ -8,7 +8,7 @@ import org.uorderflow.dto.productCategory.ProductCategoryResponseDTO;
 import org.uorderflow.dto.productCategory.ProductCategoryUpdateDTO;
 import org.uorderflow.model.ProductCategory;
 import org.uorderflow.repository.ProductCategoryRepository;
-import org.uorderflow.enums.ValidateAction;
+import org.uorderflow.enums.generic.ValidateAction;
 
 import java.util.List;
 

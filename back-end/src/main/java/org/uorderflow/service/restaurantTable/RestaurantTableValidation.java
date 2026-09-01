@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import org.uorderflow.exception.BusinessRuleException;
 import org.uorderflow.model.RestaurantTable;
 import org.uorderflow.repository.RestaurantTableRepository;
-import org.uorderflow.enums.ValidateAction;
+import org.uorderflow.enums.generic.ValidateAction;
 
 @Component
 public class RestaurantTableValidation {

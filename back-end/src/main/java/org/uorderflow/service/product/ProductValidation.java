@@ -3,7 +3,7 @@ package org.uorderflow.service.product;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.uorderflow.enums.ProductAction;
+import org.uorderflow.enums.product.ProductAction;
 import org.uorderflow.exception.BusinessRuleException;
 import org.uorderflow.model.Product;
 import org.uorderflow.repository.ProductRepository;

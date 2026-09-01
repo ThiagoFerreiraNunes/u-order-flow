@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.uorderflow.dto.bill.BillCreateDTO;
 import org.uorderflow.dto.bill.BillUpdateDTO;
-import org.uorderflow.enums.BillStatus;
+import org.uorderflow.enums.bill.BillStatus;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

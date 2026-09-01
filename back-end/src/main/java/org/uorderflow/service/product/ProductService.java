@@ -6,11 +6,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.uorderflow.dto.product.ProductCreateDTO;
 import org.uorderflow.dto.product.ProductDetailsResponseDTO;
 import org.uorderflow.dto.product.ProductUpdateDTO;
-import org.uorderflow.enums.ProductAction;
+import org.uorderflow.enums.product.ProductAction;
 import org.uorderflow.model.Product;
 import org.uorderflow.model.ProductCategory;
 import org.uorderflow.repository.ProductRepository;
-import org.uorderflow.enums.ValidateAction;
+import org.uorderflow.enums.generic.ValidateAction;
 import org.uorderflow.service.productCategory.ProductCategoryValidation;
 
 import java.util.List;

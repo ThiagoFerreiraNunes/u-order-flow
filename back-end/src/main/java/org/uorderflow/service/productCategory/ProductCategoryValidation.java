@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import org.uorderflow.exception.BusinessRuleException;
 import org.uorderflow.model.ProductCategory;
 import org.uorderflow.repository.ProductCategoryRepository;
-import org.uorderflow.enums.ValidateAction;
+import org.uorderflow.enums.generic.ValidateAction;
 
 @Component
 public class ProductCategoryValidation {
