@@ -19,7 +19,6 @@ public final class FormatUtils {
     }
 
     public static String formatDateTime(LocalDateTime dateTime) {
-        if (dateTime == null) return "";
         return dateTime.format(DATE_TIME_FORMATTER);
     }
 }
