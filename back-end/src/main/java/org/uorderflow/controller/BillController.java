@@ -55,17 +55,17 @@ public class BillController {
         return ResponseEntity.ok(billService.update(id, data));
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/{id}/cancel")
     public ResponseEntity<BillResponseDTO> cancelBill(@PathVariable Long id){
         return ResponseEntity.ok(billService.cancelBill(id));
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/{id}/close")
     public ResponseEntity<BillResponseDTO> closeBill(@PathVariable Long id){
         return ResponseEntity.ok(billService.closeBill(id));
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/{id}/pay")
     public ResponseEntity<BillResponseDTO> payBill(@PathVariable Long id){
         return ResponseEntity.ok(billService.payBill(id));
     }
