@@ -22,7 +22,7 @@ public class RestaurantTableController {
     @PostMapping
     public ResponseEntity<RestaurantTableResponseDTO> create(@RequestBody @Valid RestaurantTableCreateDTO data, UriComponentsBuilder builder){
         RestaurantTableResponseDTO restaurantTable = restaurantTableService.create(data);
-        URI uri = builder.path("/{id}").buildAndExpand(restaurantTable.id()).toUri();
+        URI uri = builder.replacePath("/api/restaurant-tables/{id}").buildAndExpand(restaurantTable.id()).toUri();
         return ResponseEntity.created(uri).body(restaurantTable);
     }
 

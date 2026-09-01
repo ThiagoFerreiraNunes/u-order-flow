@@ -23,7 +23,7 @@ public class ProductCategoryController {
     @PostMapping
     public ResponseEntity<ProductCategoryResponseDTO> create(@RequestBody @Valid ProductCategoryCreateDTO data, UriComponentsBuilder builder){
         ProductCategoryResponseDTO productCategory = productCategoryService.create(data);
-        URI uri = builder.path("/{id}").buildAndExpand(productCategory.id()).toUri();
+        URI uri = builder.replacePath("/api/product-categories/{id}").buildAndExpand(productCategory.id()).toUri();
         return ResponseEntity.created(uri).body(productCategory);
     }
 
