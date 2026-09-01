@@ -1,8 +1,8 @@
 package org.uorderflow.service.restaurantTable;
 
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.uorderflow.dto.restaurantTable.RestaurantTableCreateDTO;
 import org.uorderflow.dto.restaurantTable.RestaurantTableResponseDTO;
 import org.uorderflow.dto.restaurantTable.RestaurantTableUpdateDTO;
@@ -25,10 +25,12 @@ public class RestaurantTableService {
         return new RestaurantTableResponseDTO(restaurantTable);
     }
 
+    @Transactional(readOnly = true)
     public List<RestaurantTableResponseDTO> findAll(){
         return restaurantTableRepository.findAllByNotDeletedAndSortByNumber().stream().map(RestaurantTableResponseDTO::new).toList();
     }
 
+    @Transactional(readOnly = true)
     public RestaurantTableResponseDTO findById(Long id){
         RestaurantTable restaurantTable = restaurantTableValidation.validateRestaurantTable(id, ValidateAction.ACTIVE_CHECK);
         return new RestaurantTableResponseDTO(restaurantTable);
