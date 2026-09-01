@@ -45,7 +45,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ErrorResponseDTO> handleDataIntegrityViolation(DataIntegrityViolationException e){
+    public ResponseEntity<ErrorResponseDTO> handleDataIntegrityViolation(){
         ErrorResponseDTO error = new ErrorResponseDTO(
                 HttpStatus.CONFLICT.value(),
                 "Data integrity violation"
@@ -54,7 +54,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponseDTO> handleGenericException(Exception e){
+    public ResponseEntity<ErrorResponseDTO> handleGenericException(){
         ErrorResponseDTO error = new ErrorResponseDTO(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 "Internal server error"
