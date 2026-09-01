@@ -17,7 +17,7 @@ import org.uorderflow.repository.OrderRepository;
 import org.uorderflow.enums.ValidateAction;
 import org.uorderflow.service.bill.BillValidation;
 import org.uorderflow.service.product.ProductValidation;
-import org.uorderflow.service.table.RestaurantTableValidation;
+import org.uorderflow.service.restaurantTable.RestaurantTableValidation;
 
 @Service
 public class OrderService {

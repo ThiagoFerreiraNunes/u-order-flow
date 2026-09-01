@@ -1,4 +1,4 @@
-package org.uorderflow.service.table;
+package org.uorderflow.service.restaurantTable;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;

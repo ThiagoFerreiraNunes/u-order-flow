@@ -13,7 +13,7 @@ import org.uorderflow.enums.ValidateAction;
 import org.uorderflow.model.Bill;
 import org.uorderflow.model.RestaurantTable;
 import org.uorderflow.repository.BillRepository;
-import org.uorderflow.service.table.RestaurantTableValidation;
+import org.uorderflow.service.restaurantTable.RestaurantTableValidation;
 
 @Service
 public class BillService {

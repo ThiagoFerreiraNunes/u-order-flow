@@ -8,7 +8,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import org.uorderflow.dto.restaurantTable.RestaurantTableCreateDTO;
 import org.uorderflow.dto.restaurantTable.RestaurantTableResponseDTO;
 import org.uorderflow.dto.restaurantTable.RestaurantTableUpdateDTO;
-import org.uorderflow.service.table.RestaurantTableService;
+import org.uorderflow.service.restaurantTable.RestaurantTableService;
 
 import java.net.URI;
 import java.util.List;
