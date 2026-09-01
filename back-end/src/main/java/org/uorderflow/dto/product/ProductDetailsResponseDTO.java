@@ -10,7 +10,8 @@ public record ProductDetailsResponseDTO(
         String description,
         String image,
         String price,
-        ProductCategoryResponseDTO productCategory
+        ProductCategoryResponseDTO productCategory,
+        Boolean isAvailable
 ) {
     public ProductDetailsResponseDTO(Product product){
         this(
@@ -19,7 +20,8 @@ public record ProductDetailsResponseDTO(
                 product.getDescription(),
                 product.getImage(),
                 FormatUtils.formatToBRL(product.getPrice()),
-                new ProductCategoryResponseDTO(product.getProductCategory())
+                new ProductCategoryResponseDTO(product.getProductCategory()),
+                product.getIsAvailable()
         );
     }
 }

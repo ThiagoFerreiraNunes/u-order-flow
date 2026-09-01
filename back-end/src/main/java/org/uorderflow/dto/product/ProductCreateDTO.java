@@ -10,6 +10,7 @@ public record ProductCreateDTO(
         @NotBlank @Size(max = 255) String description,
         @NotBlank @Size(max = 2048) String image,
         @NotNull @Positive Double price,
-        @NotNull Long productCategoryId
+        @NotNull Long productCategoryId,
+        @NotNull Boolean isAvailable
 ) {
 }

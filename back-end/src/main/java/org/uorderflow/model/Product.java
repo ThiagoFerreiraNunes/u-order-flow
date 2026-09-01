@@ -35,6 +35,9 @@ public class Product {
     @Column(nullable = false, name = "is_available")
     private Boolean isAvailable;
 
+    @Column(nullable = false, name = "is_deleted")
+    private Boolean isDeleted;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "category_id")
     private ProductCategory productCategory;
@@ -46,6 +49,7 @@ public class Product {
         this.price = data.price();
         this.productCategory = productCategory;
         this.isAvailable = true;
+        this.isDeleted = false;
     }
 
     public void update(ProductUpdateDTO data, ProductCategory productCategory){
@@ -54,13 +58,14 @@ public class Product {
         if(data.image() != null) this.image = data.image();
         if(data.price() != null) this.price = data.price();
         if(productCategory != null) this.productCategory = productCategory;
+        if(data.isAvailable() != null) this.isAvailable = data.isAvailable();
     }
 
     public void delete(){
-        this.isAvailable = false;
+        this.isDeleted = true;
     }
 
     public void reactivate(){
-        this.isAvailable = true;
+        this.isDeleted = false;
     }
 }

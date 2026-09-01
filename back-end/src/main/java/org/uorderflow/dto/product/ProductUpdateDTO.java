@@ -8,6 +8,7 @@ public record ProductUpdateDTO(
         @Size(max = 255) String description,
         @Size(max = 2048) String image,
         @Positive Double price,
-        Long productCategoryId
+        Long productCategoryId,
+        Boolean isAvailable
 ) {
 }
