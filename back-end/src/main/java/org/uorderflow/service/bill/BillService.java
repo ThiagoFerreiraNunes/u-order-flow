@@ -1,10 +1,10 @@
 package org.uorderflow.service.bill;
 
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.uorderflow.dto.bill.BillCreateDTO;
 import org.uorderflow.dto.bill.BillResponseDTO;
 import org.uorderflow.dto.bill.BillUpdateDTO;
@@ -30,10 +30,12 @@ public class BillService {
         return new BillResponseDTO(bill);
     }
 
+    @Transactional(readOnly = true)
     public Page<BillResponseDTO> findAll(Pageable pageable){
         return billRepository.findAllPaged(pageable).map(BillResponseDTO::new);
     }
 
+    @Transactional(readOnly = true)
     public BillResponseDTO findById(Long id){
         Bill bill = billValidation.validateBill(id, null);
         return new BillResponseDTO(bill);
