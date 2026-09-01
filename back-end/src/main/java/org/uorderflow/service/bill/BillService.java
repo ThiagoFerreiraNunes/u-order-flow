@@ -43,7 +43,7 @@ public class BillService {
 
     @Transactional
     public BillResponseDTO update(Long id, BillUpdateDTO data){
-        Bill bill = billValidation.validateBill(id, null);
+        Bill bill = billValidation.validateBill(id, BillAction.UPDATE);
         RestaurantTable restaurantTable = null;
 
         if(data.restaurantTableId() != null){
