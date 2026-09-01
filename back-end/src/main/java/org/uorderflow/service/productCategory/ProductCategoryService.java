@@ -1,8 +1,8 @@
 package org.uorderflow.service.productCategory;
 
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.uorderflow.dto.productCategory.ProductCategoryCreateDTO;
 import org.uorderflow.dto.productCategory.ProductCategoryResponseDTO;
 import org.uorderflow.dto.productCategory.ProductCategoryUpdateDTO;
@@ -27,10 +27,12 @@ public class ProductCategoryService {
         return new ProductCategoryResponseDTO(productCategory);
     }
 
+    @Transactional(readOnly = true)
     public List<ProductCategoryResponseDTO> findAll(){
         return productCategoryRepository.findAllByNotDeletedAndSortByName().stream().map(ProductCategoryResponseDTO::new).toList();
     }
 
+    @Transactional(readOnly = true)
     public ProductCategoryResponseDTO findById(Long id){
         ProductCategory productCategory = productCategoryValidation.validateProductCategory(id, ValidateAction.ACTIVE_CHECK);
         return new ProductCategoryResponseDTO(productCategory);
