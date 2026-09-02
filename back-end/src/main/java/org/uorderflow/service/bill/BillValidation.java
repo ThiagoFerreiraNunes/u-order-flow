@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.uorderflow.enums.bill.BillAction;
 import org.uorderflow.enums.bill.BillStatus;
-import org.uorderflow.exception.BusinessRuleException;
+import org.uorderflow.infra.exception.BusinessRuleException;
 import org.uorderflow.model.Bill;
 import org.uorderflow.repository.BillRepository;
 

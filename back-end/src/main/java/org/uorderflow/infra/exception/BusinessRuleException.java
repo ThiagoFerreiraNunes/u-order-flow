@@ -1,4 +1,4 @@
-package org.uorderflow.exception;
+package org.uorderflow.infra.exception;
 
 public class BusinessRuleException extends RuntimeException {
     public BusinessRuleException(String message) {

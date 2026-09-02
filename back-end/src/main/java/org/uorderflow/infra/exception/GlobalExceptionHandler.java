@@ -1,4 +1,4 @@
-package org.uorderflow.exception;
+package org.uorderflow.infra.exception;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -42,6 +42,24 @@ public class GlobalExceptionHandler {
                 e.getMessage()
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(LoginAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponseDTO> handleLoginAlreadyExists(LoginAlreadyExistsException e){
+        ErrorResponseDTO error = new ErrorResponseDTO(
+                HttpStatus.CONFLICT.value(),
+                e.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
+
+    @ExceptionHandler(TokenGenerationException.class)
+    public ResponseEntity<ErrorResponseDTO> handleTokenGeneration(TokenGenerationException e){
+        ErrorResponseDTO error = new ErrorResponseDTO(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                e.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
