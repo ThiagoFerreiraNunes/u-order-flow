@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.uorderflow.enums.order.OrderAction;
 import org.uorderflow.enums.order.OrderStatus;
-import org.uorderflow.exception.BusinessRuleException;
+import org.uorderflow.infra.exception.BusinessRuleException;
 import org.uorderflow.model.Order;
 import org.uorderflow.repository.OrderRepository;
 
