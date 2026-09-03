@@ -1,7 +1,6 @@
 package org.uorderflow.controller;
 
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -20,8 +19,12 @@ import java.net.URI;
 @RequestMapping("/api/products")
 public class ProductController {
 
-    @Autowired
-    ProductService productService;
+    private final ProductService productService;
+
+    public ProductController(ProductService productService) {
+        this.productService = productService;
+    }
+
 
     @PostMapping
     public ResponseEntity<ProductDetailsResponseDTO> create(@RequestBody @Valid ProductCreateDTO data, UriComponentsBuilder builder){

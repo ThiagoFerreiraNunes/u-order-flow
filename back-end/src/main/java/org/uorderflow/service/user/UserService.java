@@ -1,6 +1,5 @@
 package org.uorderflow.service.user;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -13,8 +12,13 @@ import org.uorderflow.repository.UserRepository;
 @Service
 public class UserService {
 
-    @Autowired UserRepository userRepository;
-    @Autowired UserValidation userValidation;
+    private final UserRepository userRepository;
+    private final UserValidation userValidation;
+
+    public UserService(UserRepository userRepository, UserValidation userValidation) {
+        this.userRepository = userRepository;
+        this.userValidation = userValidation;
+    }
 
     @Transactional(readOnly = true)
     public Page<UserResponseDTO> findAll(Pageable pageable){

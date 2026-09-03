@@ -1,7 +1,6 @@
 package org.uorderflow.service.product;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.uorderflow.enums.product.ProductAction;
 import org.uorderflow.infra.exception.BusinessRuleException;
@@ -11,7 +10,11 @@ import org.uorderflow.repository.ProductRepository;
 @Component
 public class ProductValidation {
 
-    @Autowired ProductRepository productRepository;
+    private final ProductRepository productRepository;
+
+    public ProductValidation(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
 
     public Product validateProduct(Long id, ProductAction action){
         Product product = productRepository

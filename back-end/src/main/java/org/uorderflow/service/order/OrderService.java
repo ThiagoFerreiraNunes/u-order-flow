@@ -1,6 +1,5 @@
 package org.uorderflow.service.order;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -22,11 +21,23 @@ import org.uorderflow.service.user.UserValidation;
 @Service
 public class OrderService {
 
-    @Autowired OrderRepository orderRepository;
-    @Autowired OrderValidation orderValidation;
-    @Autowired BillValidation billValidation;
-    @Autowired ProductValidation productValidation;
-    @Autowired UserValidation userValidation;
+    private final OrderRepository orderRepository;
+    private final OrderValidation orderValidation;
+    private final BillValidation billValidation;
+    private final ProductValidation productValidation;
+    private final UserValidation userValidation;
+
+    public OrderService(OrderRepository orderRepository,
+                        OrderValidation orderValidation,
+                        BillValidation billValidation,
+                        ProductValidation productValidation,
+                        UserValidation userValidation) {
+        this.orderRepository = orderRepository;
+        this.orderValidation = orderValidation;
+        this.billValidation = billValidation;
+        this.productValidation = productValidation;
+        this.userValidation = userValidation;
+    }
 
     @Transactional
     public OrderDetailsResponseDTO createOrder(Long billId, OrderCreateDTO data){

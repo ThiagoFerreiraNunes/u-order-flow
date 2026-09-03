@@ -1,7 +1,6 @@
 package org.uorderflow.controller;
 
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -24,8 +23,14 @@ import java.net.URI;
 @RequestMapping("/api/bills")
 public class BillController {
 
-    @Autowired BillService billService;
-    @Autowired OrderService orderService;
+    private final BillService billService;
+    private final OrderService orderService;
+
+    public BillController(BillService billService,
+                          OrderService orderService) {
+        this.billService = billService;
+        this.orderService = orderService;
+    }
 
     @PostMapping
     public ResponseEntity<BillDetailsResponseDTO> createBill(@RequestBody @Valid BillCreateDTO data, UriComponentsBuilder builder){

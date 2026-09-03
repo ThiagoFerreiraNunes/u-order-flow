@@ -1,7 +1,6 @@
 package org.uorderflow.controller;
 
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -17,7 +16,11 @@ import java.util.List;
 @RequestMapping("/api/restaurant-tables")
 public class RestaurantTableController {
 
-    @Autowired RestaurantTableService restaurantTableService;
+    private final RestaurantTableService restaurantTableService;
+
+    public RestaurantTableController(RestaurantTableService restaurantTableService) {
+        this.restaurantTableService = restaurantTableService;
+    }
 
     @PostMapping
     public ResponseEntity<RestaurantTableResponseDTO> create(@RequestBody @Valid RestaurantTableCreateDTO data, UriComponentsBuilder builder){

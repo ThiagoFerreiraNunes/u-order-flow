@@ -1,7 +1,6 @@
 package org.uorderflow.service.user;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.uorderflow.enums.user.UserAction;
 import org.uorderflow.enums.user.UserRole;
@@ -12,7 +11,11 @@ import org.uorderflow.repository.UserRepository;
 @Component
 public class UserValidation {
 
-    @Autowired UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    public UserValidation(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     public User validateUser(Long id, UserAction action){
         User user = userRepository
