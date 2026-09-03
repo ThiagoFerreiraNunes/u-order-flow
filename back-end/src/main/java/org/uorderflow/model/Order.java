@@ -39,10 +39,15 @@ public class Order {
     private List<OrderProduct> items = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false, name = "user_id")
+    private User waiter;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "bill_id")
     private Bill bill;
 
-    public Order(OrderCreateDTO data){
+    public Order(User waiter){
+        this.waiter = waiter;
         this.status = OrderStatus.WAITING;
         this.createdAt = LocalDateTime.now();
         this.deliveredAt = null;
@@ -53,8 +58,8 @@ public class Order {
         item.setOrder(this);
     }
 
-    public void update(OrderUpdateDTO data){
-
+    public void update(User waiter){
+        this.waiter = waiter;
     }
 
     public void cancelOrder(){

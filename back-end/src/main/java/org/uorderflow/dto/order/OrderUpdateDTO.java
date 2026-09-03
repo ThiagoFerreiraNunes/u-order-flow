@@ -6,6 +6,7 @@ import org.uorderflow.dto.orderProduct.OrderProductCreateDTO;
 import java.util.List;
 
 public record OrderUpdateDTO(
+        Long waiterId,
         @NotEmpty List<OrderProductCreateDTO> items
 ) {
 }

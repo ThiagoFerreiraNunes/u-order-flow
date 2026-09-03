@@ -18,6 +18,7 @@ import org.uorderflow.enums.generic.ValidateAction;
 import org.uorderflow.service.bill.BillValidation;
 import org.uorderflow.service.product.ProductValidation;
 import org.uorderflow.service.restaurantTable.RestaurantTableValidation;
+import org.uorderflow.service.user.UserValidation;
 
 @Service
 public class OrderService {
@@ -25,13 +26,14 @@ public class OrderService {
     @Autowired OrderRepository orderRepository;
     @Autowired OrderValidation orderValidation;
     @Autowired BillValidation billValidation;
-    @Autowired RestaurantTableValidation restaurantTableValidation;
     @Autowired ProductValidation productValidation;
+    @Autowired UserValidation userValidation;
 
     @Transactional
     public OrderDetailsResponseDTO createOrder(Long billId, OrderCreateDTO data){
         Bill bill = billValidation.validateBill(billId, null);
-        Order order = new Order(data);
+        User waiter = userValidation.validateUser(data.waiterId(), ValidateAction.ACTIVE_CHECK);
+        Order order = new Order(waiter);
 
         for (OrderProductCreateDTO item : data.items()){
             Product product = productValidation.validateProduct(item.productId(), ProductAction.CREATE_ORDER_PRODUCT);
@@ -58,7 +60,8 @@ public class OrderService {
     @Transactional
     public OrderDetailsResponseDTO update(Long id, OrderUpdateDTO data){
         Order order = orderValidation.validateOrder(id, OrderAction.UPDATE);
-        order.update(data);
+        User waiter = userValidation.validateUser(data.waiterId(), ValidateAction.ACTIVE_CHECK);
+        order.update(waiter);
 
         if (data.items() != null){
             order.getItems().clear();
