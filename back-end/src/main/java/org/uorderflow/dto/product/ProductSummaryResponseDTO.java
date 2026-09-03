@@ -7,6 +7,7 @@ public record ProductSummaryResponseDTO(
         Long id,
         String name,
         String price,
+        String image,
         String productCategory,
         Boolean isAvailable
 ) {
@@ -15,6 +16,7 @@ public record ProductSummaryResponseDTO(
                 product.getId(),
                 product.getName(),
                 FormatUtils.formatToBRL(product.getPrice()),
+                product.getImage(),
                 product.getProductCategory().getName(),
                 product.getIsAvailable()
         );
