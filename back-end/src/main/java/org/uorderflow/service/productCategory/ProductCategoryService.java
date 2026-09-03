@@ -1,6 +1,8 @@
 package org.uorderflow.service.productCategory;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.uorderflow.dto.productCategory.ProductCategoryCreateDTO;
@@ -10,15 +12,11 @@ import org.uorderflow.model.ProductCategory;
 import org.uorderflow.repository.ProductCategoryRepository;
 import org.uorderflow.enums.generic.ValidateAction;
 
-import java.util.List;
-
 @Service
 public class ProductCategoryService {
 
-    @Autowired
-    ProductCategoryRepository productCategoryRepository;
-    @Autowired
-    ProductCategoryValidation productCategoryValidation;
+    @Autowired ProductCategoryRepository productCategoryRepository;
+    @Autowired ProductCategoryValidation productCategoryValidation;
 
     @Transactional
     public ProductCategoryResponseDTO create(ProductCategoryCreateDTO data){
@@ -28,8 +26,8 @@ public class ProductCategoryService {
     }
 
     @Transactional(readOnly = true)
-    public List<ProductCategoryResponseDTO> findAll(){
-        return productCategoryRepository.findAllByNotDeletedAndSortByName().stream().map(ProductCategoryResponseDTO::new).toList();
+    public Page<ProductCategoryResponseDTO> findAll(Pageable pageable){
+        return productCategoryRepository.findAllPagedByIsDeletedFalse(pageable).map(ProductCategoryResponseDTO::new);
     }
 
     @Transactional(readOnly = true)
