@@ -1,10 +1,7 @@
 package org.uorderflow.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.uorderflow.dto.orderProduct.OrderProductCreateDTO;
 
 @Table(name = "tb_order_products")
@@ -13,6 +10,7 @@ import org.uorderflow.dto.orderProduct.OrderProductCreateDTO;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(of = "id")
 public class OrderProduct {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

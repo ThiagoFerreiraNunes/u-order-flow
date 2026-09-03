@@ -1,10 +1,7 @@
 package org.uorderflow.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.uorderflow.dto.order.OrderCreateDTO;
 import org.uorderflow.dto.order.OrderUpdateDTO;
 import org.uorderflow.enums.order.OrderStatus;
@@ -19,6 +16,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(of = "id")
 public class Order {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
