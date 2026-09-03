@@ -20,8 +20,11 @@ import java.net.URI;
 @RequestMapping("/api/product-categories")
 public class ProductCategoryController {
 
-    @Autowired
-    ProductCategoryService productCategoryService;
+    private final ProductCategoryService productCategoryService;
+
+    public ProductCategoryController(ProductCategoryService productCategoryService){
+        this.productCategoryService = productCategoryService;
+    }
 
     @PostMapping
     public ResponseEntity<ProductCategoryResponseDTO> create(@RequestBody @Valid ProductCategoryCreateDTO data, UriComponentsBuilder builder){

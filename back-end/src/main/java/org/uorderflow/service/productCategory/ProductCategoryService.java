@@ -1,6 +1,5 @@
 package org.uorderflow.service.productCategory;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -15,8 +14,14 @@ import org.uorderflow.enums.generic.ValidateAction;
 @Service
 public class ProductCategoryService {
 
-    @Autowired ProductCategoryRepository productCategoryRepository;
-    @Autowired ProductCategoryValidation productCategoryValidation;
+    private final ProductCategoryRepository productCategoryRepository;
+    private final ProductCategoryValidation productCategoryValidation;
+
+    public ProductCategoryService(ProductCategoryRepository productCategoryRepository,
+                                  ProductCategoryValidation productCategoryValidation) {
+        this.productCategoryRepository = productCategoryRepository;
+        this.productCategoryValidation = productCategoryValidation;
+    }
 
     @Transactional
     public ProductCategoryResponseDTO create(ProductCategoryCreateDTO data){
