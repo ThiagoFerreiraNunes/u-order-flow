@@ -25,6 +25,7 @@ public class ProductCategoryService {
 
     @Transactional
     public ProductCategoryResponseDTO create(ProductCategoryCreateDTO data){
+        productCategoryValidation.validateUniqueFields(data.name());
         ProductCategory productCategory = new ProductCategory(data);
         productCategoryRepository.save(productCategory);
         return new ProductCategoryResponseDTO(productCategory);
@@ -44,6 +45,11 @@ public class ProductCategoryService {
     @Transactional
     public ProductCategoryResponseDTO update(Long id, ProductCategoryUpdateDTO data){
         ProductCategory productCategory = productCategoryValidation.validateProductCategory(id, ValidateAction.ACTIVE_CHECK);
+
+        if(data.name() != null && !data.name().equals(productCategory.getName())){
+            productCategoryValidation.validateUniqueFields(data.name());
+        }
+
         productCategory.update(data);
         return new ProductCategoryResponseDTO(productCategory);
     }

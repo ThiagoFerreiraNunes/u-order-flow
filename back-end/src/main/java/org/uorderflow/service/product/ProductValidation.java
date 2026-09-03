@@ -45,4 +45,10 @@ public class ProductValidation {
         }
         return product;
     }
+
+    public void validateUniqueFields(String name){
+        if(productRepository.existsByName(name)){
+            throw new BusinessRuleException("A Product with the name '" + name + "' already exists");
+        }
+    }
 }

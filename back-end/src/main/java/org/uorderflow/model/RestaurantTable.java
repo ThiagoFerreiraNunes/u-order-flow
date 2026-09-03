@@ -21,7 +21,7 @@ public class RestaurantTable {
     @Column(name = "restaurant_table_id")
     private Long id;
 
-    @Column(nullable = false, name = "restaurant_table_number")
+    @Column(nullable = false, unique = true, name = "restaurant_table_number")
     @Positive
     private Integer number;
 

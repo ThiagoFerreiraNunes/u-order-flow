@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface RestaurantTableRepository extends JpaRepository<RestaurantTable, Long> {
 
+    boolean existsByNumber(int number);
+
     @Query("SELECT r FROM RestaurantTable r " +
             "WHERE r.isDeleted = FALSE " +
             "ORDER BY r.number")
