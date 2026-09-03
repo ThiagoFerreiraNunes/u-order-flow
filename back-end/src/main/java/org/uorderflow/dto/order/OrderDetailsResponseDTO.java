@@ -1,6 +1,7 @@
 package org.uorderflow.dto.order;
 
 import org.uorderflow.dto.orderProduct.OrderProductResponseDTO;
+import org.uorderflow.dto.restaurantTable.RestaurantTableResponseDTO;
 import org.uorderflow.enums.order.OrderStatus;
 import org.uorderflow.model.Order;
 import org.uorderflow.utils.FormatUtils;
@@ -13,7 +14,7 @@ public record OrderDetailsResponseDTO(
         String createdAt,
         String deliveredAt,
         String customer,
-        Integer restaurantTable,
+        RestaurantTableResponseDTO restaurantTable,
         List<OrderProductResponseDTO> items
 ) {
     public OrderDetailsResponseDTO(Order order){
@@ -23,7 +24,7 @@ public record OrderDetailsResponseDTO(
                 FormatUtils.formatDateTime(order.getCreatedAt()),
                 resolveDeliveredAt(order),
                 order.getBill().getCustomer(),
-                order.getRestaurantTable().getNumber(),
+                new RestaurantTableResponseDTO(order.getBill().getRestaurantTable()),
                 order.getItems().stream().map(OrderProductResponseDTO::new).toList()
         );
     }

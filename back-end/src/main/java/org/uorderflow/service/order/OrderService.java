@@ -31,8 +31,7 @@ public class OrderService {
     @Transactional
     public OrderDetailsResponseDTO createOrder(Long billId, OrderCreateDTO data){
         Bill bill = billValidation.validateBill(billId, null);
-        RestaurantTable restaurantTable = restaurantTableValidation.validateRestaurantTable(data.restaurantTableId(), ValidateAction.ACTIVE_CHECK);
-        Order order = new Order(data, restaurantTable);
+        Order order = new Order(data);
 
         for (OrderProductCreateDTO item : data.items()){
             Product product = productValidation.validateProduct(item.productId(), ProductAction.CREATE_ORDER_PRODUCT);
@@ -59,13 +58,7 @@ public class OrderService {
     @Transactional
     public OrderDetailsResponseDTO update(Long id, OrderUpdateDTO data){
         Order order = orderValidation.validateOrder(id, OrderAction.UPDATE);
-        RestaurantTable restaurantTable = null;
-
-        if (data.restaurantTableId() != null){
-            restaurantTable = restaurantTableValidation.validateRestaurantTable(data.restaurantTableId(), ValidateAction.ACTIVE_CHECK);
-        }
-
-        order.update(data, restaurantTable);
+        order.update(data);
 
         if (data.items() != null){
             order.getItems().clear();
