@@ -15,7 +15,6 @@ import org.uorderflow.dto.productCategory.ProductCategoryUpdateDTO;
 import org.uorderflow.service.productCategory.ProductCategoryService;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/product-categories")
