@@ -32,6 +32,7 @@ public class ProductService {
     @Transactional
     public ProductDetailsResponseDTO create(ProductCreateDTO data){
         ProductCategory productCategory = productCategoryValidation.validateProductCategory(data.productCategoryId(), ValidateAction.ACTIVE_CHECK);
+        productValidation.validateUniqueFields(data.name());
         Product product = new Product(data, productCategory);
         productRepository.save(product);
         return new ProductDetailsResponseDTO(product);
@@ -50,10 +51,16 @@ public class ProductService {
 
     @Transactional
     public ProductDetailsResponseDTO update(Long id, ProductUpdateDTO data){
+        if(data.name() != null){
+            productValidation.validateUniqueFields(data.name());
+        }
+
         ProductCategory productCategory = null;
+
         if(data.productCategoryId() != null){
             productCategory = productCategoryValidation.validateProductCategory(data.productCategoryId(), ValidateAction.ACTIVE_CHECK);
         }
+
         Product product = productValidation.validateProduct(id, ProductAction.ACTIVE_CHECK);
         product.update(data, productCategory);
         return new ProductDetailsResponseDTO(product);

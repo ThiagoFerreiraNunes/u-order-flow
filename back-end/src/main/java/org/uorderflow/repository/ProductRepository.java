@@ -11,6 +11,8 @@ import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
+    boolean existsByName(String name);
+
     @Query(value = "SELECT p FROM Product p " +
             "JOIN FETCH p.productCategory " +
             "WHERE p.isDeleted = false",
