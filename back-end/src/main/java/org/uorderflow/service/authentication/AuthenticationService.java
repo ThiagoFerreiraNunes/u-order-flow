@@ -1,6 +1,5 @@
 package org.uorderflow.service.authentication;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,10 +15,20 @@ import org.uorderflow.repository.UserRepository;
 @Service
 public class AuthenticationService {
 
-    @Autowired AuthenticationManager authenticationManager;
-    @Autowired UserRepository userRepository;
-    @Autowired TokenService tokenService;
-    @Autowired PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final UserRepository userRepository;
+    private final TokenService tokenService;
+    private final PasswordEncoder passwordEncoder;
+
+    public AuthenticationService(AuthenticationManager authenticationManager,
+                                 UserRepository userRepository,
+                                 TokenService tokenService,
+                                 PasswordEncoder passwordEncoder) {
+        this.authenticationManager = authenticationManager;
+        this.userRepository = userRepository;
+        this.tokenService = tokenService;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public String login(UserLoginDTO data) {
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.email(), data.password());
