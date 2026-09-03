@@ -3,7 +3,8 @@ package org.uorderflow.service.user;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.uorderflow.enums.generic.ValidateAction;
+import org.uorderflow.enums.user.UserAction;
+import org.uorderflow.enums.user.UserRole;
 import org.uorderflow.infra.exception.BusinessRuleException;
 import org.uorderflow.model.User;
 import org.uorderflow.repository.UserRepository;
@@ -13,7 +14,7 @@ public class UserValidation {
 
     @Autowired UserRepository userRepository;
 
-    public User validateUser(Long id, ValidateAction action){
+    public User validateUser(Long id, UserAction action){
         User user = userRepository
                 .findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id " + id + "."));
@@ -32,6 +33,14 @@ public class UserValidation {
             case REACTIVATE -> {
                 if(Boolean.FALSE.equals(user.getIsDeleted())){
                     throw new BusinessRuleException("User is already activated with id " + id + ".");
+                }
+            }
+            case CREATE_ORDER -> {
+                if(Boolean.TRUE.equals(user.getIsDeleted())){
+                    throw new BusinessRuleException("User is deleted with id " + id + ".");
+                }
+                if(user.getRole() == UserRole.COOK){
+                    throw new BusinessRuleException("A user with the COOK role cannot be associated with an order.");
                 }
             }
         }
