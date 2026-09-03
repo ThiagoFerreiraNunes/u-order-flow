@@ -1,6 +1,5 @@
 package org.uorderflow.service.bill;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -19,9 +18,17 @@ import org.uorderflow.service.restaurantTable.RestaurantTableValidation;
 @Service
 public class BillService {
 
-    @Autowired BillRepository billRepository;
-    @Autowired BillValidation billValidation;
-    @Autowired RestaurantTableValidation restaurantTableValidation;
+    private final BillRepository billRepository;
+    private final BillValidation billValidation;
+    private final RestaurantTableValidation restaurantTableValidation;
+
+    public BillService(BillRepository billRepository,
+                       BillValidation billValidation,
+                       RestaurantTableValidation restaurantTableValidation) {
+        this.billRepository = billRepository;
+        this.billValidation = billValidation;
+        this.restaurantTableValidation = restaurantTableValidation;
+    }
 
     @Transactional
     public BillDetailsResponseDTO createBill(BillCreateDTO data){

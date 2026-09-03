@@ -1,7 +1,6 @@
 package org.uorderflow.service.bill;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.uorderflow.enums.bill.BillAction;
 import org.uorderflow.enums.bill.BillStatus;
@@ -12,7 +11,11 @@ import org.uorderflow.repository.BillRepository;
 @Component
 public class BillValidation {
 
-    @Autowired BillRepository billRepository;
+    private final BillRepository billRepository;
+
+    public BillValidation(BillRepository billRepository) {
+        this.billRepository = billRepository;
+    }
 
     public Bill validateBill(Long id, BillAction action){
         Bill bill = billRepository
