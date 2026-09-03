@@ -12,12 +12,11 @@ import org.uorderflow.dto.order.OrderUpdateDTO;
 import org.uorderflow.dto.orderProduct.OrderProductCreateDTO;
 import org.uorderflow.enums.order.OrderAction;
 import org.uorderflow.enums.product.ProductAction;
+import org.uorderflow.enums.user.UserAction;
 import org.uorderflow.model.*;
 import org.uorderflow.repository.OrderRepository;
-import org.uorderflow.enums.generic.ValidateAction;
 import org.uorderflow.service.bill.BillValidation;
 import org.uorderflow.service.product.ProductValidation;
-import org.uorderflow.service.restaurantTable.RestaurantTableValidation;
 import org.uorderflow.service.user.UserValidation;
 
 @Service
@@ -32,7 +31,7 @@ public class OrderService {
     @Transactional
     public OrderDetailsResponseDTO createOrder(Long billId, OrderCreateDTO data){
         Bill bill = billValidation.validateBill(billId, null);
-        User waiter = userValidation.validateUser(data.waiterId(), ValidateAction.ACTIVE_CHECK);
+        User waiter = userValidation.validateUser(data.waiterId(), UserAction.CREATE_ORDER);
         Order order = new Order(waiter);
 
         for (OrderProductCreateDTO item : data.items()){
@@ -60,7 +59,7 @@ public class OrderService {
     @Transactional
     public OrderDetailsResponseDTO update(Long id, OrderUpdateDTO data){
         Order order = orderValidation.validateOrder(id, OrderAction.UPDATE);
-        User waiter = userValidation.validateUser(data.waiterId(), ValidateAction.ACTIVE_CHECK);
+        User waiter = userValidation.validateUser(data.waiterId(), UserAction.CREATE_ORDER);
         order.update(waiter);
 
         if (data.items() != null){
