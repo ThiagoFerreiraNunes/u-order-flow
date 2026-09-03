@@ -18,7 +18,7 @@ public class ProductCategory {
     @Column(name = "category_id")
     private Long id;
 
-    @Column(nullable = false, length = 50, name = "category_name")
+    @Column(nullable = false, unique = true, length = 50, name = "category_name")
     private String name;
 
     @Column(nullable = false, name = "is_deleted")
