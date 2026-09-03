@@ -1,6 +1,5 @@
 package org.uorderflow.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -14,7 +13,11 @@ import org.uorderflow.service.user.UserService;
 @RequestMapping("/api/users")
 public class UserController {
 
-    @Autowired UserService userService;
+    private final UserService userService;
+
+    public UserController(UserService userService){
+        this.userService = userService;
+    }
 
     @GetMapping
     public ResponseEntity<Page<UserResponseDTO>> findAll(@PageableDefault(page = 0, size = 10, sort = "name", direction = Sort.Direction.ASC) Pageable pageable){
