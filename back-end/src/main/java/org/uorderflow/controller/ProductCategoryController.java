@@ -2,6 +2,10 @@ package org.uorderflow.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -28,8 +32,8 @@ public class ProductCategoryController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductCategoryResponseDTO>> findAll(){
-        return ResponseEntity.ok(productCategoryService.findAll());
+    public ResponseEntity<Page<ProductCategoryResponseDTO>> findAll(@PageableDefault(page = 0, size = 20, sort = "name", direction = Sort.Direction.ASC) Pageable pageable){
+        return ResponseEntity.ok(productCategoryService.findAll(pageable));
     }
 
     @GetMapping("/{id}")
