@@ -1,7 +1,6 @@
 package org.uorderflow.service.order;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.uorderflow.enums.order.OrderAction;
 import org.uorderflow.enums.order.OrderStatus;
@@ -12,7 +11,11 @@ import org.uorderflow.repository.OrderRepository;
 @Component
 public class OrderValidation {
 
-    @Autowired OrderRepository orderRepository;
+    private final OrderRepository orderRepository;
+
+    public OrderValidation(OrderRepository orderRepository) {
+        this.orderRepository = orderRepository;
+    }
 
     public Order validateOrder(Long id, OrderAction action){
         Order order = orderRepository

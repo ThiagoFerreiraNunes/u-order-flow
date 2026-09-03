@@ -1,7 +1,6 @@
 package org.uorderflow.controller;
 
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -17,7 +16,11 @@ import org.uorderflow.service.order.OrderService;
 @RequestMapping("/api/orders")
 public class OrderController {
 
-    @Autowired OrderService orderService;
+    private final OrderService orderService;
+
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
+    }
 
     @GetMapping
     public ResponseEntity<Page<OrderSummaryResponseDTO>> findAll(@PageableDefault(page = 0, size = 30, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable){
