@@ -40,4 +40,10 @@ public class RestaurantTableValidation {
         }
         return restaurantTable;
     }
+
+    public void validateUniqueFields(int number){
+        if(restaurantTableRepository.existsByNumber(number)){
+            throw new BusinessRuleException("A RestaurantTable with the number '" + number + "' already exists");
+        }
+    }
 }

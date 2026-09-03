@@ -25,6 +25,7 @@ public class RestaurantTableService {
 
     @Transactional
     public RestaurantTableResponseDTO create(RestaurantTableCreateDTO data){
+        restaurantTableValidation.validateUniqueFields(data.number());
         RestaurantTable restaurantTable = new RestaurantTable(data);
         restaurantTableRepository.save(restaurantTable);
         return new RestaurantTableResponseDTO(restaurantTable);
@@ -44,6 +45,11 @@ public class RestaurantTableService {
     @Transactional
     public RestaurantTableResponseDTO update(Long id, RestaurantTableUpdateDTO data){
         RestaurantTable restaurantTable = restaurantTableValidation.validateRestaurantTable(id, ValidateAction.ACTIVE_CHECK);
+
+        if(data.number() != null && !data.number().equals(restaurantTable.getNumber())){
+            restaurantTableValidation.validateUniqueFields(data.number());
+        }
+
         restaurantTable.update(data);
         return new RestaurantTableResponseDTO(restaurantTable);
     }
