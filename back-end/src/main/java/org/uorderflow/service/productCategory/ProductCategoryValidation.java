@@ -40,4 +40,10 @@ public class ProductCategoryValidation {
         }
         return productCategory;
     }
+
+    public void validateUniqueFields(String name){
+        if(productCategoryRepository.existsByName(name)){
+            throw new BusinessRuleException("A ProductCategory with the name '" + name + "' already exists");
+        }
+    }
 }

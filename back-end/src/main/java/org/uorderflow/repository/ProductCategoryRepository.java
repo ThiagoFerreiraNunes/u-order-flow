@@ -7,6 +7,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.uorderflow.model.ProductCategory;
 
 public interface ProductCategoryRepository extends JpaRepository<ProductCategory, Long> {
+
+    boolean existsByName(String name);
+
     @Query("SELECT p FROM ProductCategory p " +
             "WHERE p.isDeleted = FALSE")
     Page<ProductCategory> findAllPagedByIsDeletedFalse(Pageable pageable);
