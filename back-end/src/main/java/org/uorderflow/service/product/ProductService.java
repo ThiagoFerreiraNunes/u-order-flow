@@ -51,6 +51,8 @@ public class ProductService {
 
     @Transactional
     public ProductDetailsResponseDTO update(Long id, ProductUpdateDTO data){
+        Product product = productValidation.validateProduct(id, ProductAction.ACTIVE_CHECK);
+
         if(data.name() != null){
             productValidation.validateUniqueFields(data.name());
         }
@@ -61,7 +63,6 @@ public class ProductService {
             productCategory = productCategoryValidation.validateProductCategory(data.productCategoryId(), ValidateAction.ACTIVE_CHECK);
         }
 
-        Product product = productValidation.validateProduct(id, ProductAction.ACTIVE_CHECK);
         product.update(data, productCategory);
         return new ProductDetailsResponseDTO(product);
     }
