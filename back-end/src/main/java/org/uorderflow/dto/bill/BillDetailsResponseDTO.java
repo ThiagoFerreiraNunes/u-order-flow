@@ -7,7 +7,7 @@ import org.uorderflow.utils.FormatUtils;
 
 import java.util.List;
 
-public record BillResponseDTO(
+public record BillDetailsResponseDTO(
         Long id,
         String customer,
         String status,
@@ -16,7 +16,7 @@ public record BillResponseDTO(
         Integer restaurantTable,
         List<OrderSummaryResponseDTO> orders
 ) {
-    public BillResponseDTO(Bill bill){
+    public BillDetailsResponseDTO(Bill bill){
         this(
                 bill.getId(),
                 bill.getCustomer(),

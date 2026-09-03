@@ -10,7 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.uorderflow.dto.bill.BillCreateDTO;
-import org.uorderflow.dto.bill.BillResponseDTO;
+import org.uorderflow.dto.bill.BillDetailsResponseDTO;
+import org.uorderflow.dto.bill.BillSummaryResponseDTO;
 import org.uorderflow.dto.bill.BillUpdateDTO;
 import org.uorderflow.dto.order.OrderCreateDTO;
 import org.uorderflow.dto.order.OrderDetailsResponseDTO;
@@ -27,8 +28,8 @@ public class BillController {
     @Autowired OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<BillResponseDTO> createBill(@RequestBody @Valid BillCreateDTO data, UriComponentsBuilder builder){
-        BillResponseDTO bill = billService.createBill(data);
+    public ResponseEntity<BillDetailsResponseDTO> createBill(@RequestBody @Valid BillCreateDTO data, UriComponentsBuilder builder){
+        BillDetailsResponseDTO bill = billService.createBill(data);
         URI uri = builder.replacePath("/api/bills/{id}").buildAndExpand(bill.id()).toUri();
         return ResponseEntity.created(uri).body(bill);
     }
@@ -41,32 +42,32 @@ public class BillController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<BillResponseDTO>> findAll(@PageableDefault(page = 0, size = 30, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable){
+    public ResponseEntity<Page<BillSummaryResponseDTO>> findAll(@PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable){
         return ResponseEntity.ok(billService.findAll(pageable));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BillResponseDTO> findById(@PathVariable Long id){
+    public ResponseEntity<BillDetailsResponseDTO> findById(@PathVariable Long id){
         return ResponseEntity.ok(billService.findById(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<BillResponseDTO> update(@PathVariable Long id, @RequestBody @Valid BillUpdateDTO data){
+    public ResponseEntity<BillDetailsResponseDTO> update(@PathVariable Long id, @RequestBody @Valid BillUpdateDTO data){
         return ResponseEntity.ok(billService.update(id, data));
     }
 
     @PatchMapping("/{id}/cancel")
-    public ResponseEntity<BillResponseDTO> cancelBill(@PathVariable Long id){
+    public ResponseEntity<BillDetailsResponseDTO> cancelBill(@PathVariable Long id){
         return ResponseEntity.ok(billService.cancelBill(id));
     }
 
     @PatchMapping("/{id}/close")
-    public ResponseEntity<BillResponseDTO> closeBill(@PathVariable Long id){
+    public ResponseEntity<BillDetailsResponseDTO> closeBill(@PathVariable Long id){
         return ResponseEntity.ok(billService.closeBill(id));
     }
 
     @PatchMapping("/{id}/pay")
-    public ResponseEntity<BillResponseDTO> payBill(@PathVariable Long id){
+    public ResponseEntity<BillDetailsResponseDTO> payBill(@PathVariable Long id){
         return ResponseEntity.ok(billService.payBill(id));
     }
 }
