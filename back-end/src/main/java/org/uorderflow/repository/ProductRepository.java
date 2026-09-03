@@ -1,20 +1,21 @@
 package org.uorderflow.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.uorderflow.model.Product;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    @Query("SELECT p FROM Product p " +
+    @Query(value = "SELECT p FROM Product p " +
             "JOIN FETCH p.productCategory " +
-            "WHERE p.isDeleted = false " +
-            "ORDER BY p.name")
-    List<Product> findAllByNotDeletedAndSortByName();
+            "WHERE p.isDeleted = false",
+            countQuery = "SELECT count(p) FROM Product p WHERE p.isDeleted = false")
+    Page<Product> findAllPagedByIsDeletedFalse(Pageable pageable);
 
     @Query("SELECT p FROM Product p " +
             "JOIN FETCH p.productCategory " +

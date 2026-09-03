@@ -20,9 +20,7 @@ public class OrderController {
     @Autowired OrderService orderService;
 
     @GetMapping
-    public ResponseEntity<Page<OrderSummaryResponseDTO>> findAll(
-            @PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
-    ){
+    public ResponseEntity<Page<OrderSummaryResponseDTO>> findAll(@PageableDefault(page = 0, size = 30, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable){
         return ResponseEntity.ok(orderService.findAll(pageable));
     }
 

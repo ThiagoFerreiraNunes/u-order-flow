@@ -1,14 +1,13 @@
 package org.uorderflow.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.uorderflow.model.ProductCategory;
 
-import java.util.List;
-
 public interface ProductCategoryRepository extends JpaRepository<ProductCategory, Long> {
     @Query("SELECT p FROM ProductCategory p " +
-            "WHERE p.isDeleted = FALSE " +
-            "ORDER BY p.name")
-    List<ProductCategory> findAllByNotDeletedAndSortByName();
+            "WHERE p.isDeleted = FALSE")
+    Page<ProductCategory> findAllPagedByIsDeletedFalse(Pageable pageable);
 }
