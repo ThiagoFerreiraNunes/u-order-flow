@@ -2,6 +2,10 @@ package org.uorderflow.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -11,7 +15,6 @@ import org.uorderflow.dto.product.ProductUpdateDTO;
 import org.uorderflow.service.product.ProductService;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
@@ -28,8 +31,8 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductDetailsResponseDTO>> findAll(){
-        return ResponseEntity.ok(productService.findAll());
+    public ResponseEntity<Page<ProductDetailsResponseDTO>> findAll(@PageableDefault(page = 0, size = 20, sort = "name", direction = Sort.Direction.ASC) Pageable pageable){
+        return ResponseEntity.ok(productService.findAll(pageable));
     }
 
     @GetMapping("/{id}")
