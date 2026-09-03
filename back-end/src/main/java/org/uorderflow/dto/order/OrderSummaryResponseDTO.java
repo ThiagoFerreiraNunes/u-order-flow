@@ -10,6 +10,7 @@ public record OrderSummaryResponseDTO(
         Long id,
         String createdAt,
         String customer,
+        String waiter,
         Integer restaurantTable,
         List<OrderProductResponseDTO> items
 ) {
@@ -18,7 +19,8 @@ public record OrderSummaryResponseDTO(
                 order.getId(),
                 FormatUtils.formatDateTime(order.getCreatedAt()),
                 order.getBill().getCustomer(),
-                order.getRestaurantTable().getNumber(),
+                order.getWaiter().getName(),
+                order.getBill().getRestaurantTable().getNumber(),
                 order.getItems().stream().map(OrderProductResponseDTO::new).toList()
         );
     }

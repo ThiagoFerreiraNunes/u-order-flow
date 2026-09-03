@@ -35,22 +35,22 @@ public class Order {
     @Column(name = "delivered_at")
     private LocalDateTime deliveredAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false, name = "restaurant_table_id")
-    private RestaurantTable restaurantTable;
-
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderProduct> items = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false, name = "user_id")
+    private User waiter;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "bill_id")
     private Bill bill;
 
-    public Order(OrderCreateDTO data, RestaurantTable restaurantTable){
+    public Order(User waiter){
+        this.waiter = waiter;
         this.status = OrderStatus.WAITING;
         this.createdAt = LocalDateTime.now();
         this.deliveredAt = null;
-        this.restaurantTable = restaurantTable;
     }
 
     public void addItem(OrderProduct item){
@@ -58,8 +58,8 @@ public class Order {
         item.setOrder(this);
     }
 
-    public void update(OrderUpdateDTO data, RestaurantTable restaurantTable){
-        if(restaurantTable != null) this.restaurantTable = restaurantTable;
+    public void update(User waiter){
+        this.waiter = waiter;
     }
 
     public void cancelOrder(){
