@@ -53,7 +53,7 @@ public class ProductService {
     public ProductDetailsResponseDTO update(Long id, ProductUpdateDTO data){
         Product product = productValidation.validateProduct(id, ProductAction.ACTIVE_CHECK);
 
-        if(data.name() != null){
+        if(data.name() != null && !data.name().equals(product.getName())){
             productValidation.validateUniqueFields(data.name());
         }
 

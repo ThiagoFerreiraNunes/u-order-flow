@@ -46,7 +46,7 @@ public class ProductCategoryService {
     public ProductCategoryResponseDTO update(Long id, ProductCategoryUpdateDTO data){
         ProductCategory productCategory = productCategoryValidation.validateProductCategory(id, ValidateAction.ACTIVE_CHECK);
 
-        if(data.name() != null){
+        if(data.name() != null && !data.name().equals(productCategory.getName())){
             productCategoryValidation.validateUniqueFields(data.name());
         }
 
