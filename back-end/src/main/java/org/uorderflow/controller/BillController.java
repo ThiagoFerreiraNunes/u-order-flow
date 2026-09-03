@@ -41,7 +41,7 @@ public class BillController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<BillResponseDTO>> findAll(@PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable){
+    public ResponseEntity<Page<BillResponseDTO>> findAll(@PageableDefault(page = 0, size = 30, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable){
         return ResponseEntity.ok(billService.findAll(pageable));
     }
 
