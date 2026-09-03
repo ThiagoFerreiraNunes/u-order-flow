@@ -6,7 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.uorderflow.dto.bill.BillCreateDTO;
-import org.uorderflow.dto.bill.BillResponseDTO;
+import org.uorderflow.dto.bill.BillDetailsResponseDTO;
+import org.uorderflow.dto.bill.BillSummaryResponseDTO;
 import org.uorderflow.dto.bill.BillUpdateDTO;
 import org.uorderflow.enums.bill.BillAction;
 import org.uorderflow.enums.generic.ValidateAction;
@@ -23,26 +24,26 @@ public class BillService {
     @Autowired RestaurantTableValidation restaurantTableValidation;
 
     @Transactional
-    public BillResponseDTO createBill(BillCreateDTO data){
+    public BillDetailsResponseDTO createBill(BillCreateDTO data){
         RestaurantTable restaurantTable = restaurantTableValidation.validateRestaurantTable(data.restaurantTableId(), ValidateAction.ACTIVE_CHECK);
         Bill bill = new Bill(data, restaurantTable);
         billRepository.save(bill);
-        return new BillResponseDTO(bill);
+        return new BillDetailsResponseDTO(bill);
     }
 
     @Transactional(readOnly = true)
-    public Page<BillResponseDTO> findAll(Pageable pageable){
-        return billRepository.findAllPaged(pageable).map(BillResponseDTO::new);
+    public Page<BillSummaryResponseDTO> findAll(Pageable pageable){
+        return billRepository.findAllPaged(pageable).map(BillSummaryResponseDTO::new);
     }
 
     @Transactional(readOnly = true)
-    public BillResponseDTO findById(Long id){
+    public BillDetailsResponseDTO findById(Long id){
         Bill bill = billValidation.validateBill(id, null);
-        return new BillResponseDTO(bill);
+        return new BillDetailsResponseDTO(bill);
     }
 
     @Transactional
-    public BillResponseDTO update(Long id, BillUpdateDTO data){
+    public BillDetailsResponseDTO update(Long id, BillUpdateDTO data){
         Bill bill = billValidation.validateBill(id, BillAction.UPDATE);
         RestaurantTable restaurantTable = null;
 
@@ -51,28 +52,28 @@ public class BillService {
         }
 
         bill.update(data, restaurantTable);
-        return new BillResponseDTO(bill);
+        return new BillDetailsResponseDTO(bill);
     }
 
     @Transactional
-    public BillResponseDTO closeBill(Long id){
+    public BillDetailsResponseDTO closeBill(Long id){
         Bill bill = billValidation.validateBill(id, BillAction.CLOSE);
         bill.closeBill();
-        return new BillResponseDTO(bill);
+        return new BillDetailsResponseDTO(bill);
     }
 
     @Transactional
-    public BillResponseDTO payBill(Long id){
+    public BillDetailsResponseDTO payBill(Long id){
         Bill bill = billValidation.validateBill(id, BillAction.PAY);
         bill.payBill();
-        return new BillResponseDTO(bill);
+        return new BillDetailsResponseDTO(bill);
     }
 
     @Transactional
-    public BillResponseDTO cancelBill(Long id){
+    public BillDetailsResponseDTO cancelBill(Long id){
         Bill bill = billValidation.validateBill(id, BillAction.CANCEL);
         bill.cancelBill();
-        return new BillResponseDTO(bill);
+        return new BillDetailsResponseDTO(bill);
     }
 
 }
