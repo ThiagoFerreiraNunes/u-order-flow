@@ -3,6 +3,7 @@ package org.uorderflow.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.uorderflow.dto.restaurantTable.RestaurantTableCreateDTO;
@@ -13,6 +14,7 @@ import org.uorderflow.dto.restaurantTable.RestaurantTableUpdateDTO;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(of = "id")
 public class RestaurantTable {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

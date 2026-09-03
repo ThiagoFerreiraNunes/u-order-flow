@@ -2,6 +2,7 @@ package org.uorderflow.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.uorderflow.dto.productCategory.ProductCategoryCreateDTO;
@@ -12,6 +13,7 @@ import org.uorderflow.dto.productCategory.ProductCategoryUpdateDTO;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(of = "id")
 public class ProductCategory {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

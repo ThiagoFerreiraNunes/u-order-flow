@@ -2,6 +2,7 @@ package org.uorderflow.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.uorderflow.dto.bill.BillCreateDTO;
@@ -17,6 +18,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(of = "id")
 public class Bill {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
