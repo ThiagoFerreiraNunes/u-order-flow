@@ -1,6 +1,5 @@
 package org.uorderflow.service.restaurantTable;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.uorderflow.dto.restaurantTable.RestaurantTableCreateDTO;
@@ -15,8 +14,14 @@ import java.util.List;
 @Service
 public class RestaurantTableService {
 
-    @Autowired RestaurantTableRepository restaurantTableRepository;
-    @Autowired RestaurantTableValidation restaurantTableValidation;
+    private final RestaurantTableRepository restaurantTableRepository;
+    private final RestaurantTableValidation restaurantTableValidation;
+
+    public RestaurantTableService(RestaurantTableRepository restaurantTableRepository,
+                                  RestaurantTableValidation restaurantTableValidation) {
+        this.restaurantTableRepository = restaurantTableRepository;
+        this.restaurantTableValidation = restaurantTableValidation;
+    }
 
     @Transactional
     public RestaurantTableResponseDTO create(RestaurantTableCreateDTO data){
