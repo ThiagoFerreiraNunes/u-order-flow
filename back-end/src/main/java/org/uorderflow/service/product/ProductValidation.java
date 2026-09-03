@@ -48,7 +48,7 @@ public class ProductValidation {
 
     public void validateUniqueFields(String name){
         if(productRepository.existsByName(name)){
-            throw new BusinessRuleException("A product with the name '" + name + "' already exists");
+            throw new BusinessRuleException("A Product with the name '" + name + "' already exists");
         }
     }
 }
