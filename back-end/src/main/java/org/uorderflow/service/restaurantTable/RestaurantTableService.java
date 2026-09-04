@@ -7,7 +7,6 @@ import org.uorderflow.dto.restaurantTable.RestaurantTableResponseDTO;
 import org.uorderflow.dto.restaurantTable.RestaurantTableUpdateDTO;
 import org.uorderflow.model.RestaurantTable;
 import org.uorderflow.repository.RestaurantTableRepository;
-import org.uorderflow.enums.generic.ValidateAction;
 
 import java.util.List;
 
@@ -38,13 +37,13 @@ public class RestaurantTableService {
 
     @Transactional(readOnly = true)
     public RestaurantTableResponseDTO findById(Long id){
-        RestaurantTable restaurantTable = restaurantTableValidation.validateRestaurantTable(id, ValidateAction.ACTIVE_CHECK);
+        RestaurantTable restaurantTable = restaurantTableValidation.validateRestaurantTable(id);
         return new RestaurantTableResponseDTO(restaurantTable);
     }
 
     @Transactional
     public RestaurantTableResponseDTO update(Long id, RestaurantTableUpdateDTO data){
-        RestaurantTable restaurantTable = restaurantTableValidation.validateRestaurantTable(id, ValidateAction.ACTIVE_CHECK);
+        RestaurantTable restaurantTable = restaurantTableValidation.validateRestaurantTable(id);
 
         if(data.number() != null && !data.number().equals(restaurantTable.getNumber())){
             restaurantTableValidation.validateUniqueFields(data.number());
@@ -56,13 +55,13 @@ public class RestaurantTableService {
 
     @Transactional
     public void delete(Long id){
-        RestaurantTable restaurantTable = restaurantTableValidation.validateRestaurantTable(id, ValidateAction.DELETE);
+        RestaurantTable restaurantTable = restaurantTableValidation.validateRestaurantTable(id);
         restaurantTable.delete();
     }
 
     @Transactional
     public RestaurantTableResponseDTO reactivate(Long id){
-        RestaurantTable restaurantTable = restaurantTableValidation.validateRestaurantTable(id, ValidateAction.REACTIVATE);
+        RestaurantTable restaurantTable = restaurantTableValidation.validateRestaurantTable(id);
         restaurantTable.reactivate();
         return new RestaurantTableResponseDTO(restaurantTable);
     }
