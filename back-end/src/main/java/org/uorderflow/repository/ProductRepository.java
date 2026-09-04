@@ -15,6 +15,15 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query(value = "SELECT p FROM Product p " +
             "JOIN FETCH p.productCategory " +
+            "WHERE p.isDeleted = false AND " +
+            "LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%'))",
+            countQuery = "SELECT COUNT(p) FROM Product p " +
+                    "WHERE p.isDeleted = false AND " +
+                    "LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%'))")
+    Page<Product> searchAllPagedByName(@Param("name") String name, Pageable pageable);
+
+    @Query(value = "SELECT p FROM Product p " +
+            "JOIN FETCH p.productCategory " +
             "WHERE p.isDeleted = false",
             countQuery = "SELECT count(p) FROM Product p WHERE p.isDeleted = false")
     Page<Product> findAllPagedByIsDeletedFalse(Pageable pageable);

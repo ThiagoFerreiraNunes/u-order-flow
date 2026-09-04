@@ -24,6 +24,13 @@ public class UserController {
         return ResponseEntity.ok(userService.findAll(pageable));
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<Page<UserResponseDTO>> searchAllByName(@RequestParam String name,
+                                                                 @PageableDefault(page = 0, size = 10, sort = "name", direction = Sort.Direction.ASC) Pageable pageable
+    ){
+        return ResponseEntity.ok(userService.searchAllByName(name, pageable));
+    }
+
     @GetMapping("{id}")
     public ResponseEntity<UserResponseDTO> findById(@PathVariable Long id){
         return ResponseEntity.ok(userService.findById(id));
