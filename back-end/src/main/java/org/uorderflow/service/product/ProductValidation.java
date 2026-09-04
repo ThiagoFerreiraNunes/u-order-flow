@@ -32,16 +32,6 @@ public class ProductValidation {
                     throw new BusinessRuleException("Product is not available with id " + id + ".");
                 }
             }
-            case DELETE -> {
-                if(Boolean.TRUE.equals(product.getIsDeleted())){
-                    throw new BusinessRuleException("Product is already deleted with id " + id + ".");
-                }
-            }
-            case REACTIVATE -> {
-                if(Boolean.FALSE.equals(product.getIsDeleted())){
-                    throw new BusinessRuleException("Product is already activated with id " + id + ".");
-                }
-            }
         }
         return product;
     }

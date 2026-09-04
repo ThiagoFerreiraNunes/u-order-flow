@@ -11,7 +11,6 @@ import org.uorderflow.enums.product.ProductAction;
 import org.uorderflow.model.Product;
 import org.uorderflow.model.ProductCategory;
 import org.uorderflow.repository.ProductRepository;
-import org.uorderflow.enums.generic.ValidateAction;
 import org.uorderflow.service.productCategory.ProductCategoryValidation;
 
 @Service
@@ -31,7 +30,7 @@ public class ProductService {
 
     @Transactional
     public ProductDetailsResponseDTO create(ProductCreateDTO data){
-        ProductCategory productCategory = productCategoryValidation.validateProductCategory(data.productCategoryId(), ValidateAction.ACTIVE_CHECK);
+        ProductCategory productCategory = productCategoryValidation.validateProductCategory(data.productCategoryId());
         productValidation.validateUniqueFields(data.name());
         Product product = new Product(data, productCategory);
         productRepository.save(product);
@@ -60,7 +59,7 @@ public class ProductService {
         ProductCategory productCategory = null;
 
         if(data.productCategoryId() != null){
-            productCategory = productCategoryValidation.validateProductCategory(data.productCategoryId(), ValidateAction.ACTIVE_CHECK);
+            productCategory = productCategoryValidation.validateProductCategory(data.productCategoryId());
         }
 
         product.update(data, productCategory);
@@ -69,13 +68,13 @@ public class ProductService {
 
     @Transactional
     public void delete(Long id){
-        Product product = productValidation.validateProduct(id, ProductAction.DELETE);
+        Product product = productValidation.validateProduct(id, ProductAction.ACTIVE_CHECK);
         product.delete();
     }
 
     @Transactional
     public ProductDetailsResponseDTO reactivate(Long id){
-        Product product = productValidation.validateProduct(id, ProductAction.REACTIVATE);
+        Product product = productValidation.validateProduct(id, ProductAction.ACTIVE_CHECK);
         product.reactivate();
         return new ProductDetailsResponseDTO(product);
     }
