@@ -43,9 +43,6 @@ public class OrderValidation {
                 }
             }
             case CANCEL -> {
-                if(order.getStatus() == OrderStatus.CANCELLED){
-                    throw new BusinessRuleException("An order cannot be cancelled if its status is already CANCELLED.");
-                }
                 if(order.getStatus() == OrderStatus.DELIVERED){
                     throw new BusinessRuleException("An order cannot be cancelled if its status is DELIVERED.");
                 }
