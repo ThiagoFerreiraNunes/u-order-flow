@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.uorderflow.dto.product.ProductCreateDTO;
 import org.uorderflow.dto.product.ProductDetailsResponseDTO;
+import org.uorderflow.dto.product.ProductSummaryResponseDTO;
 import org.uorderflow.dto.product.ProductUpdateDTO;
 import org.uorderflow.enums.product.ProductAction;
 import org.uorderflow.model.Product;
@@ -40,6 +41,11 @@ public class ProductService {
     @Transactional(readOnly = true)
     public Page<ProductDetailsResponseDTO> findAll(Pageable pageable){
         return productRepository.findAllPagedByIsDeletedFalse(pageable).map(ProductDetailsResponseDTO::new);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ProductSummaryResponseDTO> searchAllByName(String name, Pageable pageable){
+        return productRepository.searchAllPagedByName(name, pageable).map(ProductSummaryResponseDTO::new);
     }
 
     @Transactional(readOnly = true)

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.uorderflow.dto.product.ProductCreateDTO;
 import org.uorderflow.dto.product.ProductDetailsResponseDTO;
+import org.uorderflow.dto.product.ProductSummaryResponseDTO;
 import org.uorderflow.dto.product.ProductUpdateDTO;
 import org.uorderflow.service.product.ProductService;
 
@@ -36,6 +37,13 @@ public class ProductController {
     @GetMapping
     public ResponseEntity<Page<ProductDetailsResponseDTO>> findAll(@PageableDefault(page = 0, size = 20, sort = "name", direction = Sort.Direction.ASC) Pageable pageable){
         return ResponseEntity.ok(productService.findAll(pageable));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<ProductSummaryResponseDTO>> SearchAllByName(@RequestParam String name,
+                                                                           @PageableDefault(page = 0, size = 20, sort = "name", direction = Sort.Direction.ASC) Pageable pageable
+    ){
+        return ResponseEntity.ok(productService.searchAllByName(name, pageable));
     }
 
     @GetMapping("/{id}")
