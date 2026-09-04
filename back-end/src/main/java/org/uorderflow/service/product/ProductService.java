@@ -39,8 +39,8 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ProductDetailsResponseDTO> findAll(Pageable pageable){
-        return productRepository.findAllPagedByIsDeletedFalse(pageable).map(ProductDetailsResponseDTO::new);
+    public Page<ProductSummaryResponseDTO> findAll(Pageable pageable){
+        return productRepository.findAllPagedByIsDeletedFalse(pageable).map(ProductSummaryResponseDTO::new);
     }
 
     @Transactional(readOnly = true)
