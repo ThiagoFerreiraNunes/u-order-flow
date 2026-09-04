@@ -33,25 +33,16 @@ public class BillValidation {
                 }
             }
             case CANCEL -> {
-                if(bill.getStatus() == BillStatus.CANCELLED){
-                    throw new BusinessRuleException("A bill cannot be cancelled if its status is already CANCELLED.");
-                }
                 if(bill.getStatus() == BillStatus.PAID){
                     throw new BusinessRuleException("A bill cannot be cancelled if its status is PAID.");
                 }
             }
             case CLOSE -> {
-                if(bill.getStatus() == BillStatus.CLOSED){
-                    throw new BusinessRuleException("A bill cannot be closed if its status is already CLOSED.");
-                }
                 if(bill.getStatus() == BillStatus.CANCELLED){
                     throw new BusinessRuleException("A bill cannot be closed if its status is CANCELLED.");
                 }
             }
             case PAY -> {
-                if(bill.getStatus() == BillStatus.PAID){
-                    throw new BusinessRuleException("A bill cannot be paid if its status is already PAID.");
-                }
                 if(bill.getStatus() == BillStatus.CANCELLED){
                     throw new BusinessRuleException("A bill cannot be paid if its status is CANCELLED.");
                 }
