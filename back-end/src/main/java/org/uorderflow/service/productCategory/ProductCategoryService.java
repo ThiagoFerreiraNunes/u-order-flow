@@ -9,7 +9,6 @@ import org.uorderflow.dto.productCategory.ProductCategoryResponseDTO;
 import org.uorderflow.dto.productCategory.ProductCategoryUpdateDTO;
 import org.uorderflow.model.ProductCategory;
 import org.uorderflow.repository.ProductCategoryRepository;
-import org.uorderflow.enums.generic.ValidateAction;
 
 @Service
 public class ProductCategoryService {
@@ -38,13 +37,13 @@ public class ProductCategoryService {
 
     @Transactional(readOnly = true)
     public ProductCategoryResponseDTO findById(Long id){
-        ProductCategory productCategory = productCategoryValidation.validateProductCategory(id, ValidateAction.ACTIVE_CHECK);
+        ProductCategory productCategory = productCategoryValidation.validateProductCategory(id);
         return new ProductCategoryResponseDTO(productCategory);
     }
 
     @Transactional
     public ProductCategoryResponseDTO update(Long id, ProductCategoryUpdateDTO data){
-        ProductCategory productCategory = productCategoryValidation.validateProductCategory(id, ValidateAction.ACTIVE_CHECK);
+        ProductCategory productCategory = productCategoryValidation.validateProductCategory(id);
 
         if(data.name() != null && !data.name().equals(productCategory.getName())){
             productCategoryValidation.validateUniqueFields(data.name());
@@ -56,13 +55,13 @@ public class ProductCategoryService {
 
     @Transactional
     public void delete(Long id){
-        ProductCategory productCategory = productCategoryValidation.validateProductCategory(id, ValidateAction.DELETE);
+        ProductCategory productCategory = productCategoryValidation.validateProductCategory(id);
         productCategory.delete();
     }
 
     @Transactional
     public ProductCategoryResponseDTO reactivate(Long id){
-        ProductCategory productCategory = productCategoryValidation.validateProductCategory(id, ValidateAction.REACTIVATE);
+        ProductCategory productCategory = productCategoryValidation.validateProductCategory(id);
         productCategory.reactivate();
         return new ProductCategoryResponseDTO(productCategory);
     }

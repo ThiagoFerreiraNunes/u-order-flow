@@ -28,22 +28,12 @@ public class UserValidation {
                     throw new BusinessRuleException("User is deleted with id " + id + ".");
                 }
             }
-            case DELETE -> {
-                if(Boolean.TRUE.equals(user.getIsDeleted())){
-                    throw new BusinessRuleException("User is already deleted with id " + id + ".");
-                }
-            }
-            case REACTIVATE -> {
-                if(Boolean.FALSE.equals(user.getIsDeleted())){
-                    throw new BusinessRuleException("User is already activated with id " + id + ".");
-                }
-            }
             case CREATE_ORDER -> {
                 if(Boolean.TRUE.equals(user.getIsDeleted())){
                     throw new BusinessRuleException("User is deleted with id " + id + ".");
                 }
                 if(user.getRole() == UserRole.COOK){
-                    throw new BusinessRuleException("A user with the COOK role cannot be associated with an order.");
+                    throw new BusinessRuleException("A User with the COOK role cannot be associated with an order.");
                 }
             }
         }

@@ -33,13 +33,13 @@ public class UserService {
 
     @Transactional
     public void delete(Long id){
-        User user = userValidation.validateUser(id, UserAction.DELETE);
+        User user = userValidation.validateUser(id, UserAction.ACTIVE_CHECK);
         user.delete();
     }
 
     @Transactional
     public UserResponseDTO reactivate(Long id){
-        User user = userValidation.validateUser(id, UserAction.REACTIVATE);
+        User user = userValidation.validateUser(id, UserAction.ACTIVE_CHECK);
         user.reactivate();
         return new UserResponseDTO(user);
     }
