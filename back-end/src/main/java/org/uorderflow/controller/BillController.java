@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -18,6 +19,7 @@ import org.uorderflow.service.bill.BillService;
 import org.uorderflow.service.order.OrderService;
 
 import java.net.URI;
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/api/bills")
@@ -49,6 +51,14 @@ public class BillController {
     @GetMapping
     public ResponseEntity<Page<BillSummaryResponseDTO>> findAll(@PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable){
         return ResponseEntity.ok(billService.findAll(pageable));
+    }
+
+    @GetMapping("/search-by-date")
+    public ResponseEntity<Page<BillSummaryResponseDTO>> searchAllByDate(
+            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable
+    ){
+        return ResponseEntity.ok(billService.searchAllByDate(date, pageable));
     }
 
     @GetMapping("/{id}")

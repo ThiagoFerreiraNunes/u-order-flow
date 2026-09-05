@@ -14,6 +14,10 @@ import org.uorderflow.model.RestaurantTable;
 import org.uorderflow.repository.BillRepository;
 import org.uorderflow.service.restaurantTable.RestaurantTableValidation;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 @Service
 public class BillService {
 
@@ -40,6 +44,14 @@ public class BillService {
     @Transactional(readOnly = true)
     public Page<BillSummaryResponseDTO> findAll(Pageable pageable){
         return billRepository.findAllPaged(pageable).map(BillSummaryResponseDTO::new);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<BillSummaryResponseDTO> searchAllByDate(LocalDate date, Pageable pageable){
+        LocalDateTime startOfDay = date.atStartOfDay();
+        LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
+
+        return billRepository.searchAllByDate(startOfDay, endOfDay, pageable).map(BillSummaryResponseDTO::new);
     }
 
     @Transactional(readOnly = true)
