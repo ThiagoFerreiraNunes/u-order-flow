@@ -11,7 +11,12 @@ public interface RestaurantTableRepository extends JpaRepository<RestaurantTable
     boolean existsByNumber(int number);
 
     @Query("SELECT r FROM RestaurantTable r " +
-            "WHERE r.isDeleted = FALSE " +
+            "WHERE r.isDeleted = false " +
             "ORDER BY r.number")
-    List<RestaurantTable> findAllByNotDeletedAndSortByNumber();
+    List<RestaurantTable> findAllByIsDeletedFalseAndSortByNumber();
+
+    @Query("SELECT r FROM RestaurantTable r " +
+            "WHERE r.isDeleted = true " +
+            "ORDER BY r.number")
+    List<RestaurantTable> findAllByIsDeletedTrueAndSortByNumber();
 }
