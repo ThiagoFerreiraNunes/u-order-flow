@@ -16,6 +16,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "LOWER(u.name) LIKE LOWER(CONCAT('%', :name, '%'))")
     Page<User> searchAllPagedByName(@Param("name") String name, Pageable pageable);
 
-    @Query("SELECT u FROM User u WHERE u.isDeleted = FALSE")
+    @Query("SELECT u FROM User u WHERE u.isDeleted = false")
     Page<User> findAllPagedByIsDeletedFalse(Pageable pageable);
+
+    @Query("SELECT u FROM User u WHERE u.isDeleted = true")
+    Page<User> findAllPagedByIsDeletedTrue(Pageable pageable);
 }
