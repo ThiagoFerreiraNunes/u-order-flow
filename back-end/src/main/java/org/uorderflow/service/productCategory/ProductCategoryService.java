@@ -32,7 +32,12 @@ public class ProductCategoryService {
 
     @Transactional(readOnly = true)
     public List<ProductCategoryResponseDTO> findAll(){
-        return productCategoryRepository.findAllByNotDeletedAndSortByName().stream().map(ProductCategoryResponseDTO::new).toList();
+        return productCategoryRepository.findAllByIsDeletedFalseAndSortByName().stream().map(ProductCategoryResponseDTO::new).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<ProductCategoryResponseDTO> findAllDeleted(){
+        return productCategoryRepository.findAllByIsDeletedTrueAndSortByName().stream().map(ProductCategoryResponseDTO::new).toList();
     }
 
     @Transactional(readOnly = true)

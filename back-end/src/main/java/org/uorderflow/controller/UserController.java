@@ -24,6 +24,11 @@ public class UserController {
         return ResponseEntity.ok(userService.findAll(pageable));
     }
 
+    @GetMapping("/deleted")
+    public ResponseEntity<Page<UserResponseDTO>> findAllDeleted(@PageableDefault(page = 0, size = 10, sort = "name", direction = Sort.Direction.ASC) Pageable pageable){
+        return ResponseEntity.ok(userService.findAllDeleted(pageable));
+    }
+
     @GetMapping("/search")
     public ResponseEntity<Page<UserResponseDTO>> searchAllByName(@RequestParam String name,
                                                                  @PageableDefault(page = 0, size = 10, sort = "name", direction = Sort.Direction.ASC) Pageable pageable

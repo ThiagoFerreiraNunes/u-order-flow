@@ -26,6 +26,11 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
+    public Page<UserResponseDTO> findAllDeleted(Pageable pageable){
+        return userRepository.findAllPagedByIsDeletedTrue(pageable).map(UserResponseDTO::new);
+    }
+
+    @Transactional(readOnly = true)
     public Page<UserResponseDTO> searchAllByName(String name, Pageable pageable){
         return userRepository.searchAllPagedByName(name, pageable).map(UserResponseDTO::new);
     }

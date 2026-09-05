@@ -32,7 +32,12 @@ public class RestaurantTableService {
 
     @Transactional(readOnly = true)
     public List<RestaurantTableResponseDTO> findAll(){
-        return restaurantTableRepository.findAllByNotDeletedAndSortByNumber().stream().map(RestaurantTableResponseDTO::new).toList();
+        return restaurantTableRepository.findAllByIsDeletedFalseAndSortByNumber().stream().map(RestaurantTableResponseDTO::new).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<RestaurantTableResponseDTO> findAllDeleted(){
+        return restaurantTableRepository.findAllByIsDeletedTrueAndSortByNumber().stream().map(RestaurantTableResponseDTO::new).toList();
     }
 
     @Transactional(readOnly = true)

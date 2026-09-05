@@ -34,6 +34,11 @@ public class RestaurantTableController {
         return ResponseEntity.ok(restaurantTableService.findAll());
     }
 
+    @GetMapping("/deleted")
+    public ResponseEntity<List<RestaurantTableResponseDTO>> findAllDeleted(){
+        return ResponseEntity.ok(restaurantTableService.findAllDeleted());
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<RestaurantTableResponseDTO> findById(@PathVariable Long id){
         return ResponseEntity.ok(restaurantTableService.findById(id));
