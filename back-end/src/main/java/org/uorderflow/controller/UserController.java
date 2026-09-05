@@ -20,18 +20,18 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<UserResponseDTO>> findAll(@PageableDefault(page = 0, size = 10, sort = "name", direction = Sort.Direction.ASC) Pageable pageable){
+    public ResponseEntity<Page<UserResponseDTO>> findAll(@PageableDefault(page = 0, size = 20, sort = "name", direction = Sort.Direction.ASC) Pageable pageable){
         return ResponseEntity.ok(userService.findAll(pageable));
     }
 
     @GetMapping("/deleted")
-    public ResponseEntity<Page<UserResponseDTO>> findAllDeleted(@PageableDefault(page = 0, size = 10, sort = "name", direction = Sort.Direction.ASC) Pageable pageable){
+    public ResponseEntity<Page<UserResponseDTO>> findAllDeleted(@PageableDefault(page = 0, size = 20, sort = "name", direction = Sort.Direction.ASC) Pageable pageable){
         return ResponseEntity.ok(userService.findAllDeleted(pageable));
     }
 
     @GetMapping("/search")
     public ResponseEntity<Page<UserResponseDTO>> searchAllByName(@RequestParam String name,
-                                                                 @PageableDefault(page = 0, size = 10, sort = "name", direction = Sort.Direction.ASC) Pageable pageable
+                                                                 @PageableDefault(page = 0, size = 20, sort = "name", direction = Sort.Direction.ASC) Pageable pageable
     ){
         return ResponseEntity.ok(userService.searchAllByName(name, pageable));
     }
