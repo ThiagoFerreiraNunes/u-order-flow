@@ -39,8 +39,13 @@ public class ProductController {
         return ResponseEntity.ok(productService.findAll(pageable));
     }
 
+    @GetMapping("/deleted")
+    public ResponseEntity<Page<ProductSummaryResponseDTO>> findAllDeleted(@PageableDefault(page = 0, size = 20, sort = "name", direction = Sort.Direction.ASC) Pageable pageable){
+        return ResponseEntity.ok(productService.findAllDeleted(pageable));
+    }
+
     @GetMapping("/search")
-    public ResponseEntity<Page<ProductSummaryResponseDTO>> SearchAllByName(@RequestParam String name,
+    public ResponseEntity<Page<ProductSummaryResponseDTO>> searchAllByName(@RequestParam String name,
                                                                            @PageableDefault(page = 0, size = 20, sort = "name", direction = Sort.Direction.ASC) Pageable pageable
     ){
         return ResponseEntity.ok(productService.searchAllByName(name, pageable));
