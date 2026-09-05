@@ -11,6 +11,12 @@ public interface ProductCategoryRepository extends JpaRepository<ProductCategory
     boolean existsByName(String name);
 
     @Query("SELECT p FROM ProductCategory p " +
-            "WHERE p.isDeleted = FALSE")
-    List<ProductCategory> findAllByNotDeletedAndSortByName();
+            "WHERE p.isDeleted = false " +
+            "ORDER BY p.name")
+    List<ProductCategory> findAllByIsDeletedFalseAndSortByName();
+
+    @Query("SELECT p FROM ProductCategory p " +
+            "WHERE p.isDeleted = true " +
+            "ORDER BY p.name")
+    List<ProductCategory> findAllByIsDeletedTrueAndSortByName();
 }

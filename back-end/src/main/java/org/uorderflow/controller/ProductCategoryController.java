@@ -34,6 +34,11 @@ public class ProductCategoryController {
         return ResponseEntity.ok(productCategoryService.findAll());
     }
 
+    @GetMapping("/deleted")
+    public ResponseEntity<List<ProductCategoryResponseDTO>> findAllDeleted(){
+        return ResponseEntity.ok(productCategoryService.findAllDeleted());
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<ProductCategoryResponseDTO> findById(@PathVariable Long id){
         return ResponseEntity.ok(productCategoryService.findById(id));
