@@ -56,9 +56,11 @@ public class User implements UserDetails {
             case ADMIN -> List.of(
                     new SimpleGrantedAuthority("ROLE_ADMIN"),
                     new SimpleGrantedAuthority("ROLE_WAITER"),
+                    new SimpleGrantedAuthority("ROLE_CASHIER"),
                     new SimpleGrantedAuthority("ROLE_COOK")
             );
             case WAITER -> List.of(new SimpleGrantedAuthority("ROLE_WAITER"));
+            case CASHIER -> List.of(new SimpleGrantedAuthority("ROLE_CASHIER"));
             case COOK -> List.of(new SimpleGrantedAuthority("ROLE_COOK"));
         };
     }

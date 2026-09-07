@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public enum UserRole {
     ADMIN("Admin"),
+    CASHIER("Cashier"),
     COOK("Cook"),
     WAITER("Waiter");
 
