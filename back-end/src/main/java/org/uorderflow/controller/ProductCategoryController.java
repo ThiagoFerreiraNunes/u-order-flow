@@ -2,6 +2,7 @@ package org.uorderflow.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.uorderflow.dto.productCategory.ProductCategoryCreateDTO;
@@ -30,13 +31,14 @@ public class ProductCategoryController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductCategoryResponseDTO>> findAll(){
-        return ResponseEntity.ok(productCategoryService.findAll());
-    }
+    public ResponseEntity<List<ProductCategoryResponseDTO>> findAll(
+            @RequestParam(name = "is-deleted", defaultValue = "false") boolean isDeleted,
+            Authentication authentication
+    ){
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(role -> role.getAuthority().equals("ADMIN"));
 
-    @GetMapping("/deleted")
-    public ResponseEntity<List<ProductCategoryResponseDTO>> findAllDeleted(){
-        return ResponseEntity.ok(productCategoryService.findAllDeleted());
+        return ResponseEntity.ok(productCategoryService.findAll(isDeleted, isAdmin));
     }
 
     @GetMapping("/{id}")

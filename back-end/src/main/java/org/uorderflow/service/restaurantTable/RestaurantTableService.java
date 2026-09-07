@@ -1,5 +1,6 @@
 package org.uorderflow.service.restaurantTable;
 
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.uorderflow.dto.restaurantTable.RestaurantTableCreateDTO;
@@ -31,13 +32,12 @@ public class RestaurantTableService {
     }
 
     @Transactional(readOnly = true)
-    public List<RestaurantTableResponseDTO> findAll(){
-        return restaurantTableRepository.findAllByIsDeletedFalseAndSortByNumber().stream().map(RestaurantTableResponseDTO::new).toList();
-    }
+    public List<RestaurantTableResponseDTO> findAll(boolean isDeleted, boolean isAdmin){
+        if (isDeleted && !isAdmin) {
+            throw new AccessDeniedException("Only users with the ADMIN role can view deleted restaurantTables.");
+        }
 
-    @Transactional(readOnly = true)
-    public List<RestaurantTableResponseDTO> findAllDeleted(){
-        return restaurantTableRepository.findAllByIsDeletedTrueAndSortByNumber().stream().map(RestaurantTableResponseDTO::new).toList();
+        return restaurantTableRepository.findAllSorted(isDeleted).stream().map(RestaurantTableResponseDTO::new).toList();
     }
 
     @Transactional(readOnly = true)

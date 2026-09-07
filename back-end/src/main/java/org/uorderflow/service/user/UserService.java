@@ -2,6 +2,7 @@ package org.uorderflow.service.user;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.uorderflow.dto.user.UserResponseDTO;
@@ -21,18 +22,16 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public Page<UserResponseDTO> findAll(Pageable pageable){
-        return userRepository.findAllPagedByIsDeletedFalse(pageable).map(UserResponseDTO::new);
-    }
+    public Page<UserResponseDTO> findAll(String name, boolean isDeleted, Pageable pageable, boolean isAdmin){
+        if (isDeleted && !isAdmin) {
+            throw new AccessDeniedException("Only users with the ADMIN role can view deleted users.");
+        }
 
-    @Transactional(readOnly = true)
-    public Page<UserResponseDTO> findAllDeleted(Pageable pageable){
-        return userRepository.findAllPagedByIsDeletedTrue(pageable).map(UserResponseDTO::new);
-    }
+        if (name != null && !name.isBlank()) {
+            return userRepository.findAllPagedByName(name, isDeleted, pageable).map(UserResponseDTO::new);
+        }
 
-    @Transactional(readOnly = true)
-    public Page<UserResponseDTO> searchAllByName(String name, Pageable pageable){
-        return userRepository.searchAllPagedByName(name, pageable).map(UserResponseDTO::new);
+        return userRepository.findAllPaged(isDeleted, pageable).map(UserResponseDTO::new);
     }
 
     @Transactional(readOnly = true)

@@ -12,13 +12,18 @@ public interface UserRepository extends JpaRepository<User, Long> {
     UserDetails findByEmail(String email);
 
     @Query("SELECT u FROM User u " +
-            "WHERE u.isDeleted = false AND " +
+            "WHERE u.isDeleted = :isDeleted AND " +
             "LOWER(u.name) LIKE LOWER(CONCAT('%', :name, '%'))")
-    Page<User> searchAllPagedByName(@Param("name") String name, Pageable pageable);
+    Page<User> findAllPagedByName(
+            @Param("name") String name,
+            @Param("isDeleted") boolean isDeleted,
+            Pageable pageable
+    );
 
-    @Query("SELECT u FROM User u WHERE u.isDeleted = false")
-    Page<User> findAllPagedByIsDeletedFalse(Pageable pageable);
-
-    @Query("SELECT u FROM User u WHERE u.isDeleted = true")
-    Page<User> findAllPagedByIsDeletedTrue(Pageable pageable);
+    @Query("SELECT u FROM User u " +
+            "WHERE u.isDeleted = :isDeleted")
+    Page<User> findAllPaged(
+            @Param("isDeleted") boolean isDeleted,
+            Pageable pageable
+    );
 }
