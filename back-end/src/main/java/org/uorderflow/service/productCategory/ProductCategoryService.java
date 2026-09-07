@@ -1,5 +1,6 @@
 package org.uorderflow.service.productCategory;
 
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.uorderflow.dto.productCategory.ProductCategoryCreateDTO;
@@ -31,13 +32,14 @@ public class ProductCategoryService {
     }
 
     @Transactional(readOnly = true)
-    public List<ProductCategoryResponseDTO> findAll(){
-        return productCategoryRepository.findAllByIsDeletedFalseAndSortByName().stream().map(ProductCategoryResponseDTO::new).toList();
-    }
+    public List<ProductCategoryResponseDTO> findAll(boolean isDeleted, boolean isAdmin){
+        if (isDeleted && !isAdmin) {
+            throw new AccessDeniedException("Only users with the ADMIN role can view deleted productCategories.");
+        }
 
-    @Transactional(readOnly = true)
-    public List<ProductCategoryResponseDTO> findAllDeleted(){
-        return productCategoryRepository.findAllByIsDeletedTrueAndSortByName().stream().map(ProductCategoryResponseDTO::new).toList();
+        return productCategoryRepository.findAllSorted(isDeleted).stream()
+                .map(ProductCategoryResponseDTO::new)
+                .toList();
     }
 
     @Transactional(readOnly = true)
