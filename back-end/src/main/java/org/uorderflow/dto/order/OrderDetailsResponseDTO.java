@@ -7,6 +7,7 @@ import org.uorderflow.enums.order.OrderStatus;
 import org.uorderflow.model.Order;
 import org.uorderflow.utils.FormatUtils;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public record OrderDetailsResponseDTO(
@@ -17,6 +18,7 @@ public record OrderDetailsResponseDTO(
         String customer,
         UserResponseDTO employee,
         RestaurantTableResponseDTO restaurantTable,
+        String totalPrice,
         List<OrderProductResponseDTO> items
 ) {
     public OrderDetailsResponseDTO(Order order){
@@ -28,6 +30,9 @@ public record OrderDetailsResponseDTO(
                 order.getBill().getCustomer(),
                 new UserResponseDTO(order.getWaiter()),
                 new RestaurantTableResponseDTO(order.getBill().getRestaurantTable()),
+                FormatUtils.formatToBRL(order.getItems().stream()
+                        .map(item -> item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+                        .reduce(BigDecimal.ZERO, BigDecimal::add)),
                 order.getItems().stream().map(OrderProductResponseDTO::new).toList()
         );
     }

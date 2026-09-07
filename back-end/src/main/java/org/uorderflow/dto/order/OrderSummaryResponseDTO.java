@@ -3,13 +3,16 @@ package org.uorderflow.dto.order;
 import org.uorderflow.model.Order;
 import org.uorderflow.utils.FormatUtils;
 
+import java.math.BigDecimal;
+
 public record OrderSummaryResponseDTO(
         Long id,
         String status,
         String createdAt,
         String customer,
         String employee,
-        Integer restaurantTable
+        Integer restaurantTable,
+        String totalPrice
 ) {
     public OrderSummaryResponseDTO(Order order){
         this(
@@ -18,7 +21,10 @@ public record OrderSummaryResponseDTO(
                 FormatUtils.formatDateTime(order.getCreatedAt()),
                 order.getBill().getCustomer(),
                 order.getWaiter().getName(),
-                order.getBill().getRestaurantTable().getNumber()
+                order.getBill().getRestaurantTable().getNumber(),
+                FormatUtils.formatToBRL(order.getItems().stream()
+                        .map(item -> item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+                        .reduce(BigDecimal.ZERO, BigDecimal::add))
         );
     }
 }

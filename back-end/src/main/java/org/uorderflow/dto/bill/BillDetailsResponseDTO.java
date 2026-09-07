@@ -5,6 +5,7 @@ import org.uorderflow.enums.bill.BillStatus;
 import org.uorderflow.model.Bill;
 import org.uorderflow.utils.FormatUtils;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public record BillDetailsResponseDTO(
@@ -14,6 +15,7 @@ public record BillDetailsResponseDTO(
         String createdAt,
         String paidAt,
         Integer restaurantTable,
+        String totalPrice,
         List<OrderSummaryResponseDTO> orders
 ) {
     public BillDetailsResponseDTO(Bill bill){
@@ -24,6 +26,12 @@ public record BillDetailsResponseDTO(
                 FormatUtils.formatDateTime(bill.getCreatedAt()),
                 resolvePaidAt(bill),
                 bill.getRestaurantTable().getNumber(),
+                bill.getOrders() != null
+                        ? FormatUtils.formatToBRL(bill.getOrders().stream()
+                            .flatMap(order -> order.getItems().stream())
+                            .map(item -> item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+                            .reduce(BigDecimal.ZERO, BigDecimal::add))
+                        : FormatUtils.formatToBRL(BigDecimal.valueOf(0)),
                 bill.getOrders() != null
                         ? bill.getOrders().stream().map(OrderSummaryResponseDTO::new).toList()
                         : List.of()
