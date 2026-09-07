@@ -2,6 +2,7 @@ package org.uorderflow.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.uorderflow.dto.restaurantTable.RestaurantTableCreateDTO;
@@ -30,13 +31,14 @@ public class RestaurantTableController {
     }
 
     @GetMapping
-    public ResponseEntity<List<RestaurantTableResponseDTO>> findAll(){
-        return ResponseEntity.ok(restaurantTableService.findAll());
-    }
+    public ResponseEntity<List<RestaurantTableResponseDTO>> findAll(
+            @RequestParam(name = "is-deleted", defaultValue = "false") boolean isDeleted,
+            Authentication authentication
+    ){
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(role -> role.getAuthority().equals("ADMIN"));
 
-    @GetMapping("/deleted")
-    public ResponseEntity<List<RestaurantTableResponseDTO>> findAllDeleted(){
-        return ResponseEntity.ok(restaurantTableService.findAllDeleted());
+        return ResponseEntity.ok(restaurantTableService.findAll(isDeleted, isAdmin));
     }
 
     @GetMapping("/{id}")
