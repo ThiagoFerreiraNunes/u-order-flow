@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.uorderflow.dto.user.UserResponseDTO;
 import org.uorderflow.service.user.UserService;
@@ -20,20 +21,16 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<UserResponseDTO>> findAll(@PageableDefault(page = 0, size = 20, sort = "name", direction = Sort.Direction.ASC) Pageable pageable){
-        return ResponseEntity.ok(userService.findAll(pageable));
-    }
-
-    @GetMapping("/deleted")
-    public ResponseEntity<Page<UserResponseDTO>> findAllDeleted(@PageableDefault(page = 0, size = 20, sort = "name", direction = Sort.Direction.ASC) Pageable pageable){
-        return ResponseEntity.ok(userService.findAllDeleted(pageable));
-    }
-
-    @GetMapping("/search")
-    public ResponseEntity<Page<UserResponseDTO>> searchAllByName(@RequestParam String name,
-                                                                 @PageableDefault(page = 0, size = 20, sort = "name", direction = Sort.Direction.ASC) Pageable pageable
+    public ResponseEntity<Page<UserResponseDTO>> findAll(
+            @RequestParam(required = false) String name,
+            @RequestParam(name = "is-deleted", defaultValue = "false") boolean isDeleted,
+            @PageableDefault(page = 0, size = 20, sort = "name", direction = Sort.Direction.ASC) Pageable pageable,
+            Authentication authentication
     ){
-        return ResponseEntity.ok(userService.searchAllByName(name, pageable));
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(role -> role.getAuthority().equals("ADMIN"));
+
+        return ResponseEntity.ok(userService.findAll(name, isDeleted, pageable, isAdmin));
     }
 
     @GetMapping("{id}")
