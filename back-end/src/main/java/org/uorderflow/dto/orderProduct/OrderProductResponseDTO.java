@@ -4,6 +4,8 @@ import org.uorderflow.dto.product.ProductSummaryResponseDTO;
 import org.uorderflow.model.OrderProduct;
 import org.uorderflow.utils.FormatUtils;
 
+import java.math.BigDecimal;
+
 public record OrderProductResponseDTO(
         ProductSummaryResponseDTO product,
         String note,
@@ -17,7 +19,7 @@ public record OrderProductResponseDTO(
                 orderProduct.getNote(),
                 orderProduct.getQuantity(),
                 FormatUtils.formatToBRL(orderProduct.getUnitPrice()),
-                FormatUtils.formatToBRL(orderProduct.getUnitPrice() * orderProduct.getQuantity())
+                FormatUtils.formatToBRL(orderProduct.getUnitPrice().multiply(BigDecimal.valueOf(orderProduct.getQuantity())))
         );
     }
 }
