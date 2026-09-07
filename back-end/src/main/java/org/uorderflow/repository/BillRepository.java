@@ -26,11 +26,9 @@ public interface BillRepository extends JpaRepository<Bill, Long> {
     @Query(
             value = "SELECT b FROM Bill b " +
                     "JOIN FETCH b.restaurantTable " +
-                    "WHERE b.isDeleted = false " +
-                    "AND b.createdAt BETWEEN :startOfDay AND :endOfDay",
+                    "WHERE b.createdAt BETWEEN :startOfDay AND :endOfDay",
             countQuery = "SELECT COUNT(b) FROM Bill b " +
-                    "WHERE b.isDeleted = false " +
-                    "AND b.createdAt BETWEEN :startOfDay AND :endOfDay"
+                    "WHERE b.createdAt BETWEEN :startOfDay AND :endOfDay"
     )
     Page<Bill> searchAllByDate(
             @Param("startOfDay")LocalDateTime startOfDay,
