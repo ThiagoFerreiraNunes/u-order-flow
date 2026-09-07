@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.uorderflow.dto.orderProduct.OrderProductCreateDTO;
 
+import java.math.BigDecimal;
+
 @Table(name = "tb_order_products")
 @Entity(name = "OrderProduct")
 @Getter
@@ -23,8 +25,8 @@ public class OrderProduct {
     @Column(nullable = false, name = "quantity")
     private Integer quantity;
 
-    @Column(nullable = false, precision = 6, scale = 2, name = "unit_price")
-    private Double unitPrice;
+    @Column(nullable = false, precision = 10, scale = 2, name = "unit_price")
+    private BigDecimal unitPrice;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "order_id")

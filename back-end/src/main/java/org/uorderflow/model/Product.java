@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import org.uorderflow.dto.product.ProductCreateDTO;
 import org.uorderflow.dto.product.ProductUpdateDTO;
 
+import java.math.BigDecimal;
+
 @Table(name = "tb_products")
 @Entity(name = "Product")
 @Getter
@@ -30,9 +32,9 @@ public class Product {
     @Column(nullable = false, length = 2048, name = "image_url")
     private String image;
 
-    @Column(nullable = false, precision = 6, scale = 2, name = "price")
+    @Column(nullable = false, precision = 10, scale = 2, name = "price")
     @Positive
-    private Double price;
+    private BigDecimal price;
 
     @Column(nullable = false, name = "is_available")
     private Boolean isAvailable;
