@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.uorderflow.dto.product.ProductCreateDTO;
@@ -35,20 +36,16 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<ProductSummaryResponseDTO>> findAll(@PageableDefault(page = 0, size = 30, sort = "name", direction = Sort.Direction.ASC) Pageable pageable){
-        return ResponseEntity.ok(productService.findAll(pageable));
-    }
-
-    @GetMapping("/deleted")
-    public ResponseEntity<Page<ProductSummaryResponseDTO>> findAllDeleted(@PageableDefault(page = 0, size = 30, sort = "name", direction = Sort.Direction.ASC) Pageable pageable){
-        return ResponseEntity.ok(productService.findAllDeleted(pageable));
-    }
-
-    @GetMapping("/search")
-    public ResponseEntity<Page<ProductSummaryResponseDTO>> searchAllByName(@RequestParam String name,
-                                                                           @PageableDefault(page = 0, size = 30, sort = "name", direction = Sort.Direction.ASC) Pageable pageable
+    public ResponseEntity<Page<ProductSummaryResponseDTO>> findAll(
+            @RequestParam(required = false) String name,
+            @RequestParam(name = "is-deleted", defaultValue = "false") boolean isDeleted,
+            @PageableDefault(page = 0, size = 30, sort = "name", direction = Sort.Direction.ASC) Pageable pageable,
+            Authentication authentication
     ){
-        return ResponseEntity.ok(productService.searchAllByName(name, pageable));
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(role -> role.getAuthority().equals("ADMIN"));
+
+        return ResponseEntity.ok(productService.findAll(name, isDeleted, pageable, isAdmin));
     }
 
     @GetMapping("/{id}")

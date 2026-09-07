@@ -15,24 +15,26 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query(value = "SELECT p FROM Product p " +
             "JOIN FETCH p.productCategory " +
-            "WHERE p.isDeleted = false AND " +
+            "WHERE p.isDeleted = :isDeleted AND " +
             "LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%'))",
             countQuery = "SELECT COUNT(p) FROM Product p " +
-                    "WHERE p.isDeleted = false AND " +
+                    "WHERE p.isDeleted = :isDeleted AND " +
                     "LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%'))")
-    Page<Product> searchAllPagedByName(@Param("name") String name, Pageable pageable);
+    Page<Product> findAllPagedByName(
+            @Param("name") String name,
+            @Param("isDeleted") boolean isDeleted,
+            Pageable pageable
+    );
 
     @Query(value = "SELECT p FROM Product p " +
             "JOIN FETCH p.productCategory " +
-            "WHERE p.isDeleted = false",
-            countQuery = "SELECT count(p) FROM Product p WHERE p.isDeleted = false")
-    Page<Product> findAllPagedByIsDeletedFalse(Pageable pageable);
-
-    @Query(value = "SELECT p FROM Product p " +
-            "JOIN FETCH p.productCategory " +
-            "WHERE p.isDeleted = true",
-            countQuery = "SELECT count(p) FROM Product p WHERE p.isDeleted = true")
-    Page<Product> findAllPagedByIsDeletedTrue(Pageable pageable);
+            "WHERE p.isDeleted = :isDeleted",
+            countQuery = "SELECT COUNT(p) FROM Product p " +
+                    "WHERE p.isDeleted = :isDeleted")
+    Page<Product> findAllPaged(
+            @Param("isDeleted") boolean isDeleted,
+            Pageable pageable
+    );
 
     @Query("SELECT p FROM Product p " +
             "JOIN FETCH p.productCategory " +

@@ -2,6 +2,7 @@ package org.uorderflow.service.product;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.uorderflow.dto.product.ProductCreateDTO;
@@ -39,18 +40,16 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ProductSummaryResponseDTO> findAll(Pageable pageable){
-        return productRepository.findAllPagedByIsDeletedFalse(pageable).map(ProductSummaryResponseDTO::new);
-    }
+    public Page<ProductSummaryResponseDTO> findAll(String name, boolean isDeleted, Pageable pageable, boolean isAdmin){
+        if (isDeleted && !isAdmin) {
+            throw new AccessDeniedException("Only users with the ADMIN role can view deleted products.");
+        }
 
-    @Transactional(readOnly = true)
-    public Page<ProductSummaryResponseDTO> findAllDeleted(Pageable pageable){
-        return productRepository.findAllPagedByIsDeletedTrue(pageable).map(ProductSummaryResponseDTO::new);
-    }
+        if (name != null && !name.isBlank()) {
+            return productRepository.findAllPagedByName(name, isDeleted, pageable).map(ProductSummaryResponseDTO::new);
+        }
 
-    @Transactional(readOnly = true)
-    public Page<ProductSummaryResponseDTO> searchAllByName(String name, Pageable pageable){
-        return productRepository.searchAllPagedByName(name, pageable).map(ProductSummaryResponseDTO::new);
+        return productRepository.findAllPaged(isDeleted, pageable).map(ProductSummaryResponseDTO::new);
     }
 
     @Transactional(readOnly = true)
