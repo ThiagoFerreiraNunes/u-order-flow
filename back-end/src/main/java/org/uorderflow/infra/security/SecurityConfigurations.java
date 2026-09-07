@@ -40,21 +40,21 @@ public class SecurityConfigurations {
                     authorize.requestMatchers("/api/product-categories/**").hasRole("ADMIN");
 
                     // Products
-                    authorize.requestMatchers(HttpMethod.GET, "/api/products/**").hasAnyRole("ADMIN", "WAITER", "COOK");
+                    authorize.requestMatchers(HttpMethod.GET, "/api/products/**").hasAnyRole("ADMIN", "WAITER", "CASHIER", "COOK");
                     authorize.requestMatchers("/api/products/**").hasRole("ADMIN");
 
                     // Restaurant Tables
-                    authorize.requestMatchers(HttpMethod.GET, "/api/restaurant-tables/**").hasAnyRole("ADMIN", "WAITER", "COOK");
+                    authorize.requestMatchers(HttpMethod.GET, "/api/restaurant-tables/**").hasAnyRole("ADMIN", "WAITER", "CASHIER", "COOK");
                     authorize.requestMatchers("/api/restaurant-tables/**").hasRole("ADMIN");
 
                     // Bills
-                    authorize.requestMatchers(HttpMethod.GET, "/api/bills/**").hasAnyRole("ADMIN", "WAITER", "COOK");
-                    authorize.requestMatchers("/api/bills/**").hasAnyRole("ADMIN", "WAITER");
+                    authorize.requestMatchers(HttpMethod.GET, "/api/bills/**").hasAnyRole("ADMIN", "WAITER", "CASHIER", "COOK");
+                    authorize.requestMatchers("/api/bills/**").hasAnyRole("ADMIN", "WAITER", "CASHIER");
 
                     // Orders
-                    authorize.requestMatchers(HttpMethod.GET, "/api/orders/**").hasAnyRole("ADMIN", "WAITER", "COOK");
-                    authorize.requestMatchers(HttpMethod.PATCH, "/api/orders/*/prepare").hasAnyRole("ADMIN", "WAITER", "COOK");
-                    authorize.requestMatchers("/api/orders/**").hasAnyRole("ADMIN", "WAITER");
+                    authorize.requestMatchers(HttpMethod.GET, "/api/orders/**").hasAnyRole("ADMIN", "WAITER", "CASHIER", "COOK");
+                    authorize.requestMatchers(HttpMethod.PATCH, "/api/orders/*/prepare").hasAnyRole("ADMIN", "WAITER", "CASHIER", "COOK");
+                    authorize.requestMatchers("/api/orders/**").hasAnyRole("ADMIN", "WAITER", "CASHIER");
 
                     authorize.anyRequest().authenticated();
 
