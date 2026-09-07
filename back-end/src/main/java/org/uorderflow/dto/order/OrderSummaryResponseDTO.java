@@ -8,7 +8,7 @@ public record OrderSummaryResponseDTO(
         String status,
         String createdAt,
         String customer,
-        String waiter,
+        String employee,
         Integer restaurantTable
 ) {
     public OrderSummaryResponseDTO(Order order){

@@ -15,7 +15,7 @@ public record OrderDetailsResponseDTO(
         String createdAt,
         String deliveredAt,
         String customer,
-        UserResponseDTO waiter,
+        UserResponseDTO employee,
         RestaurantTableResponseDTO restaurantTable,
         List<OrderProductResponseDTO> items
 ) {

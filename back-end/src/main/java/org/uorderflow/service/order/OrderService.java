@@ -42,8 +42,8 @@ public class OrderService {
     @Transactional
     public OrderDetailsResponseDTO createOrder(Long billId, OrderCreateDTO data){
         Bill bill = billValidation.validateBill(billId, null);
-        User waiter = userValidation.validateUser(data.waiterId(), UserAction.CREATE_ORDER);
-        Order order = new Order(waiter);
+        User employee = userValidation.validateUser(data.employeeId(), UserAction.CREATE_ORDER);
+        Order order = new Order(employee);
 
         for (OrderProductCreateDTO item : data.items()){
             Product product = productValidation.validateProduct(item.productId(), ProductAction.CREATE_ORDER_PRODUCT);
@@ -70,8 +70,8 @@ public class OrderService {
     @Transactional
     public OrderDetailsResponseDTO update(Long id, OrderUpdateDTO data){
         Order order = orderValidation.validateOrder(id, OrderAction.UPDATE);
-        User waiter = userValidation.validateUser(data.waiterId(), UserAction.CREATE_ORDER);
-        order.update(waiter);
+        User employee = userValidation.validateUser(data.employeeId(), UserAction.CREATE_ORDER);
+        order.update(employee);
 
         if (data.items() != null){
             order.getItems().clear();

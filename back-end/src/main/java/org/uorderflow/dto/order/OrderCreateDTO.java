@@ -7,7 +7,7 @@ import org.uorderflow.dto.orderProduct.OrderProductCreateDTO;
 import java.util.List;
 
 public record OrderCreateDTO(
-        @NotNull Long waiterId,
+        @NotNull Long employeeId,
         @NotEmpty List<OrderProductCreateDTO> items
 ) {
 }
