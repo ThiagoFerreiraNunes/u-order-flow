@@ -2,8 +2,6 @@ package org.uorderflow.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.uorderflow.dto.order.OrderCreateDTO;
-import org.uorderflow.dto.order.OrderUpdateDTO;
 import org.uorderflow.enums.order.OrderStatus;
 
 import java.time.LocalDateTime;
@@ -38,14 +36,14 @@ public class Order {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "user_id")
-    private User waiter;
+    private User employee;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "bill_id")
     private Bill bill;
 
-    public Order(User waiter){
-        this.waiter = waiter;
+    public Order(User employee){
+        this.employee = employee;
         this.status = OrderStatus.WAITING;
         this.createdAt = LocalDateTime.now();
         this.deliveredAt = null;
@@ -56,8 +54,8 @@ public class Order {
         item.setOrder(this);
     }
 
-    public void update(User waiter){
-        this.waiter = waiter;
+    public void update(User employee){
+        this.employee = employee;
     }
 
     public void cancelOrder(){
