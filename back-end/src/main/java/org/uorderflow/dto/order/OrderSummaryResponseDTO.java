@@ -20,7 +20,7 @@ public record OrderSummaryResponseDTO(
                 order.getStatus().getDescription(),
                 FormatUtils.formatDateTime(order.getCreatedAt()),
                 order.getBill().getCustomer(),
-                order.getWaiter().getName(),
+                order.getEmployee().getName(),
                 order.getBill().getRestaurantTable().getNumber(),
                 FormatUtils.formatToBRL(order.getItems().stream()
                         .map(item -> item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
