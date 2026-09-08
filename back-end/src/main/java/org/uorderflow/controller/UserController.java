@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.uorderflow.dto.user.UserResponseDTO;
+import org.uorderflow.enums.user.UserRole;
 import org.uorderflow.service.user.UserService;
 
 @RestController
@@ -24,13 +25,14 @@ public class UserController {
     public ResponseEntity<Page<UserResponseDTO>> findAll(
             @RequestParam(required = false) String name,
             @RequestParam(name = "is-deleted", defaultValue = "false") boolean isDeleted,
+            @RequestParam(name = "exclude-role", required = false) UserRole excludeRole,
             @PageableDefault(page = 0, size = 20, sort = "name", direction = Sort.Direction.ASC) Pageable pageable,
             Authentication authentication
     ){
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(role -> role.getAuthority().equals("ADMIN"));
 
-        return ResponseEntity.ok(userService.findAll(name, isDeleted, pageable, isAdmin));
+        return ResponseEntity.ok(userService.findAll(name, isDeleted, excludeRole, pageable, isAdmin));
     }
 
     @GetMapping("{id}")
