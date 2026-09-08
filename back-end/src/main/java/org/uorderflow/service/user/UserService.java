@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.uorderflow.dto.user.UserResponseDTO;
 import org.uorderflow.enums.user.UserAction;
+import org.uorderflow.enums.user.UserRole;
 import org.uorderflow.model.User;
 import org.uorderflow.repository.UserRepository;
 
@@ -22,9 +23,13 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public Page<UserResponseDTO> findAll(String name, boolean isDeleted, Pageable pageable, boolean isAdmin){
+    public Page<UserResponseDTO> findAll(String name, boolean isDeleted, UserRole excludeRole, Pageable pageable, boolean isAdmin){
         if (isDeleted && !isAdmin) {
             throw new AccessDeniedException("Only users with the ADMIN role can view deleted users.");
+        }
+
+        if (excludeRole != null) {
+            return userRepository.findAllPagedExcludingRole(excludeRole, isDeleted, pageable).map(UserResponseDTO::new);
         }
 
         if (name != null && !name.isBlank()) {

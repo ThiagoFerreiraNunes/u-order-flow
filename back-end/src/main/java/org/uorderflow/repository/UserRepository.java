@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.uorderflow.enums.user.UserRole;
 import org.uorderflow.model.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -23,6 +24,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u " +
             "WHERE u.isDeleted = :isDeleted")
     Page<User> findAllPaged(
+            @Param("isDeleted") boolean isDeleted,
+            Pageable pageable
+    );
+
+    @Query("SELECT u FROM User u " +
+            "WHERE u.isDeleted = :isDeleted AND " +
+            "u.role <> :excludeRole")
+    Page<User> findAllPagedExcludingRole(
+            @Param("excludeRole") UserRole excludeRole,
             @Param("isDeleted") boolean isDeleted,
             Pageable pageable
     );
