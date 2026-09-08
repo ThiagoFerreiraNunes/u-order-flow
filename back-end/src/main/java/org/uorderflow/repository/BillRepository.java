@@ -17,12 +17,6 @@ public interface BillRepository extends JpaRepository<Bill, Long> {
             countQuery = "SELECT count(b) FROM Bill b")
     Page<Bill> findAllPaged(Pageable pageable);
 
-    @Query("SELECT DISTINCT b FROM Bill b " +
-            "JOIN FETCH b.restaurantTable " +
-            "LEFT JOIN FETCH b.orders " +
-            "WHERE b.id = :id")
-    Optional<Bill> findByIdWithDetails(@Param("id") Long id);
-
     @Query(
             value = "SELECT b FROM Bill b " +
                     "JOIN FETCH b.restaurantTable " +
@@ -30,9 +24,17 @@ public interface BillRepository extends JpaRepository<Bill, Long> {
             countQuery = "SELECT COUNT(b) FROM Bill b " +
                     "WHERE b.createdAt BETWEEN :startOfDay AND :endOfDay"
     )
-    Page<Bill> searchAllByDate(
+    Page<Bill> findAllPagedByDate(
             @Param("startOfDay")LocalDateTime startOfDay,
             @Param("endOfDay") LocalDateTime endOfDay,
             Pageable pageable
     );
+
+    @Query("SELECT DISTINCT b FROM Bill b " +
+            "JOIN FETCH b.restaurantTable " +
+            "LEFT JOIN FETCH b.orders " +
+            "WHERE b.id = :id")
+    Optional<Bill> findByIdWithDetails(@Param("id") Long id);
+
+
 }
