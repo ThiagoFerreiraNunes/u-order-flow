@@ -49,16 +49,11 @@ public class BillController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<BillSummaryResponseDTO>> findAll(@PageableDefault(page = 0, size = 30, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable){
-        return ResponseEntity.ok(billService.findAll(pageable));
-    }
-
-    @GetMapping("/search-by-date")
-    public ResponseEntity<Page<BillSummaryResponseDTO>> searchAllByDate(
-            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-            @PageableDefault(page = 0, size = 30, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable
+    public ResponseEntity<Page<BillSummaryResponseDTO>> findAll(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @PageableDefault(page = 0, size = 30, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ){
-        return ResponseEntity.ok(billService.searchAllByDate(date, pageable));
+        return ResponseEntity.ok(billService.findAll(date, pageable));
     }
 
     @GetMapping("/{id}")

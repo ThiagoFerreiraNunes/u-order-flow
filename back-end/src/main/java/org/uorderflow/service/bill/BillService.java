@@ -42,16 +42,14 @@ public class BillService {
     }
 
     @Transactional(readOnly = true)
-    public Page<BillSummaryResponseDTO> findAll(Pageable pageable){
+    public Page<BillSummaryResponseDTO> findAll(LocalDate date, Pageable pageable){
+        if (date != null) {
+            LocalDateTime startOfDay = date.atStartOfDay();
+            LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
+
+            return billRepository.findAllPagedByDate(startOfDay, endOfDay, pageable).map(BillSummaryResponseDTO::new);
+        }
         return billRepository.findAllPaged(pageable).map(BillSummaryResponseDTO::new);
-    }
-
-    @Transactional(readOnly = true)
-    public Page<BillSummaryResponseDTO> searchAllByDate(LocalDate date, Pageable pageable){
-        LocalDateTime startOfDay = date.atStartOfDay();
-        LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
-
-        return billRepository.searchAllByDate(startOfDay, endOfDay, pageable).map(BillSummaryResponseDTO::new);
     }
 
     @Transactional(readOnly = true)
