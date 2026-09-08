@@ -32,7 +32,7 @@ public class ProductCategory {
     }
 
     public void update(ProductCategoryUpdateDTO data){
-        if(data.name() != null) this.name = data.name();
+        if(data.name() != null && !data.name().isBlank()) this.name = data.name();
     }
 
     public void delete(){

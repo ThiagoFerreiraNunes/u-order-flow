@@ -87,8 +87,8 @@ public class User implements UserDetails {
     }
 
     public void update(UserUpdateDTO data) {
-        if (data.name() != null) this.name = data.name();
-        if (data.email() != null) this.email = data.email();
+        if (data.name() != null && !data.name().isBlank()) this.name = data.name();
+        if (data.email() != null && !data.email().isBlank()) this.email = data.email();
         if (data.role() != null) this.role = data.role();
     }
 
