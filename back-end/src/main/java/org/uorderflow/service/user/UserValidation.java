@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import org.uorderflow.enums.user.UserAction;
 import org.uorderflow.enums.user.UserRole;
 import org.uorderflow.infra.exception.BusinessRuleException;
+import org.uorderflow.infra.exception.LoginAlreadyExistsException;
 import org.uorderflow.model.User;
 import org.uorderflow.repository.UserRepository;
 
@@ -39,5 +40,11 @@ public class UserValidation {
         }
 
         return user;
+    }
+
+    public void validateUniqueFields(String email){
+        if(userRepository.existsByEmail(email)){
+            throw new LoginAlreadyExistsException("A User with the email '" + email + "' already exists.");
+        }
     }
 }

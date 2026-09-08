@@ -1,5 +1,6 @@
 package org.uorderflow.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -7,10 +8,14 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.uorderflow.dto.user.UserPasswordUpdateDTO;
 import org.uorderflow.dto.user.UserResponseDTO;
+import org.uorderflow.dto.user.UserUpdateDTO;
 import org.uorderflow.enums.user.UserRole;
 import org.uorderflow.model.User;
 import org.uorderflow.service.user.UserService;
+
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/users")
@@ -31,7 +36,7 @@ public class UserController {
             Authentication authentication
     ){
         boolean isAdmin = authentication.getAuthorities().stream()
-                .anyMatch(role -> role.getAuthority().equals("ADMIN"));
+                .anyMatch(role -> Objects.equals(role.getAuthority(), "ADMIN"));
 
         return ResponseEntity.ok(userService.findAll(name, isDeleted, excludeRole, pageable, isAdmin));
     }
@@ -42,14 +47,30 @@ public class UserController {
         return ResponseEntity.ok(userService.findById(id, loggedUser));
     }
 
-    @DeleteMapping("{id}")
+    @PutMapping("{id}")
+    public ResponseEntity<UserResponseDTO> update(@PathVariable Long id, @RequestBody @Valid UserUpdateDTO data){
+        return ResponseEntity.ok(userService.update(id, data));
+    }
+
+    @DeleteMapping("{id}/delete")
     public ResponseEntity<Void> delete(@PathVariable Long id){
         userService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("{id}")
+    @PatchMapping("{id}/reactivate")
     public ResponseEntity<UserResponseDTO> reactivate(@PathVariable Long id){
         return ResponseEntity.ok(userService.reactivate(id));
+    }
+
+    @PatchMapping("{id}/password")
+    public ResponseEntity<Void> updatePassword(
+            @PathVariable Long id,
+            @RequestBody @Valid UserPasswordUpdateDTO data,
+            Authentication authentication
+    ){
+        User loggedUser = (User) authentication.getPrincipal();
+        userService.updatePassword(id, data, loggedUser);
+        return ResponseEntity.noContent().build();
     }
 }

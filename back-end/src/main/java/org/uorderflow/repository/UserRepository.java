@@ -36,4 +36,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
             @Param("isDeleted") boolean isDeleted,
             Pageable pageable
     );
+
+    boolean existsByEmail(String email);
 }

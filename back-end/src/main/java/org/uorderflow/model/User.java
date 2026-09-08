@@ -9,6 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.uorderflow.dto.user.UserRegisterDTO;
+import org.uorderflow.dto.user.UserUpdateDTO;
 import org.uorderflow.enums.user.UserRole;
 
 import java.util.Collection;
@@ -83,6 +84,18 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return Boolean.FALSE.equals(isDeleted);
+    }
+
+    public void update(UserUpdateDTO data) {
+        if (data.name() != null) this.name = data.name();
+        if (data.email() != null) this.email = data.email();
+        if (data.role() != null) this.role = data.role();
+    }
+
+    public void updatePassword(String newPassword){
+        if(newPassword != null){
+            this.password = newPassword;
+        }
     }
 
     public void delete(){
