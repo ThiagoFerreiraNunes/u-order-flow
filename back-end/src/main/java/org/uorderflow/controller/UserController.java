@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.uorderflow.dto.user.UserResponseDTO;
 import org.uorderflow.enums.user.UserRole;
+import org.uorderflow.model.User;
 import org.uorderflow.service.user.UserService;
 
 @RestController
@@ -36,8 +37,9 @@ public class UserController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<UserResponseDTO> findById(@PathVariable Long id){
-        return ResponseEntity.ok(userService.findById(id));
+    public ResponseEntity<UserResponseDTO> findById(@PathVariable Long id, Authentication authentication){
+        User loggedUser = (User) authentication.getPrincipal();
+        return ResponseEntity.ok(userService.findById(id, loggedUser));
     }
 
     @DeleteMapping("{id}")
