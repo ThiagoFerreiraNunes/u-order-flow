@@ -47,6 +47,7 @@ public class SecurityConfigurations {
                     // Users
                     authorize.requestMatchers(HttpMethod.GET, "/api/users").hasAnyRole("ADMIN", "WAITER", "CASHIER");
                     authorize.requestMatchers(HttpMethod.GET, "/api/users/*").hasAnyRole("ADMIN", "WAITER", "CASHIER", "COOK");
+                    authorize.requestMatchers(HttpMethod.PATCH, "/api/users/*/password").authenticated();
                     authorize.requestMatchers("/api/users/**").hasRole("ADMIN");
 
                     // Bills
