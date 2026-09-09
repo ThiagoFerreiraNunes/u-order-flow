@@ -9,6 +9,7 @@ import org.uorderflow.dto.product.ProductCreateDTO;
 import org.uorderflow.dto.product.ProductDetailsResponseDTO;
 import org.uorderflow.dto.product.ProductSummaryResponseDTO;
 import org.uorderflow.dto.product.ProductUpdateDTO;
+import org.uorderflow.enums.generic.ValidateAction;
 import org.uorderflow.enums.product.ProductAction;
 import org.uorderflow.model.Product;
 import org.uorderflow.model.ProductCategory;
@@ -32,7 +33,7 @@ public class ProductService {
 
     @Transactional
     public ProductDetailsResponseDTO create(ProductCreateDTO data){
-        ProductCategory productCategory = productCategoryValidation.validateProductCategory(data.productCategoryId());
+        ProductCategory productCategory = productCategoryValidation.validateProductCategory(data.productCategoryId(), ValidateAction.ACTIVE_CHECK);
         productValidation.validateUniqueFields(data.name());
         Product product = new Product(data, productCategory);
         productRepository.save(product);
@@ -69,7 +70,7 @@ public class ProductService {
         ProductCategory productCategory = null;
 
         if(data.productCategoryId() != null){
-            productCategory = productCategoryValidation.validateProductCategory(data.productCategoryId());
+            productCategory = productCategoryValidation.validateProductCategory(data.productCategoryId(), ValidateAction.ACTIVE_CHECK);
         }
 
         product.update(data, productCategory);
