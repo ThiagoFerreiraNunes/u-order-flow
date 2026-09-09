@@ -78,13 +78,13 @@ public class ProductService {
 
     @Transactional
     public void delete(Long id){
-        Product product = productValidation.validateProduct(id, ProductAction.ACTIVE_CHECK);
+        Product product = productValidation.validateProduct(id, ProductAction.DELETE);
         product.delete();
     }
 
     @Transactional
     public ProductDetailsResponseDTO reactivate(Long id){
-        Product product = productValidation.validateProduct(id, ProductAction.ACTIVE_CHECK);
+        Product product = productValidation.validateProduct(id, ProductAction.REACTIVATE);
         product.reactivate();
         return new ProductDetailsResponseDTO(product);
     }
