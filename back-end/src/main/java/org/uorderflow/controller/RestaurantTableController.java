@@ -51,13 +51,13 @@ public class RestaurantTableController {
         return ResponseEntity.ok(restaurantTableService.update(id, data));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}/delete")
     public ResponseEntity<Void> delete(@PathVariable Long id){
         restaurantTableService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/{id}/reactivate")
     public ResponseEntity<RestaurantTableResponseDTO> reactivate(@PathVariable Long id){
         return ResponseEntity.ok(restaurantTableService.reactivate(id));
     }

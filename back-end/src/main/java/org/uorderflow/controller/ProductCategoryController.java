@@ -51,13 +51,13 @@ public class ProductCategoryController {
         return ResponseEntity.ok(productCategoryService.update(id, data));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}/delete")
     public ResponseEntity<Void> delete(@PathVariable Long id){
         productCategoryService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/{id}/reactivate")
     public ResponseEntity<ProductCategoryResponseDTO> reactivate(@PathVariable Long id){
         return ResponseEntity.ok(productCategoryService.reactivate(id));
     }
