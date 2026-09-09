@@ -16,6 +16,7 @@ import org.uorderflow.dto.product.ProductUpdateDTO;
 import org.uorderflow.service.product.ProductService;
 
 import java.net.URI;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/products")
@@ -43,7 +44,7 @@ public class ProductController {
             Authentication authentication
     ){
         boolean isAdmin = authentication.getAuthorities().stream()
-                .anyMatch(role -> role.getAuthority().equals("ADMIN"));
+                .anyMatch(role -> Objects.equals(role.getAuthority(), "ADMIN"));
 
         return ResponseEntity.ok(productService.findAll(name, isDeleted, pageable, isAdmin));
     }

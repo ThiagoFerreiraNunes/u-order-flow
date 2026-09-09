@@ -12,6 +12,7 @@ import org.uorderflow.service.productCategory.ProductCategoryService;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/product-categories")
@@ -36,7 +37,7 @@ public class ProductCategoryController {
             Authentication authentication
     ){
         boolean isAdmin = authentication.getAuthorities().stream()
-                .anyMatch(role -> role.getAuthority().equals("ADMIN"));
+                .anyMatch(role -> Objects.equals(role.getAuthority(), "ADMIN"));
 
         return ResponseEntity.ok(productCategoryService.findAll(isDeleted, isAdmin));
     }

@@ -12,6 +12,7 @@ import org.uorderflow.service.restaurantTable.RestaurantTableService;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/restaurant-tables")
@@ -36,7 +37,7 @@ public class RestaurantTableController {
             Authentication authentication
     ){
         boolean isAdmin = authentication.getAuthorities().stream()
-                .anyMatch(role -> role.getAuthority().equals("ADMIN"));
+                .anyMatch(role -> Objects.equals(role.getAuthority(), "ADMIN"));
 
         return ResponseEntity.ok(restaurantTableService.findAll(isDeleted, isAdmin));
     }
