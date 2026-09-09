@@ -92,13 +92,13 @@ public class UserService {
 
     @Transactional
     public void delete(Long id){
-        User user = userValidation.validateUser(id, UserAction.ACTIVE_CHECK);
+        User user = userValidation.validateUser(id, UserAction.DELETE);
         user.delete();
     }
 
     @Transactional
     public UserResponseDTO reactivate(Long id){
-        User user = userValidation.validateUser(id, UserAction.ACTIVE_CHECK);
+        User user = userValidation.validateUser(id, UserAction.REACTIVATE);
         user.reactivate();
         return new UserResponseDTO(user);
     }
