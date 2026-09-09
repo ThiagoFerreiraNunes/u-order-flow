@@ -55,7 +55,7 @@ public class Order {
     }
 
     public void update(User employee){
-        this.employee = employee;
+        if(employee != null) this.employee = employee;
     }
 
     public void cancelOrder(){
