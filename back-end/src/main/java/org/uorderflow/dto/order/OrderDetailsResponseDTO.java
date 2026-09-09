@@ -28,7 +28,7 @@ public record OrderDetailsResponseDTO(
                 FormatUtils.formatDateTime(order.getCreatedAt()),
                 resolveDeliveredAt(order),
                 order.getBill().getCustomer(),
-                new UserResponseDTO(order.getWaiter()),
+                new UserResponseDTO(order.getEmployee()),
                 new RestaurantTableResponseDTO(order.getBill().getRestaurantTable()),
                 FormatUtils.formatToBRL(order.getItems().stream()
                         .map(item -> item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
