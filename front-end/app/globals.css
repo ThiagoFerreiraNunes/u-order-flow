@@ -1,26 +1,51 @@
 @import "tailwindcss";
 
+/* ─── Design Tokens ─────────────────────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Surface */
+  --color-sidebar:    #3c3c3c;
+  --color-page-bg:    #ebebeb;
+  --color-card:       #ffffff;
+
+  /* Brand */
+  --color-orange:     #f97316;
+  --color-orange-hov: #ea6c0e;
+
+  /* Text */
+  --color-text:       #1a1a1a;
+  --color-text-muted: #6b7280;
+
+  /* Border */
+  --color-border:     #d1d5db;
+
+  /* Fonts */
+  --font-sans: var(--font-geist-sans), system-ui, Arial, sans-serif;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--color-page-bg);
+  --color-foreground: var(--color-text);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ─── Base ──────────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-page-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
 }
+
+/* ─── Scrollbar ──────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #c4c4c4; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #a0a0a0; }
+
+/* ─── Form reset ─────────────────────────────────────────────────────────── */
+input, select, textarea, button { font-family: inherit; }
