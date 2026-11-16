@@ -25,7 +25,8 @@ public record BillDetailsResponseDTO(
                 bill.getStatus().name(),
                 FormatUtils.formatDateTime(bill.getCreatedAt()),
                 resolvePaidAt(bill),
-                bill.getRestaurantTable().getNumber(),
+                bill.getRestaurantTable() != null
+                    ? bill.getRestaurantTable().getNumber() : null,
                 bill.getOrders() != null
                         ? FormatUtils.formatToBRL(bill.getOrders().stream()
                             .flatMap(order -> order.getItems().stream())
