@@ -9,7 +9,6 @@ import org.uorderflow.dto.bill.BillDetailsResponseDTO;
 import org.uorderflow.dto.bill.BillSummaryResponseDTO;
 import org.uorderflow.dto.bill.BillUpdateDTO;
 import org.uorderflow.enums.bill.BillAction;
-import org.uorderflow.enums.generic.ValidateAction;
 import org.uorderflow.model.Bill;
 import org.uorderflow.model.RestaurantTable;
 import org.uorderflow.repository.BillRepository;
@@ -36,7 +35,7 @@ public class BillService {
 
     @Transactional
     public BillDetailsResponseDTO createBill(BillCreateDTO data){
-        RestaurantTable restaurantTable = restaurantTableValidation.validateRestaurantTable(data.restaurantTableId(), ValidateAction.ACTIVE_CHECK);
+        RestaurantTable restaurantTable = restaurantTableValidation.validateRestaurantTable(data.restaurantTableId());
         Bill bill = new Bill(data, restaurantTable);
         billRepository.save(bill);
         return new BillDetailsResponseDTO(bill);
@@ -65,7 +64,7 @@ public class BillService {
         RestaurantTable restaurantTable = null;
 
         if(data.restaurantTableId() != null){
-            restaurantTable = restaurantTableValidation.validateRestaurantTable(data.restaurantTableId(), ValidateAction.ACTIVE_CHECK);
+            restaurantTable = restaurantTableValidation.validateRestaurantTable(data.restaurantTableId());
         }
 
         bill.update(data, restaurantTable);
@@ -92,5 +91,4 @@ public class BillService {
         bill.cancelBill();
         return new BillDetailsResponseDTO(bill);
     }
-
 }

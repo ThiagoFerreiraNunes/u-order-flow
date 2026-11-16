@@ -2,15 +2,13 @@ package org.uorderflow.service.product;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.uorderflow.dto.product.ProductCreateDTO;
 import org.uorderflow.dto.product.ProductDetailsResponseDTO;
 import org.uorderflow.dto.product.ProductSummaryResponseDTO;
 import org.uorderflow.dto.product.ProductUpdateDTO;
-import org.uorderflow.enums.generic.ValidateAction;
-import org.uorderflow.enums.product.ProductAction;
+import org.uorderflow.infra.exception.BusinessRuleException;
 import org.uorderflow.model.Product;
 import org.uorderflow.model.ProductCategory;
 import org.uorderflow.repository.ProductRepository;
@@ -33,44 +31,47 @@ public class ProductService {
 
     @Transactional
     public ProductDetailsResponseDTO create(ProductCreateDTO data){
-        ProductCategory productCategory = productCategoryValidation.validateProductCategory(data.productCategoryId(), ValidateAction.ACTIVE_CHECK);
-        productValidation.validateUniqueFields(data.name());
+        ProductCategory productCategory = productCategoryValidation.validateProductCategory(data.productCategoryId());
+
+        if(productRepository.existsByName(data.name())){
+            throw new BusinessRuleException("A Product with the name '" + data.name() + "' already exists");
+        }
+
         Product product = new Product(data, productCategory);
         productRepository.save(product);
         return new ProductDetailsResponseDTO(product);
     }
 
     @Transactional(readOnly = true)
-    public Page<ProductSummaryResponseDTO> findAll(String name, boolean isDeleted, Pageable pageable, boolean isAdmin){
-        if (isDeleted && !isAdmin) {
-            throw new AccessDeniedException("Only users with the ADMIN role can view deleted products.");
-        }
-
+    public Page<ProductSummaryResponseDTO> findAll(String name, Pageable pageable){
         if (name != null && !name.isBlank()) {
-            return productRepository.findAllPagedByName(name, isDeleted, pageable).map(ProductSummaryResponseDTO::new);
+            return productRepository.findAllPagedByName(name, pageable).map(ProductSummaryResponseDTO::new);
         }
 
-        return productRepository.findAllPaged(isDeleted, pageable).map(ProductSummaryResponseDTO::new);
+        return productRepository.findAllPaged(pageable).map(ProductSummaryResponseDTO::new);
     }
 
     @Transactional(readOnly = true)
     public ProductDetailsResponseDTO findById(Long id){
-        Product product = productValidation.validateProduct(id, ProductAction.ACTIVE_CHECK);
+        Product product = productValidation.validateProduct(id);
         return new ProductDetailsResponseDTO(product);
     }
 
     @Transactional
     public ProductDetailsResponseDTO update(Long id, ProductUpdateDTO data){
-        Product product = productValidation.validateProduct(id, ProductAction.ACTIVE_CHECK);
+        Product product = productValidation.validateProduct(id);
 
         if(data.name() != null && !data.name().equals(product.getName())){
-            productValidation.validateUniqueFields(data.name());
+            boolean nameExists = productRepository.existsByNameAndIdNot(data.name(), id);
+            if (nameExists) {
+                throw new BusinessRuleException("A Product with the name '" + data.name() + "' already exists");
+            }
         }
 
         ProductCategory productCategory = null;
 
         if(data.productCategoryId() != null){
-            productCategory = productCategoryValidation.validateProductCategory(data.productCategoryId(), ValidateAction.ACTIVE_CHECK);
+            productCategory = productCategoryValidation.validateProductCategory(data.productCategoryId());
         }
 
         product.update(data, productCategory);
@@ -79,14 +80,7 @@ public class ProductService {
 
     @Transactional
     public void delete(Long id){
-        Product product = productValidation.validateProduct(id, ProductAction.DELETE);
+        Product product = productValidation.validateProduct(id);
         product.delete();
-    }
-
-    @Transactional
-    public ProductDetailsResponseDTO reactivate(Long id){
-        Product product = productValidation.validateProduct(id, ProductAction.REACTIVATE);
-        product.reactivate();
-        return new ProductDetailsResponseDTO(product);
     }
 }

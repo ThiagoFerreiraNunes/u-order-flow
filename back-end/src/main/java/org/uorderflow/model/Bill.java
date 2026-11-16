@@ -74,5 +74,4 @@ public class Bill {
     public void cancelBill() {
         this.status = BillStatus.CANCELLED;
     }
-
 }

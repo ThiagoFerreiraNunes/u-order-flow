@@ -6,11 +6,13 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLRestriction;
 import org.uorderflow.dto.restaurantTable.RestaurantTableCreateDTO;
 import org.uorderflow.dto.restaurantTable.RestaurantTableUpdateDTO;
 
 @Table(name = "tb_restaurant_tables")
 @Entity(name = "RestaurantTable")
+@SQLRestriction("is_deleted = false")
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,7 +23,7 @@ public class RestaurantTable {
     @Column(name = "restaurant_table_id")
     private Long id;
 
-    @Column(nullable = false, unique = true, name = "restaurant_table_number")
+    @Column(nullable = false, name = "restaurant_table_number")
     @Positive
     private Integer number;
 
@@ -39,9 +41,5 @@ public class RestaurantTable {
 
     public void delete(){
         this.isDeleted = true;
-    }
-
-    public void reactivate(){
-        this.isDeleted = false;
     }
 }

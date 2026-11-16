@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLRestriction;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,6 +18,7 @@ import java.util.List;
 
 @Table(name = "tb_users")
 @Entity(name = "User")
+@SQLRestriction("is_deleted = false")
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -30,7 +32,7 @@ public class User implements UserDetails {
     @Column(nullable = false, length = 100, name = "user_name")
     private String name;
 
-    @Column(nullable = false, unique = true, length = 100, name = "user_email")
+    @Column(nullable = false, length = 100, name = "user_email")
     private String email;
 
     @Column(nullable = false, length = 100, name = "user_password")
@@ -100,9 +102,5 @@ public class User implements UserDetails {
 
     public void delete(){
         this.isDeleted = true;
-    }
-
-    public void reactivate(){
-        this.isDeleted = false;
     }
 }

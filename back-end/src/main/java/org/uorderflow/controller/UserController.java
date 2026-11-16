@@ -30,7 +30,6 @@ public class UserController {
     @GetMapping
     public ResponseEntity<Page<UserResponseDTO>> findAll(
             @RequestParam(required = false) String name,
-            @RequestParam(name = "is-deleted", defaultValue = "false") boolean isDeleted,
             @RequestParam(name = "exclude-role", required = false) UserRole excludeRole,
             @PageableDefault(page = 0, size = 20, sort = "name", direction = Sort.Direction.ASC) Pageable pageable,
             Authentication authentication
@@ -38,7 +37,7 @@ public class UserController {
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(role -> Objects.equals(role.getAuthority(), "ADMIN"));
 
-        return ResponseEntity.ok(userService.findAll(name, isDeleted, excludeRole, pageable, isAdmin));
+        return ResponseEntity.ok(userService.findAll(name, excludeRole, pageable, isAdmin));
     }
 
     @GetMapping("{id}")
@@ -52,18 +51,13 @@ public class UserController {
         return ResponseEntity.ok(userService.update(id, data));
     }
 
-    @DeleteMapping("{id}/delete")
+    @DeleteMapping("{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id){
         userService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("{id}/reactivate")
-    public ResponseEntity<UserResponseDTO> reactivate(@PathVariable Long id){
-        return ResponseEntity.ok(userService.reactivate(id));
-    }
-
-    @PatchMapping("{id}/password")
+    @PatchMapping("{id}/update-password")
     public ResponseEntity<Void> updatePassword(
             @PathVariable Long id,
             @RequestBody @Valid UserPasswordUpdateDTO data,

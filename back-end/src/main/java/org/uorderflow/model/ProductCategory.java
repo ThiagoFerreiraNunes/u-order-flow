@@ -5,11 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLRestriction;
 import org.uorderflow.dto.productCategory.ProductCategoryCreateDTO;
 import org.uorderflow.dto.productCategory.ProductCategoryUpdateDTO;
 
 @Table(name = "tb_product_categories")
 @Entity(name = "ProductCategory")
+@SQLRestriction("is_deleted = false")
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,7 +22,7 @@ public class ProductCategory {
     @Column(name = "category_id")
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 50, name = "category_name")
+    @Column(nullable = false, length = 50, name = "category_name")
     private String name;
 
     @Column(nullable = false, name = "is_deleted")
@@ -37,9 +39,5 @@ public class ProductCategory {
 
     public void delete(){
         this.isDeleted = true;
-    }
-
-    public void reactivate(){
-        this.isDeleted = false;
     }
 }

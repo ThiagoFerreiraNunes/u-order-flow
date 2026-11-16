@@ -2,7 +2,6 @@ package org.uorderflow.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.uorderflow.dto.restaurantTable.RestaurantTableCreateDTO;
@@ -12,7 +11,6 @@ import org.uorderflow.service.restaurantTable.RestaurantTableService;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/restaurant-tables")
@@ -32,14 +30,8 @@ public class RestaurantTableController {
     }
 
     @GetMapping
-    public ResponseEntity<List<RestaurantTableResponseDTO>> findAll(
-            @RequestParam(name = "is-deleted", defaultValue = "false") boolean isDeleted,
-            Authentication authentication
-    ){
-        boolean isAdmin = authentication.getAuthorities().stream()
-                .anyMatch(role -> Objects.equals(role.getAuthority(), "ADMIN"));
-
-        return ResponseEntity.ok(restaurantTableService.findAll(isDeleted, isAdmin));
+    public ResponseEntity<List<RestaurantTableResponseDTO>> findAll(){
+        return ResponseEntity.ok(restaurantTableService.findAll());
     }
 
     @GetMapping("/{id}")
@@ -52,14 +44,9 @@ public class RestaurantTableController {
         return ResponseEntity.ok(restaurantTableService.update(id, data));
     }
 
-    @DeleteMapping("/{id}/delete")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id){
         restaurantTableService.delete(id);
         return ResponseEntity.noContent().build();
-    }
-
-    @PatchMapping("/{id}/reactivate")
-    public ResponseEntity<RestaurantTableResponseDTO> reactivate(@PathVariable Long id){
-        return ResponseEntity.ok(restaurantTableService.reactivate(id));
     }
 }

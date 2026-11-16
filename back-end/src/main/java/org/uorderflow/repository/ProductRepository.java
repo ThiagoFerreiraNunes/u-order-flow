@@ -1,5 +1,6 @@
 package org.uorderflow.repository;
 
+import jakarta.validation.constraints.Size;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,24 +16,18 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query(value = "SELECT p FROM Product p " +
             "JOIN FETCH p.productCategory " +
-            "WHERE p.isDeleted = :isDeleted AND " +
-            "LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%'))",
+            "WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%'))",
             countQuery = "SELECT COUNT(p) FROM Product p " +
-                    "WHERE p.isDeleted = :isDeleted AND " +
-                    "LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%'))")
+                    "WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%'))")
     Page<Product> findAllPagedByName(
             @Param("name") String name,
-            @Param("isDeleted") boolean isDeleted,
             Pageable pageable
     );
 
     @Query(value = "SELECT p FROM Product p " +
-            "JOIN FETCH p.productCategory " +
-            "WHERE p.isDeleted = :isDeleted",
-            countQuery = "SELECT COUNT(p) FROM Product p " +
-                    "WHERE p.isDeleted = :isDeleted")
+            "JOIN FETCH p.productCategory ",
+            countQuery = "SELECT COUNT(p) FROM Product p ")
     Page<Product> findAllPaged(
-            @Param("isDeleted") boolean isDeleted,
             Pageable pageable
     );
 
@@ -40,4 +35,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "JOIN FETCH p.productCategory " +
             "WHERE p.id = :id")
     Optional<Product> findByIdWithDetails(@Param("id") Long id);
+
+    @Query("SELECT COUNT(p) > 0 FROM Product p WHERE LOWER(p.name) = LOWER(:name) AND p.id <> :id")
+    boolean existsByNameAndIdNot(@Param("name") String name, @Param("id") Long id);
 }
