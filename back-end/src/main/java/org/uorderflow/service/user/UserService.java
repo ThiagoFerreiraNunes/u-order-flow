@@ -10,8 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.uorderflow.dto.user.UserPasswordUpdateDTO;
 import org.uorderflow.dto.user.UserResponseDTO;
 import org.uorderflow.dto.user.UserUpdateDTO;
-import org.uorderflow.enums.user.UserAction;
 import org.uorderflow.enums.user.UserRole;
+import org.uorderflow.infra.exception.BusinessRuleException;
 import org.uorderflow.model.User;
 import org.uorderflow.repository.UserRepository;
 
@@ -31,21 +31,17 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public Page<UserResponseDTO> findAll(String name, boolean isDeleted, UserRole excludeRole, Pageable pageable, boolean isAdmin){
-        if (isDeleted && !isAdmin) {
-            throw new AccessDeniedException("Only users with the ADMIN role can view deleted users.");
-        }
-
+    public Page<UserResponseDTO> findAll(String name, UserRole excludeRole, Pageable pageable, boolean isAdmin){
         if (excludeRole != null) {
-            return userRepository.findAllPagedExcludingRole(excludeRole, isDeleted, pageable).map(UserResponseDTO::new);
+            return userRepository.findAllPagedExcludingRole(excludeRole, pageable).map(UserResponseDTO::new);
         }
 
         if (isAdmin) {
             if (name != null && !name.isBlank()) {
-                return userRepository.findAllPagedByName(name, isDeleted, pageable).map(UserResponseDTO::new);
+                return userRepository.findAllPagedByName(name, pageable).map(UserResponseDTO::new);
             }
 
-            return userRepository.findAllPaged(isDeleted, pageable).map(UserResponseDTO::new);
+            return userRepository.findAll(pageable).map(UserResponseDTO::new);
         }
 
         throw new AccessDeniedException("Only users with the ADMIN role can use the findAll method without the 'exclude-role' parameter.");
@@ -54,7 +50,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserResponseDTO findById(Long id, User loggedUser){
         if(loggedUser.getRole() == UserRole.ADMIN || Objects.equals(loggedUser.getId(), id)){
-            User user = userValidation.validateUser(id, UserAction.ACTIVE_CHECK);
+            User user = userValidation.validateUser(id);
             return new UserResponseDTO(user);
         }
         throw new AccessDeniedException("Users with the " + loggedUser.getRole() + " role can only use the findById method with their own ids.");
@@ -62,10 +58,13 @@ public class UserService {
 
     @Transactional
     public UserResponseDTO update(Long id, UserUpdateDTO data) {
-        User user = userValidation.validateUser(id, UserAction.ACTIVE_CHECK);
+        User user = userValidation.validateUser(id);
 
         if(data.email() != null && !data.email().equals(user.getEmail())){
-            userValidation.validateUniqueFields(data.email());
+            boolean emailExists = userRepository.existsByEmailAndIdNot(data.email(), id);
+            if (emailExists) {
+                throw new BusinessRuleException("A User with the email '" + data.email() + "' already exists");
+            }
         }
 
         user.update(data);
@@ -78,7 +77,7 @@ public class UserService {
             throw new AccessDeniedException("Users with the " + loggedUser.getRole() + " role can only update their own passwords.");
         }
 
-        User user = userValidation.validateUser(id, UserAction.ACTIVE_CHECK);
+        User user = userValidation.validateUser(id);
 
         if (loggedUser.getRole() != UserRole.ADMIN) {
             if (!passwordEncoder.matches(data.currentPassword(), user.getPassword())) {
@@ -92,14 +91,7 @@ public class UserService {
 
     @Transactional
     public void delete(Long id){
-        User user = userValidation.validateUser(id, UserAction.DELETE);
+        User user = userValidation.validateUser(id);
         user.delete();
-    }
-
-    @Transactional
-    public UserResponseDTO reactivate(Long id){
-        User user = userValidation.validateUser(id, UserAction.REACTIVATE);
-        user.reactivate();
-        return new UserResponseDTO(user);
     }
 }

@@ -13,29 +13,21 @@ public interface UserRepository extends JpaRepository<User, Long> {
     UserDetails findByEmail(String email);
 
     @Query("SELECT u FROM User u " +
-            "WHERE u.isDeleted = :isDeleted AND " +
-            "LOWER(u.name) LIKE LOWER(CONCAT('%', :name, '%'))")
+            "WHERE LOWER(u.name) LIKE LOWER(CONCAT('%', :name, '%'))")
     Page<User> findAllPagedByName(
             @Param("name") String name,
-            @Param("isDeleted") boolean isDeleted,
             Pageable pageable
     );
 
     @Query("SELECT u FROM User u " +
-            "WHERE u.isDeleted = :isDeleted")
-    Page<User> findAllPaged(
-            @Param("isDeleted") boolean isDeleted,
-            Pageable pageable
-    );
-
-    @Query("SELECT u FROM User u " +
-            "WHERE u.isDeleted = :isDeleted AND " +
-            "u.role <> :excludeRole")
+            "WHERE u.role <> :excludeRole")
     Page<User> findAllPagedExcludingRole(
             @Param("excludeRole") UserRole excludeRole,
-            @Param("isDeleted") boolean isDeleted,
             Pageable pageable
     );
 
     boolean existsByEmail(String email);
+
+    @Query("SELECT COUNT(u) > 0 FROM User u WHERE u.email = :email AND u.id <> :id")
+    boolean existsByEmailAndIdNot(@Param("email") String email, @Param("id") Long id);
 }
