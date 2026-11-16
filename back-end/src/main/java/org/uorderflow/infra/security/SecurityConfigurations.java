@@ -2,6 +2,8 @@ package org.uorderflow.infra.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -24,6 +26,18 @@ public class SecurityConfigurations {
     }
 
     @Bean
+    @Profile("dev")
+    @Order(1)
+    public SecurityFilterChain swaggerFilterChain(HttpSecurity httpSecurity) throws Exception {
+        return httpSecurity
+                .securityMatcher("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
+                .build();
+    }
+
+    @Bean
+    @Order(2)
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
         return httpSecurity
                 .csrf(csrf -> csrf.disable())
