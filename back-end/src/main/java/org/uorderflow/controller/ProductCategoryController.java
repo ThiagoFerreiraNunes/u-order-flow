@@ -2,7 +2,6 @@ package org.uorderflow.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.uorderflow.dto.productCategory.ProductCategoryCreateDTO;
@@ -12,7 +11,6 @@ import org.uorderflow.service.productCategory.ProductCategoryService;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/product-categories")
@@ -32,14 +30,8 @@ public class ProductCategoryController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductCategoryResponseDTO>> findAll(
-            @RequestParam(name = "is-deleted", defaultValue = "false") boolean isDeleted,
-            Authentication authentication
-    ){
-        boolean isAdmin = authentication.getAuthorities().stream()
-                .anyMatch(role -> Objects.equals(role.getAuthority(), "ADMIN"));
-
-        return ResponseEntity.ok(productCategoryService.findAll(isDeleted, isAdmin));
+    public ResponseEntity<List<ProductCategoryResponseDTO>> findAll(){
+        return ResponseEntity.ok(productCategoryService.findAll());
     }
 
     @GetMapping("/{id}")
@@ -52,15 +44,9 @@ public class ProductCategoryController {
         return ResponseEntity.ok(productCategoryService.update(id, data));
     }
 
-    @DeleteMapping("/{id}/delete")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id){
         productCategoryService.delete(id);
         return ResponseEntity.noContent().build();
     }
-
-    @PatchMapping("/{id}/reactivate")
-    public ResponseEntity<ProductCategoryResponseDTO> reactivate(@PathVariable Long id){
-        return ResponseEntity.ok(productCategoryService.reactivate(id));
-    }
-
 }
