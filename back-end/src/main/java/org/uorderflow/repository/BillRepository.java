@@ -31,7 +31,7 @@ public interface BillRepository extends JpaRepository<Bill, Long> {
     );
 
     @Query("SELECT DISTINCT b FROM Bill b " +
-            "LEFT FETCH b.restaurantTable " +
+            "LEFT JOIN FETCH b.restaurantTable " +
             "LEFT JOIN FETCH b.orders " +
             "WHERE b.id = :id")
     Optional<Bill> findByIdWithDetails(@Param("id") Long id);
