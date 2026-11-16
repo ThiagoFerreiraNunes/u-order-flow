@@ -35,7 +35,11 @@ public class BillService {
 
     @Transactional
     public BillDetailsResponseDTO createBill(BillCreateDTO data){
-        RestaurantTable restaurantTable = restaurantTableValidation.validateRestaurantTable(data.restaurantTableId());
+        RestaurantTable restaurantTable = null;
+        if(data.restaurantTableId() != null){
+            restaurantTable = restaurantTableValidation.validateRestaurantTable(data.restaurantTableId());
+        }
+
         Bill bill = new Bill(data, restaurantTable);
         billRepository.save(bill);
         return new BillDetailsResponseDTO(bill);
