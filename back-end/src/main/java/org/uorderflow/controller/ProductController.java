@@ -6,7 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.uorderflow.dto.product.ProductCreateDTO;
@@ -16,7 +15,6 @@ import org.uorderflow.dto.product.ProductUpdateDTO;
 import org.uorderflow.service.product.ProductService;
 
 import java.net.URI;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/products")
@@ -28,7 +26,6 @@ public class ProductController {
         this.productService = productService;
     }
 
-
     @PostMapping
     public ResponseEntity<ProductDetailsResponseDTO> create(@RequestBody @Valid ProductCreateDTO data, UriComponentsBuilder builder){
         ProductDetailsResponseDTO product = productService.create(data);
@@ -39,14 +36,9 @@ public class ProductController {
     @GetMapping
     public ResponseEntity<Page<ProductSummaryResponseDTO>> findAll(
             @RequestParam(required = false) String name,
-            @RequestParam(name = "is-deleted", defaultValue = "false") boolean isDeleted,
-            @PageableDefault(page = 0, size = 30, sort = "name", direction = Sort.Direction.ASC) Pageable pageable,
-            Authentication authentication
+            @PageableDefault(page = 0, size = 30, sort = "name", direction = Sort.Direction.ASC) Pageable pageable
     ){
-        boolean isAdmin = authentication.getAuthorities().stream()
-                .anyMatch(role -> Objects.equals(role.getAuthority(), "ADMIN"));
-
-        return ResponseEntity.ok(productService.findAll(name, isDeleted, pageable, isAdmin));
+        return ResponseEntity.ok(productService.findAll(name, pageable));
     }
 
     @GetMapping("/{id}")
@@ -59,14 +51,9 @@ public class ProductController {
         return ResponseEntity.ok(productService.update(id, data));
     }
 
-    @DeleteMapping("/{id}/delete")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id){
         productService.delete(id);
         return ResponseEntity.noContent().build();
-    }
-
-    @PatchMapping("/{id}/reactivate")
-    public ResponseEntity<ProductDetailsResponseDTO> reactivate(@PathVariable Long id){
-        return ResponseEntity.ok(productService.reactivate(id));
     }
 }

@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLRestriction;
 import org.uorderflow.dto.product.ProductCreateDTO;
 import org.uorderflow.dto.product.ProductUpdateDTO;
 
@@ -13,6 +14,7 @@ import java.math.BigDecimal;
 
 @Table(name = "tb_products")
 @Entity(name = "Product")
+@SQLRestriction("is_deleted = false")
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,7 +25,7 @@ public class Product {
     @Column(name = "product_id")
     private Long id;
 
-    @Column(nullable = false, length = 100, unique = true, name = "product_name")
+    @Column(nullable = false, length = 100, name = "product_name")
     private String name;
 
     @Column(nullable = false, length = 255, name = "product_description")
@@ -67,9 +69,5 @@ public class Product {
 
     public void delete(){
         this.isDeleted = true;
-    }
-
-    public void reactivate(){
-        this.isDeleted = false;
     }
 }
