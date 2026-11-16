@@ -10,8 +10,7 @@ import org.uorderflow.dto.order.OrderSummaryResponseDTO;
 import org.uorderflow.dto.order.OrderUpdateDTO;
 import org.uorderflow.dto.orderProduct.OrderProductCreateDTO;
 import org.uorderflow.enums.order.OrderAction;
-import org.uorderflow.enums.product.ProductAction;
-import org.uorderflow.enums.user.UserAction;
+import org.uorderflow.infra.exception.BusinessRuleException;
 import org.uorderflow.model.*;
 import org.uorderflow.repository.OrderRepository;
 import org.uorderflow.service.bill.BillValidation;
@@ -42,11 +41,16 @@ public class OrderService {
     @Transactional
     public OrderDetailsResponseDTO createOrder(Long billId, OrderCreateDTO data){
         Bill bill = billValidation.validateBill(billId, null);
-        User employee = userValidation.validateUser(data.employeeId(), UserAction.CREATE_ORDER);
+        User employee = userValidation.validateUser(data.employeeId());
         Order order = new Order(employee);
 
         for (OrderProductCreateDTO item : data.items()){
-            Product product = productValidation.validateProduct(item.productId(), ProductAction.CREATE_ORDER_PRODUCT);
+            Product product = productValidation.validateProduct(item.productId());
+
+            if (Boolean.FALSE.equals(product.getIsAvailable())){
+                throw new BusinessRuleException("The Product with the name " + product.getName() + " is not available.");
+            }
+
             OrderProduct orderProduct = new OrderProduct(item, product);
             order.addItem(orderProduct);
         }
@@ -70,14 +74,19 @@ public class OrderService {
     @Transactional
     public OrderDetailsResponseDTO update(Long id, OrderUpdateDTO data){
         Order order = orderValidation.validateOrder(id, OrderAction.UPDATE);
-        User employee = userValidation.validateUser(data.employeeId(), UserAction.CREATE_ORDER);
+        User employee = userValidation.validateUser(data.employeeId());
         order.update(employee);
 
         if (data.items() != null){
             order.getItems().clear();
 
             for (OrderProductCreateDTO item : data.items()) {
-                Product product = productValidation.validateProduct(item.productId(), ProductAction.CREATE_ORDER_PRODUCT);
+                Product product = productValidation.validateProduct(item.productId());
+
+                if (Boolean.FALSE.equals(product.getIsAvailable())){
+                    throw new BusinessRuleException("The Product with the name " + product.getName() + " is not available.");
+                }
+
                 OrderProduct orderProduct = new OrderProduct(item, product);
                 order.addItem(orderProduct);
             }
