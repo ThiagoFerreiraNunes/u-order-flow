@@ -13,13 +13,13 @@ import java.util.Optional;
 public interface BillRepository extends JpaRepository<Bill, Long> {
 
     @Query(value = "SELECT b FROM Bill b " +
-            "JOIN FETCH b.restaurantTable",
+            "LEFT JOIN FETCH b.restaurantTable",
             countQuery = "SELECT count(b) FROM Bill b")
     Page<Bill> findAllPaged(Pageable pageable);
 
     @Query(
             value = "SELECT b FROM Bill b " +
-                    "JOIN FETCH b.restaurantTable " +
+                    "LEFT JOIN FETCH b.restaurantTable " +
                     "WHERE b.createdAt BETWEEN :startOfDay AND :endOfDay",
             countQuery = "SELECT COUNT(b) FROM Bill b " +
                     "WHERE b.createdAt BETWEEN :startOfDay AND :endOfDay"
@@ -31,10 +31,8 @@ public interface BillRepository extends JpaRepository<Bill, Long> {
     );
 
     @Query("SELECT DISTINCT b FROM Bill b " +
-            "JOIN FETCH b.restaurantTable " +
+            "LEFT JOIN FETCH b.restaurantTable " +
             "LEFT JOIN FETCH b.orders " +
             "WHERE b.id = :id")
     Optional<Bill> findByIdWithDetails(@Param("id") Long id);
-
-
 }

@@ -19,7 +19,8 @@ public record BillSummaryResponseDTO(
                 bill.getCustomer(),
                 bill.getStatus().name(),
                 FormatUtils.formatDateTime(bill.getCreatedAt()),
-                bill.getRestaurantTable().getNumber(),
+                bill.getRestaurantTable() != null
+                        ? bill.getRestaurantTable().getNumber() : null,
                 bill.getOrders() != null
                         ? FormatUtils.formatToBRL(bill.getOrders().stream()
                         .flatMap(order -> order.getItems().stream())

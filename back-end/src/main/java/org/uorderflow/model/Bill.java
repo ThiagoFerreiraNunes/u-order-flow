@@ -39,7 +39,7 @@ public class Bill {
     private LocalDateTime paidAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false, name = "restaurant_table_id")
+    @JoinColumn(nullable = true, name = "restaurant_table_id")
     private RestaurantTable restaurantTable;
 
     @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -54,7 +54,7 @@ public class Bill {
 
     public void update(BillUpdateDTO data, RestaurantTable restaurantTable){
         if(data.customer() != null) this.customer = data.customer();
-        if(restaurantTable != null) this.restaurantTable = restaurantTable;
+        this.restaurantTable = restaurantTable;
     }
 
     public void addOrder(Order order){
