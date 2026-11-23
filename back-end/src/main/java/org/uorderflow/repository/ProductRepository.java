@@ -8,6 +8,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.uorderflow.model.Product;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
@@ -38,4 +41,29 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query("SELECT COUNT(p) > 0 FROM Product p WHERE LOWER(p.name) = LOWER(:name) AND p.id <> :id")
     boolean existsByNameAndIdNot(@Param("name") String name, @Param("id") Long id);
+
+    @Query("""
+        SELECT op.product.id AS productId,
+           op.product.name AS productName,
+           SUM(op.quantity) AS quantitySold,
+           SUM(op.unitPrice * op.quantity) AS totalRevenue
+        FROM OrderProduct op
+        WHERE op.order.bill.status = PAID
+        AND op.order.bill.paidAt >= :startInclusive
+        AND op.order.bill.paidAt < :endExclusive
+        GROUP BY op.product.id, op.product.name
+        ORDER BY quantitySold DESC, productName ASC, productId ASC
+    """)
+    List<TopProductAggregate> findTopProductsSoldBetween(
+            @Param("startInclusive") LocalDateTime startInclusive,
+            @Param("endExclusive") LocalDateTime endExclusive,
+            Pageable pageable
+    );
+
+    interface TopProductAggregate {
+        Long getProductId();
+        String getProductName();
+        Long getQuantitySold();
+        BigDecimal getTotalRevenue();
+    }
 }
