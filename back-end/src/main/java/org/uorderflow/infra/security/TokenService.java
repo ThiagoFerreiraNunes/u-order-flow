@@ -10,42 +10,48 @@ import org.uorderflow.infra.exception.TokenGenerationException;
 import org.uorderflow.model.User;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 
 @Service
 public class TokenService {
 
+    private static final String ISSUER = "auth-restaurant";
+
     @Value("${api.security.token.secret}")
     private String secret;
 
-    public String generateToken(User user){
-        try{
+    public String generateToken(User user) {
+        try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.create()
-                    .withIssuer("auth-restaurant")
+                    .withIssuer(ISSUER)
                     .withSubject(user.getEmail())
+                    .withClaim("id", user.getId())
+                    .withClaim("role", user.getRole().name())
                     .withExpiresAt(generateExpirationDate())
                     .sign(algorithm);
-        }catch (JWTCreationException exception){
+        } catch (JWTCreationException exception) {
             throw new TokenGenerationException("Error while generating token.");
         }
     }
 
-    public String validateToken(String token){
-        try{
+    public String validateToken(String token) {
+        if (token == null || token.isBlank()) {
+            return null;
+        }
+        try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.require(algorithm)
-                    .withIssuer("auth-restaurant")
+                    .withIssuer(ISSUER)
                     .build()
                     .verify(token)
                     .getSubject();
         } catch (JWTVerificationException exception) {
-            return "";
+            return null;
         }
     }
 
-    private Instant generateExpirationDate(){
-        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
+    private Instant generateExpirationDate() {
+        return Instant.now().plus(2, ChronoUnit.HOURS);
     }
 }
