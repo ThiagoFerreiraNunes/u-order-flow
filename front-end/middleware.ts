@@ -56,8 +56,8 @@ export function middleware(request: NextRequest) {
   // Role-based route guards
   const role = extractRoleFromJwt(accessToken);
   if (role) {
-    // Only ADMIN can access /contas
-    if (pathname.startsWith('/contas') && role !== 'ADMIN') {
+    // Only ADMIN can access /contas and /mesas
+    if ((pathname.startsWith('/contas') || pathname.startsWith('/mesas')) && role !== 'ADMIN') {
       return NextResponse.redirect(new URL('/inicio', request.url));
     }
     // COOK cannot access /comandas

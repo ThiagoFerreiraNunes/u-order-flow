@@ -67,6 +67,17 @@ const NAV_ITEMS = [
       </svg>
     ),
   },
+  {
+    href: '/mesas',
+    label: 'Mesas',
+    icon: (
+      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <rect x="3" y="7" width="18" height="4" rx="1" />
+        <line x1="6" y1="11" x2="6" y2="19" strokeLinecap="round" />
+        <line x1="18" y1="11" x2="18" y2="19" strokeLinecap="round" />
+      </svg>
+    ),
+  },
 ];
 
 // ─── UOrderFlow Logo ─────────────────────────────────────────────────────────
@@ -102,7 +113,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const menuRef = useRef<HTMLDivElement>(null);
 
   const visibleNavItems = NAV_ITEMS.filter((item) => {
-    if (item.href === '/contas') return role === 'ADMIN';
+    if (item.href === '/contas' || item.href === '/mesas') return role === 'ADMIN';
     if (item.href === '/comandas') return role !== 'COOK';
     return true;
   });

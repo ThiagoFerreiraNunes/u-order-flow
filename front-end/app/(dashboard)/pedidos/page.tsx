@@ -439,8 +439,8 @@ export default function PedidosPage() {
       )}
 
       {/* KDS — colunas por status */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        {([STATUS_WAITING, STATUS_PREPARING, STATUS_DELIVERED] as const).map((status) => {
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
+        {([STATUS_WAITING, STATUS_PREPARING, STATUS_DELIVERED, STATUS_CANCELLED] as const).map((status) => {
           const col = displayed.filter((o) => o.status === status);
           return (
             <div key={status} className="bg-[#f9fafb] rounded-xl border border-[#e5e7eb] p-4">
@@ -458,8 +458,13 @@ export default function PedidosPage() {
                   <div key={order.id} className="bg-white rounded-lg border border-[#e5e7eb] p-3 shadow-sm">
                     <div className="flex items-start justify-between gap-2 mb-2">
                       <div>
-                        <p className="text-xs font-semibold text-[#1a1a1a]">Pedido #{order.id}</p>
-                        <p className="text-xs text-[#6b7280]">Cliente: {order.customer}</p>
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <p className="text-xs font-semibold text-[#1a1a1a]">Pedido #{order.id}</p>
+                          <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full ${STATUS_COLOR[order.status] ?? 'bg-gray-100 text-gray-600'}`}>
+                            {STATUS_LABEL[order.status] ?? order.status}
+                          </span>
+                        </div>
+                        <p className="text-xs text-[#6b7280] mt-0.5">Cliente: {order.customer}</p>
                         <p className="text-xs text-[#9ca3af]">Garçom: {order.employee}</p>
                         {order.restaurantTable && (
                           <p className="text-xs text-[#9ca3af]">Mesa {order.restaurantTable}</p>
