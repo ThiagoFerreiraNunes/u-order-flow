@@ -1,6 +1,8 @@
 import type { JwtPayload } from '@/types/user';
 
 const TOKEN_KEY = 'uorder_token';
+const EMAIL_KEY = 'uorder_email';
+const SESSION_COOKIE = 'uorder_logged_in';
 
 /** Decode a JWT without external libraries */
 function decodeJwt<T>(token: string): T | null {
@@ -20,11 +22,21 @@ function decodeJwt<T>(token: string): T | null {
   }
 }
 
+export function saveUserSession(email: string): void {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(EMAIL_KEY, email);
+  // Cookie for client/server middleware route protection (2h expiry)
+  document.cookie = `${SESSION_COOKIE}=true; path=/; max-age=${2 * 60 * 60}; SameSite=Lax`;
+}
+
 export function saveToken(token: string): void {
   if (typeof window === 'undefined') return;
   localStorage.setItem(TOKEN_KEY, token);
-  // Cookie for middleware route protection (2h expiry, same as JWT)
   document.cookie = `${TOKEN_KEY}=${token}; path=/; max-age=${2 * 60 * 60}; SameSite=Lax`;
+  const payload = decodeJwt<JwtPayload>(token);
+  if (payload?.sub) {
+    saveUserSession(payload.sub);
+  }
 }
 
 export function getToken(): string | null {
@@ -32,21 +44,28 @@ export function getToken(): string | null {
   return localStorage.getItem(TOKEN_KEY);
 }
 
-export function removeToken(): void {
+export function clearUserSession(): void {
   if (typeof window === 'undefined') return;
   localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(EMAIL_KEY);
+  document.cookie = `${SESSION_COOKIE}=; path=/; max-age=0`;
   document.cookie = `${TOKEN_KEY}=; path=/; max-age=0`;
 }
 
+export function removeToken(): void {
+  clearUserSession();
+}
+
 export function isAuthenticated(): boolean {
-  const token = getToken();
-  if (!token) return false;
-  const payload = decodeJwt<JwtPayload>(token);
-  if (!payload) return false;
-  return Date.now() < payload.exp * 1000;
+  if (typeof window === 'undefined') return false;
+  return Boolean(localStorage.getItem(EMAIL_KEY) || localStorage.getItem(TOKEN_KEY));
 }
 
 export function getUserEmail(): string | null {
+  if (typeof window === 'undefined') return null;
+  const savedEmail = localStorage.getItem(EMAIL_KEY);
+  if (savedEmail) return savedEmail;
+
   const token = getToken();
   if (!token) return null;
   const payload = decodeJwt<JwtPayload>(token);
@@ -63,7 +82,16 @@ export function getInitials(value: string | null): string {
     .join('');
 }
 
-export function logout(): void {
-  removeToken();
+export async function logout(): Promise<void> {
+  try {
+    const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080';
+    await fetch(`${BASE_URL}/api/auth/logout`, {
+      method: 'POST',
+      credentials: 'include',
+    });
+  } catch {
+    // Ignore network error on logout
+  }
+  clearUserSession();
   window.location.href = '/login';
 }

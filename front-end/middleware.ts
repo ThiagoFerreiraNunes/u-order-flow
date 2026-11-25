@@ -5,7 +5,10 @@ const TOKEN_KEY = 'uorder_token';
 const PUBLIC_ROUTES = ['/login'];
 
 export function middleware(request: NextRequest) {
-  const token = request.cookies.get(TOKEN_KEY)?.value;
+  const token =
+    request.cookies.get('access_token')?.value ||
+    request.cookies.get('uorder_logged_in')?.value ||
+    request.cookies.get(TOKEN_KEY)?.value;
   const { pathname } = request.nextUrl;
 
   const isPublicRoute = PUBLIC_ROUTES.some((r) => pathname.startsWith(r));

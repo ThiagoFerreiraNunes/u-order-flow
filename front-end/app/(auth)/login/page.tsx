@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { loginUser } from '@/lib/api';
-import { saveToken } from '@/lib/auth';
+import { saveUserSession } from '@/lib/auth';
 import type { ApiError } from '@/types/user';
 
 export default function LoginPage() {
@@ -19,8 +19,8 @@ export default function LoginPage() {
     setError('');
     setLoading(true);
     try {
-      const data = await loginUser({ email, password });
-      saveToken(data.token);
+      await loginUser({ email, password });
+      saveUserSession(email);
       router.push('/inicio');
     } catch (err: unknown) {
       if (err && typeof err === 'object') {
