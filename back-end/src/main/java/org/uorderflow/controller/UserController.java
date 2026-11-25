@@ -35,7 +35,7 @@ public class UserController {
             Authentication authentication
     ){
         boolean isAdmin = authentication.getAuthorities().stream()
-                .anyMatch(role -> Objects.equals(role.getAuthority(), "ADMIN"));
+                .anyMatch(role -> Objects.equals(role.getAuthority(), "ROLE_ADMIN"));
 
         return ResponseEntity.ok(userService.findAll(name, excludeRole, pageable, isAdmin));
     }

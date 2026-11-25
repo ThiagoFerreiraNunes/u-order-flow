@@ -1,3 +1,5 @@
+import type { OrderSummaryResponse } from './order';
+
 export type BillStatus = 'OPEN' | 'CLOSED' | 'PAID' | 'CANCELLED';
 
 export interface BillSummaryResponse {
@@ -9,23 +11,6 @@ export interface BillSummaryResponse {
   totalPrice: string;
 }
 
-export interface BillOrderProductResponse {
-  id: number;
-  productName: string;
-  unitPrice: string;
-  quantity: number;
-  note?: string;
-  totalPrice: string;
-}
-
-export interface BillOrderResponse {
-  id: number;
-  status: string;
-  employeeName: string;
-  createdAt: string;
-  items: BillOrderProductResponse[];
-}
-
 export interface BillDetailsResponse {
   id: number;
   customer: string;
@@ -34,7 +19,7 @@ export interface BillDetailsResponse {
   paidAt?: string | null;
   restaurantTable?: number | null;
   totalPrice: string;
-  orders: BillOrderResponse[];
+  orders: OrderSummaryResponse[];
 }
 
 export interface BillCreateRequest {

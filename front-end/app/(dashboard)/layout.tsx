@@ -1,9 +1,11 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useSyncExternalStore } from 'react';
 import { logout, getUserEmail, getInitials } from '@/lib/auth';
+import { useSession } from '@/lib/use-session';
 
 // ─── Nav items (matches prototype sidebar) ──────────────────────────────────
 const NAV_ITEMS = [
@@ -70,19 +72,40 @@ const NAV_ITEMS = [
 // ─── UOrderFlow Logo ─────────────────────────────────────────────────────────
 function UOrderLogo({ size = 36 }: { size?: number }) {
   return (
-    <div style={{ width: size, height: size }}>
-      <img src="/logo-uorder.png" alt="UOrderFlow Logo" className="w-full h-full object-contain" />
+    <div style={{ width: size, height: size }} className="relative flex items-center justify-center">
+      <Image
+        src="/logo-uorder.png"
+        alt="UOrderFlow Logo"
+        width={size}
+        height={size}
+        className="object-contain"
+        priority
+      />
     </div>
   );
 }
+
+const emptySubscribe = () => () => {};
 
 // ─── Dashboard Layout ────────────────────────────────────────────────────────
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const [userEmail] = useState<string | null>(() => getUserEmail());
+  const { role, email: sessionEmail } = useSession();
+  const localEmail = useSyncExternalStore(
+    emptySubscribe,
+    getUserEmail,
+    () => null,
+  );
+  const userEmail = sessionEmail ?? localEmail;
   const menuRef = useRef<HTMLDivElement>(null);
+
+  const visibleNavItems = NAV_ITEMS.filter((item) => {
+    if (item.href === '/contas') return role === 'ADMIN';
+    if (item.href === '/comandas') return role !== 'COOK';
+    return true;
+  });
 
   // Close user menu on outside click
   useEffect(() => {
@@ -136,7 +159,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         {/* Navigation */}
         <nav className="flex flex-col flex-1 py-2 overflow-y-auto">
-          {NAV_ITEMS.map((item) => {
+          {visibleNavItems.map((item) => {
             const isActive =
               pathname === item.href || pathname.startsWith(item.href + '/');
             return (

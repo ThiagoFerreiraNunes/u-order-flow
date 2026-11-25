@@ -27,8 +27,8 @@ export interface UserUpdateRequest {
 }
 
 export interface UserPasswordUpdateRequest {
-  oldPassword?: string;
-  newPassword?: string;
+  currentPassword?: string;
+  newPassword: string;
 }
 
 export interface TokenResponse {

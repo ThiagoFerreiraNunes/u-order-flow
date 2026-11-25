@@ -1,3 +1,7 @@
+import type { ProductSummaryResponse } from './product';
+import type { RestaurantTableResponse } from './table';
+import type { UserResponse } from './user';
+
 export type OrderStatus = 'WAITING' | 'PREPARING' | 'DELIVERED' | 'CANCELLED';
 
 export interface OrderItemCreateRequest {
@@ -7,12 +11,12 @@ export interface OrderItemCreateRequest {
 }
 
 export interface OrderCreateRequest {
-  employeeId?: number;
+  employeeId: number;
   items: OrderItemCreateRequest[];
 }
 
 export interface OrderUpdateRequest {
-  employeeId?: number;
+  employeeId: number;
   items: OrderItemCreateRequest[];
 }
 
@@ -27,11 +31,10 @@ export interface OrderSummaryResponse {
 }
 
 export interface OrderProductDetailsResponse {
-  id: number;
-  productName: string;
-  unitPrice: string;
+  product: ProductSummaryResponse;
+  note?: string | null;
   quantity: number;
-  note?: string;
+  unitPrice: string;
   totalPrice: string;
 }
 
@@ -41,7 +44,8 @@ export interface OrderDetailsResponse {
   createdAt: string;
   deliveredAt?: string | null;
   customer: string;
-  employee: string;
-  restaurantTable?: number | null;
+  employee: UserResponse;
+  restaurantTable?: RestaurantTableResponse | null;
+  totalPrice: string;
   items: OrderProductDetailsResponse[];
 }

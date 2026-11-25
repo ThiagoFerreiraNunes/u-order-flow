@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { loginUser } from '@/lib/api';
 import { saveUserSession } from '@/lib/auth';
@@ -42,8 +43,15 @@ export default function LoginPage() {
       <header className="h-[52px] bg-[#3c3c3c] flex items-center px-4 sm:px-6 shrink-0">
         <div className="flex items-center gap-2.5">
           {/* Logo icon */}
-          <div className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center">
-            <img src="/logo-uorder.png" alt="UOrderFlow Logo" className="w-full h-full object-contain" />
+          <div className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center relative">
+            <Image
+              src="/logo-uorder.png"
+              alt="UOrderFlow Logo"
+              width={36}
+              height={36}
+              className="object-contain"
+              priority
+            />
           </div>
           <span className="text-white font-bold text-sm tracking-wide">UOrderFlow</span>
         </div>
@@ -56,8 +64,15 @@ export default function LoginPage() {
           <div className="bg-white rounded-xl shadow-sm border border-[#e5e7eb] px-5 py-7 sm:px-8 sm:py-9 md:px-10 md:py-10">
             {/* Brand */}
             <div className="flex flex-col items-center mb-6 sm:mb-8">
-              <div className="w-36 h-20 sm:w-48 sm:h-24 flex items-center justify-center mb-3">
-                <img src="/logo-uorder.png" alt="UOrderFlow Logo" className="w-full h-full object-contain" />
+              <div className="w-36 h-20 sm:w-48 sm:h-24 flex items-center justify-center mb-3 relative">
+                <Image
+                  src="/logo-uorder.png"
+                  alt="UOrderFlow Logo"
+                  width={192}
+                  height={96}
+                  className="object-contain"
+                  priority
+                />
               </div>
               <h1 className="text-lg sm:text-xl font-bold text-[#1a1a1a]">Bem-vindo!</h1>
               <p className="text-xs sm:text-sm text-[#6b7280] mt-1 text-center">Acesse sua conta para continuar</p>

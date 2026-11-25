@@ -21,7 +21,9 @@ public record OrderSummaryResponseDTO(
                 FormatUtils.formatDateTime(order.getCreatedAt()),
                 order.getBill().getCustomer(),
                 order.getEmployee().getName(),
-                order.getBill().getRestaurantTable().getNumber(),
+                order.getBill().getRestaurantTable() != null
+                        ? order.getBill().getRestaurantTable().getNumber()
+                        : null,
                 FormatUtils.formatToBRL(order.getItems().stream()
                         .map(item -> item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
                         .reduce(BigDecimal.ZERO, BigDecimal::add))

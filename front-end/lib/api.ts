@@ -37,7 +37,6 @@ import type {
   OrderCreateRequest,
   OrderUpdateRequest,
 } from '@/types/order';
-import { getToken } from './auth';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080';
 
@@ -51,12 +50,10 @@ async function apiFetch<T>(
     headers.set('Content-Type', 'application/json');
   }
 
-  if (authenticated) {
-    const token = getToken();
-    if (token) {
-      headers.set('Authorization', `Bearer ${token}`);
-    }
-  }
+  // Authentication is handled via the HttpOnly `access_token` cookie
+  // sent automatically by the browser when credentials: 'include' is set.
+  // Do NOT read localStorage or set Authorization header here.
+  void authenticated; // kept for API compatibility
 
   const res = await fetch(`${BASE_URL}${path}`, {
     ...options,
