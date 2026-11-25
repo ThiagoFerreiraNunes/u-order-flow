@@ -110,9 +110,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       {/* ── Sidebar (drawer on mobile, fixed on desktop) ───────────────── */}
       <aside
-        className={`fixed top-0 left-0 bottom-0 flex flex-col z-40 transition-transform duration-200 ease-in-out md:translate-x-0 ${
-          sidebarOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'
-        }`}
+        className={`fixed top-0 left-0 bottom-0 flex flex-col z-40 transition-transform duration-200 ease-in-out md:translate-x-0 ${sidebarOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'
+          }`}
         style={{ width: 136, background: '#3c3c3c' }}
       >
         {/* Logo area */}

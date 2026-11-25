@@ -1,0 +1,52 @@
+package org.uorderflow.controller;
+
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
+import org.uorderflow.dto.restaurantTable.RestaurantTableCreateDTO;
+import org.uorderflow.dto.restaurantTable.RestaurantTableResponseDTO;
+import org.uorderflow.dto.restaurantTable.RestaurantTableUpdateDTO;
+import org.uorderflow.service.restaurantTable.RestaurantTableService;
+
+import java.net.URI;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/restaurant-tables")
+public class RestaurantTableController {
+
+    private final RestaurantTableService restaurantTableService;
+
+    public RestaurantTableController(RestaurantTableService restaurantTableService) {
+        this.restaurantTableService = restaurantTableService;
+    }
+
+    @PostMapping
+    public ResponseEntity<RestaurantTableResponseDTO> create(@RequestBody @Valid RestaurantTableCreateDTO data, UriComponentsBuilder builder){
+        RestaurantTableResponseDTO restaurantTable = restaurantTableService.create(data);
+        URI uri = builder.replacePath("/api/restaurant-tables/{id}").buildAndExpand(restaurantTable.id()).toUri();
+        return ResponseEntity.created(uri).body(restaurantTable);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<RestaurantTableResponseDTO>> findAll(){
+        return ResponseEntity.ok(restaurantTableService.findAll());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<RestaurantTableResponseDTO> findById(@PathVariable Long id){
+        return ResponseEntity.ok(restaurantTableService.findById(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<RestaurantTableResponseDTO> update(@PathVariable Long id, @RequestBody @Valid RestaurantTableUpdateDTO data){
+        return ResponseEntity.ok(restaurantTableService.update(id, data));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id){
+        restaurantTableService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+}

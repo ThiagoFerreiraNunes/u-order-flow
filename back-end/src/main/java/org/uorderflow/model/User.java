@@ -1,0 +1,106 @@
+package org.uorderflow.model;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLRestriction;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.uorderflow.dto.user.UserRegisterDTO;
+import org.uorderflow.dto.user.UserUpdateDTO;
+import org.uorderflow.enums.user.UserRole;
+
+import java.util.Collection;
+import java.util.List;
+
+@Table(name = "tb_users")
+@Entity(name = "User")
+@SQLRestriction("is_deleted = false")
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode(of = "id")
+public class User implements UserDetails {
+
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
+    private Long id;
+
+    @Column(nullable = false, length = 100, name = "user_name")
+    private String name;
+
+    @Column(nullable = false, length = 100, name = "user_email")
+    private String email;
+
+    @Column(nullable = false, length = 100, name = "user_password")
+    private String password;
+
+    @Column(nullable = false, name = "user_role")
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
+
+    @Column(nullable = false, name = "is_deleted")
+    private Boolean isDeleted;
+
+    public User(UserRegisterDTO data, String password){
+        this.name = data.name();
+        this.email = data.email();
+        this.password = password;
+        this.role = data.role();
+        this.isDeleted = false;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return switch (this.role) {
+            case ADMIN -> List.of(new SimpleGrantedAuthority("ROLE_ADMIN"));
+            case WAITER -> List.of(new SimpleGrantedAuthority("ROLE_WAITER"));
+            case CASHIER -> List.of(new SimpleGrantedAuthority("ROLE_CASHIER"));
+            case COOK -> List.of(new SimpleGrantedAuthority("ROLE_COOK"));
+        };
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return Boolean.FALSE.equals(isDeleted);
+    }
+
+    public void update(UserUpdateDTO data) {
+        if (data.name() != null && !data.name().isBlank()) this.name = data.name();
+        if (data.email() != null && !data.email().isBlank()) this.email = data.email();
+        if (data.role() != null) this.role = data.role();
+    }
+
+    public void updatePassword(String newPassword){
+        if(newPassword != null){
+            this.password = newPassword;
+        }
+    }
+
+    public void delete(){
+        this.isDeleted = true;
+    }
+}

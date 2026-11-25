@@ -152,11 +152,10 @@ export default function NovaContaPage() {
                 value={form.name}
                 onChange={(e) => handleChange('name', e.target.value)}
                 placeholder="Digite o nome completo"
-                className={`w-full border rounded-lg px-3 py-2.5 text-base sm:text-sm text-[#1a1a1a] placeholder:text-[#9ca3af] focus:outline-none focus:ring-2 transition-colors ${
-                  fieldErrors.name
-                    ? 'border-red-400 focus:border-red-400 focus:ring-red-100'
-                    : 'border-[#d1d5db] focus:border-[#f97316] focus:ring-[#f97316]/20'
-                }`}
+                className={`w-full border rounded-lg px-3 py-2.5 text-base sm:text-sm text-[#1a1a1a] placeholder:text-[#9ca3af] focus:outline-none focus:ring-2 transition-colors ${fieldErrors.name
+                  ? 'border-red-400 focus:border-red-400 focus:ring-red-100'
+                  : 'border-[#d1d5db] focus:border-[#f97316] focus:ring-[#f97316]/20'
+                  }`}
               />
               {fieldErrors.name && (
                 <p className="text-xs text-red-500 mt-1">{fieldErrors.name}</p>
@@ -174,11 +173,10 @@ export default function NovaContaPage() {
                 value={form.email}
                 onChange={(e) => handleChange('email', e.target.value)}
                 placeholder="exemplo@uorderflow.com"
-                className={`w-full border rounded-lg px-3 py-2.5 text-base sm:text-sm text-[#1a1a1a] placeholder:text-[#9ca3af] focus:outline-none focus:ring-2 transition-colors ${
-                  fieldErrors.email
-                    ? 'border-red-400 focus:border-red-400 focus:ring-red-100'
-                    : 'border-[#d1d5db] focus:border-[#f97316] focus:ring-[#f97316]/20'
-                }`}
+                className={`w-full border rounded-lg px-3 py-2.5 text-base sm:text-sm text-[#1a1a1a] placeholder:text-[#9ca3af] focus:outline-none focus:ring-2 transition-colors ${fieldErrors.email
+                  ? 'border-red-400 focus:border-red-400 focus:ring-red-100'
+                  : 'border-[#d1d5db] focus:border-[#f97316] focus:ring-[#f97316]/20'
+                  }`}
               />
               {fieldErrors.email && (
                 <p className="text-xs text-red-500 mt-1">{fieldErrors.email}</p>
@@ -200,11 +198,10 @@ export default function NovaContaPage() {
                   value={form.password}
                   onChange={(e) => handleChange('password', e.target.value)}
                   placeholder="Digite a senha"
-                  className={`w-full border rounded-lg px-3 py-2.5 pr-10 text-base sm:text-sm text-[#1a1a1a] placeholder:text-[#9ca3af] focus:outline-none focus:ring-2 transition-colors ${
-                    fieldErrors.password
-                      ? 'border-red-400 focus:border-red-400 focus:ring-red-100'
-                      : 'border-[#d1d5db] focus:border-[#f97316] focus:ring-[#f97316]/20'
-                  }`}
+                  className={`w-full border rounded-lg px-3 py-2.5 pr-10 text-base sm:text-sm text-[#1a1a1a] placeholder:text-[#9ca3af] focus:outline-none focus:ring-2 transition-colors ${fieldErrors.password
+                    ? 'border-red-400 focus:border-red-400 focus:ring-red-100'
+                    : 'border-[#d1d5db] focus:border-[#f97316] focus:ring-[#f97316]/20'
+                    }`}
                 />
                 <button
                   type="button"
@@ -239,11 +236,10 @@ export default function NovaContaPage() {
                   id="register-role"
                   value={form.role}
                   onChange={(e) => handleChange('role', e.target.value)}
-                  className={`w-full appearance-none border rounded-lg px-3 py-2.5 pr-8 text-base sm:text-sm focus:outline-none focus:ring-2 transition-colors bg-white cursor-pointer ${
-                    fieldErrors.role
-                      ? 'border-red-400 focus:border-red-400 focus:ring-red-100 text-[#1a1a1a]'
-                      : 'border-[#d1d5db] focus:border-[#f97316] focus:ring-[#f97316]/20'
-                  } ${form.role ? 'text-[#1a1a1a]' : 'text-[#9ca3af]'}`}
+                  className={`w-full appearance-none border rounded-lg px-3 py-2.5 pr-8 text-base sm:text-sm focus:outline-none focus:ring-2 transition-colors bg-white cursor-pointer ${fieldErrors.role
+                    ? 'border-red-400 focus:border-red-400 focus:ring-red-100 text-[#1a1a1a]'
+                    : 'border-[#d1d5db] focus:border-[#f97316] focus:ring-[#f97316]/20'
+                    } ${form.role ? 'text-[#1a1a1a]' : 'text-[#9ca3af]'}`}
                 >
                   <option value="" disabled>
                     Selecione o cargo
@@ -281,11 +277,10 @@ export default function NovaContaPage() {
                   value={form.confirmPassword}
                   onChange={(e) => handleChange('confirmPassword', e.target.value)}
                   placeholder="Digite novamente a senha"
-                  className={`w-full border rounded-lg px-3 py-2.5 pr-10 text-base sm:text-sm text-[#1a1a1a] placeholder:text-[#9ca3af] focus:outline-none focus:ring-2 transition-colors ${
-                    fieldErrors.confirmPassword
-                      ? 'border-red-400 focus:border-red-400 focus:ring-red-100'
-                      : 'border-[#d1d5db] focus:border-[#f97316] focus:ring-[#f97316]/20'
-                  }`}
+                  className={`w-full border rounded-lg px-3 py-2.5 pr-10 text-base sm:text-sm text-[#1a1a1a] placeholder:text-[#9ca3af] focus:outline-none focus:ring-2 transition-colors ${fieldErrors.confirmPassword
+                    ? 'border-red-400 focus:border-red-400 focus:ring-red-100'
+                    : 'border-[#d1d5db] focus:border-[#f97316] focus:ring-[#f97316]/20'
+                    }`}
                 />
                 <button
                   type="button"

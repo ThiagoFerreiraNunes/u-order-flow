@@ -134,9 +134,8 @@ export default function ContasPage() {
                 {['Nome', 'Email', 'Cargo', 'Ações'].map((col) => (
                   <th
                     key={col}
-                    className={`px-6 py-3.5 text-[13px] font-semibold text-[#374151] ${
-                      col === 'Ações' ? 'text-right' : 'text-left'
-                    }`}
+                    className={`px-6 py-3.5 text-[13px] font-semibold text-[#374151] ${col === 'Ações' ? 'text-right' : 'text-left'
+                      }`}
                   >
                     {col}
                   </th>
