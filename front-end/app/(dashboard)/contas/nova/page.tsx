@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { registerUser } from '@/lib/api';
-import { USER_ROLE_LABELS } from '@/types/user';
 import type { UserRole, ApiError, ValidationErrors } from '@/types/user';
 
 const ROLE_OPTIONS: { value: UserRole; label: string }[] = [
@@ -109,9 +108,9 @@ export default function NovaContaPage() {
       </div>
 
       {/* White card */}
-      <div className="bg-white rounded-xl shadow-sm border border-[#e5e7eb] px-8 py-8 max-w-3xl">
+      <div className="bg-white rounded-xl shadow-sm border border-[#e5e7eb] px-4 py-6 sm:px-6 sm:py-7 md:px-8 md:py-8 max-w-3xl">
         {/* Card title */}
-        <h2 className="text-xl font-semibold text-[#1a1a1a] text-center mb-8">
+        <h2 className="text-lg sm:text-xl font-semibold text-[#1a1a1a] text-center mb-6 sm:mb-8">
           Informações pessoais
         </h2>
 
@@ -141,9 +140,9 @@ export default function NovaContaPage() {
 
         <form onSubmit={handleSubmit} noValidate>
           {/* Row 1: Nome Completo | Email */}
-          <div className="grid grid-cols-2 gap-6 mb-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-4 md:mb-5">
             <div>
-              <label htmlFor="register-name" className="block text-sm font-semibold text-[#1a1a1a] mb-1.5">
+              <label htmlFor="register-name" className="block text-xs sm:text-sm font-semibold text-[#1a1a1a] mb-1.5">
                 Nome Completo
               </label>
               <input
@@ -153,7 +152,7 @@ export default function NovaContaPage() {
                 value={form.name}
                 onChange={(e) => handleChange('name', e.target.value)}
                 placeholder="Digite o nome completo"
-                className={`w-full border rounded-lg px-3 py-2.5 text-sm text-[#1a1a1a] placeholder:text-[#9ca3af] focus:outline-none focus:ring-2 transition-colors ${
+                className={`w-full border rounded-lg px-3 py-2.5 text-base sm:text-sm text-[#1a1a1a] placeholder:text-[#9ca3af] focus:outline-none focus:ring-2 transition-colors ${
                   fieldErrors.name
                     ? 'border-red-400 focus:border-red-400 focus:ring-red-100'
                     : 'border-[#d1d5db] focus:border-[#f97316] focus:ring-[#f97316]/20'
@@ -165,7 +164,7 @@ export default function NovaContaPage() {
             </div>
 
             <div>
-              <label htmlFor="register-email" className="block text-sm font-semibold text-[#1a1a1a] mb-1.5">
+              <label htmlFor="register-email" className="block text-xs sm:text-sm font-semibold text-[#1a1a1a] mb-1.5">
                 Email
               </label>
               <input
@@ -175,7 +174,7 @@ export default function NovaContaPage() {
                 value={form.email}
                 onChange={(e) => handleChange('email', e.target.value)}
                 placeholder="exemplo@uorderflow.com"
-                className={`w-full border rounded-lg px-3 py-2.5 text-sm text-[#1a1a1a] placeholder:text-[#9ca3af] focus:outline-none focus:ring-2 transition-colors ${
+                className={`w-full border rounded-lg px-3 py-2.5 text-base sm:text-sm text-[#1a1a1a] placeholder:text-[#9ca3af] focus:outline-none focus:ring-2 transition-colors ${
                   fieldErrors.email
                     ? 'border-red-400 focus:border-red-400 focus:ring-red-100'
                     : 'border-[#d1d5db] focus:border-[#f97316] focus:ring-[#f97316]/20'
@@ -188,9 +187,9 @@ export default function NovaContaPage() {
           </div>
 
           {/* Row 2: Senha | Função */}
-          <div className="grid grid-cols-2 gap-6 mb-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-4 md:mb-5">
             <div>
-              <label htmlFor="register-password" className="block text-sm font-semibold text-[#1a1a1a] mb-1.5">
+              <label htmlFor="register-password" className="block text-xs sm:text-sm font-semibold text-[#1a1a1a] mb-1.5">
                 Senha
               </label>
               <div className="relative">
@@ -201,7 +200,7 @@ export default function NovaContaPage() {
                   value={form.password}
                   onChange={(e) => handleChange('password', e.target.value)}
                   placeholder="Digite a senha"
-                  className={`w-full border rounded-lg px-3 py-2.5 pr-10 text-sm text-[#1a1a1a] placeholder:text-[#9ca3af] focus:outline-none focus:ring-2 transition-colors ${
+                  className={`w-full border rounded-lg px-3 py-2.5 pr-10 text-base sm:text-sm text-[#1a1a1a] placeholder:text-[#9ca3af] focus:outline-none focus:ring-2 transition-colors ${
                     fieldErrors.password
                       ? 'border-red-400 focus:border-red-400 focus:ring-red-100'
                       : 'border-[#d1d5db] focus:border-[#f97316] focus:ring-[#f97316]/20'
@@ -210,7 +209,7 @@ export default function NovaContaPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword((v) => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9ca3af] hover:text-[#6b7280]"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9ca3af] hover:text-[#6b7280] p-1 cursor-pointer"
                   aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
                 >
                   {showPassword ? (
@@ -232,7 +231,7 @@ export default function NovaContaPage() {
             </div>
 
             <div>
-              <label htmlFor="register-role" className="block text-sm font-semibold text-[#1a1a1a] mb-1.5">
+              <label htmlFor="register-role" className="block text-xs sm:text-sm font-semibold text-[#1a1a1a] mb-1.5">
                 Função
               </label>
               <div className="relative">
@@ -240,7 +239,7 @@ export default function NovaContaPage() {
                   id="register-role"
                   value={form.role}
                   onChange={(e) => handleChange('role', e.target.value)}
-                  className={`w-full appearance-none border rounded-lg px-3 py-2.5 pr-8 text-sm focus:outline-none focus:ring-2 transition-colors bg-white cursor-pointer ${
+                  className={`w-full appearance-none border rounded-lg px-3 py-2.5 pr-8 text-base sm:text-sm focus:outline-none focus:ring-2 transition-colors bg-white cursor-pointer ${
                     fieldErrors.role
                       ? 'border-red-400 focus:border-red-400 focus:ring-red-100 text-[#1a1a1a]'
                       : 'border-[#d1d5db] focus:border-[#f97316] focus:ring-[#f97316]/20'
@@ -268,10 +267,10 @@ export default function NovaContaPage() {
             </div>
           </div>
 
-          {/* Row 3: Confirmar Senha */}
-          <div className="grid grid-cols-2 gap-6 mb-8">
+          {/* Row 3: Confirmar Senha | Ação */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
             <div>
-              <label htmlFor="register-confirm-password" className="block text-sm font-semibold text-[#1a1a1a] mb-1.5">
+              <label htmlFor="register-confirm-password" className="block text-xs sm:text-sm font-semibold text-[#1a1a1a] mb-1.5">
                 Confirmar Senha
               </label>
               <div className="relative">
@@ -282,7 +281,7 @@ export default function NovaContaPage() {
                   value={form.confirmPassword}
                   onChange={(e) => handleChange('confirmPassword', e.target.value)}
                   placeholder="Digite novamente a senha"
-                  className={`w-full border rounded-lg px-3 py-2.5 pr-10 text-sm text-[#1a1a1a] placeholder:text-[#9ca3af] focus:outline-none focus:ring-2 transition-colors ${
+                  className={`w-full border rounded-lg px-3 py-2.5 pr-10 text-base sm:text-sm text-[#1a1a1a] placeholder:text-[#9ca3af] focus:outline-none focus:ring-2 transition-colors ${
                     fieldErrors.confirmPassword
                       ? 'border-red-400 focus:border-red-400 focus:ring-red-100'
                       : 'border-[#d1d5db] focus:border-[#f97316] focus:ring-[#f97316]/20'
@@ -291,7 +290,7 @@ export default function NovaContaPage() {
                 <button
                   type="button"
                   onClick={() => setShowConfirm((v) => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9ca3af] hover:text-[#6b7280]"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9ca3af] hover:text-[#6b7280] p-1 cursor-pointer"
                   aria-label={showConfirm ? 'Ocultar confirmação' : 'Mostrar confirmação'}
                 >
                   {showConfirm ? (
@@ -312,13 +311,13 @@ export default function NovaContaPage() {
               )}
             </div>
 
-            {/* Submit button aligned to right column */}
-            <div className="flex items-end justify-end">
+            {/* Submit button */}
+            <div className="flex items-center md:items-end justify-start md:justify-end mt-2 md:mt-0">
               <button
                 id="register-submit-btn"
                 type="submit"
                 disabled={loading || success}
-                className="bg-[#f97316] hover:bg-[#ea6c0e] text-white font-semibold px-6 py-2.5 rounded-lg text-sm transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2"
+                className="w-full md:w-auto justify-center bg-[#f97316] hover:bg-[#ea6c0e] text-white font-semibold px-6 py-2.5 rounded-lg text-sm transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer min-h-[44px]"
               >
                 {loading ? (
                   <>
