@@ -36,10 +36,14 @@ export function middleware(request: NextRequest) {
 
   const isPublicRoute = PUBLIC_ROUTES.some((r) => pathname.startsWith(r));
 
-  // Redirect root based on auth state
+  // Redirect root based on auth state and role
   if (pathname === '/') {
+    if (!token) {
+      return NextResponse.redirect(new URL('/login', request.url));
+    }
+    const rootRole = extractRoleFromJwt(accessToken);
     return NextResponse.redirect(
-      new URL(token ? '/inicio' : '/login', request.url),
+      new URL(rootRole === 'ADMIN' ? '/inicio' : '/pedidos', request.url),
     );
   }
 
@@ -56,9 +60,12 @@ export function middleware(request: NextRequest) {
   // Role-based route guards
   const role = extractRoleFromJwt(accessToken);
   if (role) {
-    // Only ADMIN can access /contas and /mesas
-    if ((pathname.startsWith('/contas') || pathname.startsWith('/mesas')) && role !== 'ADMIN') {
-      return NextResponse.redirect(new URL('/inicio', request.url));
+    // Only ADMIN can access /inicio (dashboard), /contas, and /mesas
+    if (
+      (pathname.startsWith('/inicio') || pathname.startsWith('/contas') || pathname.startsWith('/mesas')) &&
+      role !== 'ADMIN'
+    ) {
+      return NextResponse.redirect(new URL('/pedidos', request.url));
     }
     // COOK cannot access /comandas
     if (pathname.startsWith('/comandas') && role === 'COOK') {

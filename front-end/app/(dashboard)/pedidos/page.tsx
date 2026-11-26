@@ -22,6 +22,7 @@ import type { ProductSummaryResponse } from '@/types/product';
 import type { UserResponse } from '@/types/user';
 
 const PAGE_SIZE = 10;
+const ITEMS_PAGE_SIZE = 4;
 
 type CanonicalStatus = 'WAITING' | 'PREPARING' | 'DELIVERED' | 'CANCELLED';
 
@@ -98,6 +99,7 @@ function OrderModal({
   const [saving, setSaving] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
   const [error, setError] = useState('');
+  const [itemsPage, setItemsPage] = useState(0);
 
   useEffect(() => {
     let ignore = false;
@@ -195,31 +197,103 @@ function OrderModal({
     }
   }
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 py-6 overflow-y-auto">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h2 className="text-lg font-bold text-[#1a1a1a]">Pedido #{orderId}</h2>
-            {order && (
-              <span
-                className={`inline-block mt-1 text-xs font-semibold px-2.5 py-0.5 rounded-full ${
-                  STATUS_DETAILS[canonicalStatus].badgeClass
-                }`}
-              >
-                {STATUS_DETAILS[canonicalStatus].label}
-              </span>
-            )}
-          </div>
+  // ── Items table pagination (view mode) ────────────────────────────────────
+  const orderItems = order?.items ?? [];
+  const itemsTotalPages = Math.max(1, Math.ceil(orderItems.length / ITEMS_PAGE_SIZE));
+  const itemsCurrentPage = Math.min(itemsPage, itemsTotalPages - 1);
+  const paginatedItems = orderItems.slice(
+    itemsCurrentPage * ITEMS_PAGE_SIZE,
+    (itemsCurrentPage + 1) * ITEMS_PAGE_SIZE,
+  );
+  const itemsRangeStart = orderItems.length === 0 ? 0 : itemsCurrentPage * ITEMS_PAGE_SIZE + 1;
+  const itemsRangeEnd = Math.min((itemsCurrentPage + 1) * ITEMS_PAGE_SIZE, orderItems.length);
+
+  // ── Edit-mode items pagination ─────────────────────────────────────────────
+  const editItemsTotalPages = Math.max(1, Math.ceil(items.length / ITEMS_PAGE_SIZE));
+  const editItemsCurrentPage = Math.min(itemsPage, editItemsTotalPages - 1);
+  const paginatedEditItems = items.slice(
+    editItemsCurrentPage * ITEMS_PAGE_SIZE,
+    (editItemsCurrentPage + 1) * ITEMS_PAGE_SIZE,
+  );
+  const editRangeStart = items.length === 0 ? 0 : editItemsCurrentPage * ITEMS_PAGE_SIZE + 1;
+  const editRangeEnd = Math.min((editItemsCurrentPage + 1) * ITEMS_PAGE_SIZE, items.length);
+
+  function ItemsPagination({
+    currentPage,
+    totalPages,
+    rangeStart,
+    rangeEnd,
+    total,
+  }: {
+    currentPage: number;
+    totalPages: number;
+    rangeStart: number;
+    rangeEnd: number;
+    total: number;
+  }) {
+    return (
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3 border-t border-[#f3f4f6] bg-white">
+        <span className="text-xs text-[#6b7280]">
+          {total === 0
+            ? 'Nenhum registro'
+            : `Mostrando ${rangeStart} a ${rangeEnd} de ${total} registros`}
+        </span>
+        <div className="flex items-center gap-1.5 shrink-0">
           <button
-            onClick={onClose}
-            className="text-[#6b7280] hover:text-[#1a1a1a] p-1.5 rounded-lg transition-colors cursor-pointer"
-            aria-label="Fechar modal"
+            type="button"
+            onClick={() => setItemsPage((p) => Math.max(0, p - 1))}
+            disabled={currentPage === 0}
+            className="w-7 h-7 flex items-center justify-center rounded border border-[#e5e7eb] text-[#6b7280] hover:text-[#1a1a1a] hover:border-gray-400 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer bg-white"
           >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <polyline points="15 18 9 12 15 6" />
             </svg>
           </button>
+          {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => i).map((i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => setItemsPage(i)}
+              className={`w-7 h-7 flex items-center justify-center rounded text-xs font-medium transition-colors border cursor-pointer ${
+                currentPage === i
+                  ? 'bg-[#fff1e8] text-[#f97316] border-[#fde0cf]'
+                  : 'bg-white text-[#4b5563] border-[#e5e7eb] hover:border-gray-400'
+              }`}
+            >
+              {i + 1}
+            </button>
+          ))}
+          <button
+            type="button"
+            onClick={() => setItemsPage((p) => Math.min(totalPages - 1, p + 1))}
+            disabled={currentPage >= totalPages - 1}
+            className="w-7 h-7 flex items-center justify-center rounded border border-[#e5e7eb] text-[#6b7280] hover:text-[#1a1a1a] hover:border-gray-400 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer bg-white"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 py-6 overflow-y-auto">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto">
+        {/* ── Header: back arrow + centered title ── */}
+        <div className="relative flex items-center justify-center mb-6">
+          <button
+            onClick={onClose}
+            className="absolute left-0 text-[#1a1a1a] hover:text-[#f97316] transition-colors p-1 cursor-pointer"
+            aria-label="Fechar modal"
+          >
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <line x1="19" y1="12" x2="5" y2="12" strokeLinecap="round" />
+              <polyline points="12 19 5 12 12 5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+          <h2 className="text-xl font-bold text-[#1a1a1a]">Itens do Pedido</h2>
         </div>
 
         {error && (
@@ -235,54 +309,103 @@ function OrderModal({
           </div>
         )}
 
+        {/* ── Resumo do pedido (badge + info grid) ── */}
+        {!loading && order && (
+          <div className="flex items-center gap-3 mb-4">
+            <span className="text-sm font-bold text-[#1a1a1a]">Pedido #{orderId}</span>
+            <span
+              className={`inline-block text-xs font-semibold px-2.5 py-0.5 rounded-full ${STATUS_DETAILS[canonicalStatus].badgeClass}`}
+            >
+              {STATUS_DETAILS[canonicalStatus].label}
+            </span>
+          </div>
+        )}
+
+        {/* ── View mode: items table ── */}
         {!loading && order && !editing && (
           <div className="space-y-5">
-            <div className="grid grid-cols-2 gap-3 text-xs bg-[#f9fafb] rounded-xl p-3.5 border border-[#e5e7eb]">
-              <div>
-                <p className="text-[#9ca3af]">Cliente</p>
-                <p className="font-semibold text-[#1a1a1a] text-sm mt-0.5">{order.customer}</p>
-              </div>
-              <div>
-                <p className="text-[#9ca3af]">Mesa</p>
-                <p className="font-semibold text-[#1a1a1a] text-sm mt-0.5">
-                  {order.restaurantTable ? `Mesa ${order.restaurantTable.number}` : 'Sem mesa'}
-                </p>
-              </div>
-              <div>
-                <p className="text-[#9ca3af]">Atendente</p>
-                <p className="font-semibold text-[#1a1a1a] text-sm mt-0.5">{order.employee.name}</p>
-              </div>
-              <div>
-                <p className="text-[#9ca3af]">Total</p>
-                <p className="font-bold text-[#f97316] text-base mt-0.5">{order.totalPrice}</p>
-              </div>
-            </div>
-
-            <div>
-              <h3 className="text-xs font-bold text-[#6b7280] uppercase tracking-wider mb-2">
-                Itens do Pedido ({order.items.length})
-              </h3>
-              <div className="divide-y divide-[#f3f4f6] border border-[#e5e7eb] rounded-xl overflow-hidden max-h-56 overflow-y-auto">
-                {order.items.map((item, idx) => (
-                  <div key={idx} className="p-3 bg-white flex items-start justify-between gap-3">
-                    <div>
-                      <p className="text-sm font-semibold text-[#1a1a1a]">
-                        {item.quantity}x {item.product.name}
-                      </p>
-                      {item.note && (
-                        <p className="text-xs text-[#6b7280] mt-0.5 italic">Obs: {item.note}</p>
+            {/* Items table */}
+            <div className="border border-[#e5e7eb] rounded-xl overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="bg-[#f4f5f7] border-b border-[#e5e7eb]">
+                      <th className="px-4 py-3 text-sm font-semibold text-[#374151] text-left">Item</th>
+                      <th className="px-4 py-3 text-sm font-semibold text-[#374151] text-left">Preço Unitário</th>
+                      <th className="px-4 py-3 text-sm font-semibold text-[#374151] text-center">Quantidade</th>
+                      <th className="px-4 py-3 text-sm font-semibold text-[#374151] text-left">Observação</th>
+                      <th className="px-4 py-3 text-sm font-semibold text-[#374151] text-left">Total</th>
+                      {canEdit && (
+                        <th className="px-4 py-3 text-sm font-semibold text-[#374151] text-right">Ações</th>
                       )}
-                    </div>
-                    <div className="text-right shrink-0">
-                      <p className="text-sm font-bold text-[#1a1a1a]">{item.totalPrice}</p>
-                      <p className="text-[11px] text-[#9ca3af]">{item.unitPrice} un.</p>
-                    </div>
-                  </div>
-                ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#f3f4f6]">
+                    {paginatedItems.length === 0 ? (
+                      <tr>
+                        <td
+                          colSpan={canEdit ? 6 : 5}
+                          className="px-4 py-8 text-center text-[#6b7280] text-xs"
+                        >
+                          Nenhum item encontrado.
+                        </td>
+                      </tr>
+                    ) : (
+                      paginatedItems.map((item, idx) => (
+                        <tr key={idx} className="hover:bg-[#fafafa] transition-colors">
+                          <td className="px-4 py-4 font-semibold text-[#1a1a1a]">{item.product.name}</td>
+                          <td className="px-4 py-4 text-[#374151]">{item.unitPrice}</td>
+                          <td className="px-4 py-4 text-center text-[#374151]">{item.quantity}</td>
+                          <td className="px-4 py-4 text-[#6b7280] italic text-xs">
+                            {item.note ?? ''}
+                          </td>
+                          <td className="px-4 py-4 font-medium text-[#1a1a1a]">{item.totalPrice}</td>
+                          {canEdit && (
+                            <td className="px-4 py-4 text-right">
+                              <div className="flex items-center justify-end gap-2 text-[#374151]">
+                                <button
+                                  type="button"
+                                  onClick={() => { setEditing(true); setItemsPage(0); }}
+                                  className="hover:text-[#1a1a1a] transition-colors p-1 cursor-pointer"
+                                  title="Editar item"
+                                  aria-label="Editar item"
+                                >
+                                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                                  </svg>
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => removeItem(itemsCurrentPage * ITEMS_PAGE_SIZE + idx)}
+                                  disabled={orderItems.length <= 1}
+                                  className="hover:text-red-600 transition-colors p-1 cursor-pointer disabled:opacity-30"
+                                  title="Remover item"
+                                  aria-label="Remover item"
+                                >
+                                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                                  </svg>
+                                </button>
+                              </div>
+                            </td>
+                          )}
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
               </div>
+              {/* Pagination footer */}
+              <ItemsPagination
+                currentPage={itemsCurrentPage}
+                totalPages={itemsTotalPages}
+                rangeStart={itemsRangeStart}
+                rangeEnd={itemsRangeEnd}
+                total={orderItems.length}
+              />
             </div>
 
-            {/* Quick action buttons for advancing status */}
+            {/* Action buttons */}
             <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-[#f3f4f6]">
               <div className="flex flex-wrap gap-2">
                 {canonicalStatus === 'WAITING' && (
@@ -321,24 +444,18 @@ function OrderModal({
                 {canEdit && (
                   <button
                     type="button"
-                    onClick={() => setEditing(true)}
+                    onClick={() => { setEditing(true); setItemsPage(0); }}
                     className="px-4 py-2 text-sm font-medium border border-[#d1d5db] text-[#374151] rounded-xl hover:bg-[#f9fafb] transition-colors cursor-pointer"
                   >
                     Editar Itens
                   </button>
                 )}
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="px-4 py-2 text-sm font-medium bg-[#1a1a1a] text-white rounded-xl hover:bg-[#333333] transition-colors cursor-pointer"
-                >
-                  Fechar
-                </button>
               </div>
             </div>
           </div>
         )}
 
+        {/* ── Edit mode: items form with table-style layout ── */}
         {!loading && order && editing && (
           <form onSubmit={handleSave} className="space-y-4">
             <div>
@@ -361,61 +478,93 @@ function OrderModal({
                 <label className="text-xs font-semibold text-[#374151]">Itens *</label>
                 <button
                   type="button"
-                  onClick={addItem}
+                  onClick={() => { addItem(); setItemsPage(Math.floor(items.length / ITEMS_PAGE_SIZE)); }}
                   className="text-xs font-semibold text-[#f97316] hover:text-[#ea580c] cursor-pointer"
                 >
                   + Adicionar item
                 </button>
               </div>
-              <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
-                {items.map((item, idx) => (
-                  <div key={idx} className="p-3 bg-[#f9fafb] rounded-xl border border-[#e5e7eb] space-y-2">
-                    <div className="flex gap-2 items-center">
-                      <select
-                        className="flex-1 border border-[#d1d5db] rounded-lg px-2.5 py-1.5 text-sm bg-white text-[#1a1a1a]"
-                        value={item.productId}
-                        onChange={(e) => updateItem(idx, { productId: Number(e.target.value) })}
-                      >
-                        {products.map((p) => (
-                          <option key={p.id} value={p.id}>
-                            {p.name} — {p.price}
-                          </option>
-                        ))}
-                      </select>
-                      <input
-                        type="number"
-                        min={1}
-                        className="w-16 border border-[#d1d5db] rounded-lg px-2 py-1.5 text-sm bg-white text-center font-medium text-[#1a1a1a]"
-                        value={item.quantity}
-                        onChange={(e) => updateItem(idx, { quantity: Number(e.target.value) || 1 })}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => removeItem(idx)}
-                        disabled={items.length <= 1}
-                        className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-30 cursor-pointer"
-                        title="Remover item"
-                      >
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                      </button>
-                    </div>
-                    <input
-                      className="w-full border border-[#d1d5db] rounded-lg px-2.5 py-1.5 text-xs bg-white text-[#1a1a1a]"
-                      placeholder="Observação (opcional)"
-                      value={item.note ?? ''}
-                      onChange={(e) => updateItem(idx, { note: e.target.value })}
-                    />
-                  </div>
-                ))}
+
+              {/* Edit items as table */}
+              <div className="border border-[#e5e7eb] rounded-xl overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="bg-[#f4f5f7] border-b border-[#e5e7eb]">
+                        <th className="px-3 py-3 text-xs font-semibold text-[#374151] text-left">Item</th>
+                        <th className="px-3 py-3 text-xs font-semibold text-[#374151] text-center">Qtd</th>
+                        <th className="px-3 py-3 text-xs font-semibold text-[#374151] text-left">Observação</th>
+                        <th className="px-3 py-3 text-xs font-semibold text-[#374151] text-right">Ações</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[#f3f4f6]">
+                      {paginatedEditItems.map((item, pageIdx) => {
+                        const realIdx = editItemsCurrentPage * ITEMS_PAGE_SIZE + pageIdx;
+                        return (
+                          <tr key={realIdx} className="hover:bg-[#fafafa] transition-colors">
+                            <td className="px-3 py-3">
+                              <select
+                                className="w-full border border-[#d1d5db] rounded-lg px-2 py-1.5 text-xs bg-white text-[#1a1a1a]"
+                                value={item.productId}
+                                onChange={(e) => updateItem(realIdx, { productId: Number(e.target.value) })}
+                              >
+                                {products.map((p) => (
+                                  <option key={p.id} value={p.id}>
+                                    {p.name} — {p.price}
+                                  </option>
+                                ))}
+                              </select>
+                            </td>
+                            <td className="px-3 py-3">
+                              <input
+                                type="number"
+                                min={1}
+                                className="w-14 border border-[#d1d5db] rounded-lg px-2 py-1.5 text-xs bg-white text-center font-medium text-[#1a1a1a]"
+                                value={item.quantity}
+                                onChange={(e) => updateItem(realIdx, { quantity: Number(e.target.value) || 1 })}
+                              />
+                            </td>
+                            <td className="px-3 py-3">
+                              <input
+                                className="w-full border border-[#d1d5db] rounded-lg px-2 py-1.5 text-xs bg-white text-[#1a1a1a]"
+                                placeholder="Observação"
+                                value={item.note ?? ''}
+                                onChange={(e) => updateItem(realIdx, { note: e.target.value })}
+                              />
+                            </td>
+                            <td className="px-3 py-3 text-right">
+                              <button
+                                type="button"
+                                onClick={() => removeItem(realIdx)}
+                                disabled={items.length <= 1}
+                                className="p-1 text-red-500 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-30 cursor-pointer"
+                                title="Remover item"
+                              >
+                                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                  <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                                </svg>
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+                <ItemsPagination
+                  currentPage={editItemsCurrentPage}
+                  totalPages={editItemsTotalPages}
+                  rangeStart={editRangeStart}
+                  rangeEnd={editRangeEnd}
+                  total={items.length}
+                />
               </div>
             </div>
 
             <div className="flex justify-end gap-2.5 pt-3 border-t border-[#f3f4f6]">
               <button
                 type="button"
-                onClick={() => setEditing(false)}
+                onClick={() => { setEditing(false); setItemsPage(0); }}
                 className="px-4 py-2 text-sm font-medium border border-[#d1d5db] text-[#374151] rounded-xl hover:bg-[#f9fafb] transition-colors cursor-pointer"
               >
                 Voltar

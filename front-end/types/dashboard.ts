@@ -1,14 +1,16 @@
 export interface TopProductResponse {
+  productId: number;
   productName: string;
-  categoryName: string;
-  totalSold: number;
+  quantitySold: number;
+  totalRevenue: number;
 }
 
 export interface DashboardAlertResponse {
-  type: string;
-  title: string;
-  description: string;
-  createdAt: string;
+  orderId: number;
+  tableNumber: number | null;
+  tableName: string | null;
+  deliveredAt: string;
+  message: string;
 }
 
 export interface DashboardSummaryResponse {
@@ -22,10 +24,12 @@ export interface DashboardSummaryResponse {
 
 export interface DashboardChartPoint {
   date: string;
+  dayOfWeek: string;
   revenue: number;
 }
 
 export interface DashboardRevenueChartResponse {
-  days: number;
+  startDate: string;
+  endDate: string;
   points: DashboardChartPoint[];
 }

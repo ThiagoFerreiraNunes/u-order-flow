@@ -86,7 +86,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const menuRef = useRef<HTMLDivElement>(null);
 
   const visibleNavItems = NAV_ITEMS.filter((item) => {
-    if (item.href === '/contas' || item.href === '/mesas') return role === 'ADMIN';
+    if (item.href === '/inicio' || item.href === '/contas' || item.href === '/mesas') return role === 'ADMIN';
     if (item.href === '/comandas') return role !== 'COOK';
     return true;
   });

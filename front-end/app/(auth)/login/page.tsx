@@ -22,7 +22,21 @@ export default function LoginPage() {
     try {
       await loginUser({ email, password });
       saveUserSession(email);
-      router.push('/inicio');
+
+      // Fetch session to determine role-based landing page
+      let landingPage = '/pedidos';
+      try {
+        const sessionRes = await fetch('/api/session', { cache: 'no-store' });
+        if (sessionRes.ok) {
+          const session = await sessionRes.json();
+          if (session.role === 'ADMIN') {
+            landingPage = '/inicio';
+          }
+        }
+      } catch {
+        // fallback to /pedidos — middleware will handle the redirect anyway
+      }
+      router.push(landingPage);
     } catch (err: unknown) {
       if (err && typeof err === 'object') {
         const apiError = err as ApiError;
