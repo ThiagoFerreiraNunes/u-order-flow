@@ -27,7 +27,7 @@ export interface ProductDetailsResponse {
   description: string;
   price: string;
   image: string;
-  productCategory: string;
+  productCategory: ProductCategoryResponse | string;
   isAvailable: boolean;
 }
 

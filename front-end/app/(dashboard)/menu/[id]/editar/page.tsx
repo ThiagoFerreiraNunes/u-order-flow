@@ -58,8 +58,12 @@ export default function EditarItemPage() {
         setName(product.name || '');
         setDescription(product.description || '');
         if (product.productCategory) {
-          const match = cats.find((c) => c.name === product.productCategory);
-          if (match) setCategoryId(match.id);
+          if (typeof product.productCategory === 'object' && product.productCategory !== null) {
+            setCategoryId((product.productCategory as ProductCategoryResponse).id);
+          } else {
+            const match = cats.find((c) => c.name === product.productCategory);
+            if (match) setCategoryId(match.id);
+          }
         }
         if (product.price) {
           setPriceInput(formatCurrency(product.price));
