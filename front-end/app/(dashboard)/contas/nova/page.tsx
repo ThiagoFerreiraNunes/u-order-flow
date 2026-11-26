@@ -23,8 +23,6 @@ export default function NovaContaPage() {
     confirmPassword: '',
     role: '' as UserRole | '',
   });
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -46,7 +44,7 @@ export default function NovaContaPage() {
     else if (form.password.length < 6) errs.password = 'Mínimo de 6 caracteres.';
     if (form.password !== form.confirmPassword)
       errs.confirmPassword = 'As senhas não coincidem.';
-    if (!form.role) errs.role = 'Selecione um cargo.';
+    if (!form.role) errs.role = 'Selecione uma função.';
     setFieldErrors(errs);
     return Object.keys(errs).length === 0;
   }
@@ -65,7 +63,7 @@ export default function NovaContaPage() {
         role: form.role as UserRole,
       });
       setSuccess(true);
-      setTimeout(() => router.push('/contas'), 1500);
+      setTimeout(() => router.push('/contas'), 1200);
     } catch (err: unknown) {
       if (err && typeof err === 'object') {
         const asApiError = err as ApiError;
@@ -76,7 +74,6 @@ export default function NovaContaPage() {
         } else if (asApiError.status === 401) {
           setError('Sessão expirada. Faça login novamente.');
         } else if (!('status' in asApiError)) {
-          // Validation errors from backend: { fieldName: "message" }
           const validationErrs = err as ValidationErrors;
           setFieldErrors((prev) => ({ ...prev, ...validationErrs }));
         } else {
@@ -91,26 +88,26 @@ export default function NovaContaPage() {
   }
 
   return (
-    <div>
-      {/* Page header with back arrow */}
-      <div className="flex items-center gap-2 mb-6">
+    <div className="max-w-6xl mx-auto">
+      {/* Page header with back arrow matching image 2 */}
+      <div className="flex items-center gap-3 mb-6">
         <Link
           href="/contas"
-          className="text-[#6b7280] hover:text-[#1a1a1a] transition-colors"
+          className="text-[#1a1a1a] hover:text-[#f97316] transition-colors p-1"
           aria-label="Voltar para contas"
         >
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
             <line x1="19" y1="12" x2="5" y2="12" strokeLinecap="round" />
             <polyline points="12 19 5 12 12 5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </Link>
-        <h1 className="text-2xl font-bold text-[#1a1a1a]">Nova Conta</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-[#1a1a1a]">Nova Conta</h1>
       </div>
 
-      {/* White card */}
-      <div className="bg-white rounded-xl shadow-sm border border-[#e5e7eb] px-4 py-6 sm:px-6 sm:py-7 md:px-8 md:py-8 max-w-3xl">
-        {/* Card title */}
-        <h2 className="text-lg sm:text-xl font-semibold text-[#1a1a1a] text-center mb-6 sm:mb-8">
+      {/* Main white card */}
+      <div className="bg-white rounded-xl shadow-sm border border-[#e5e7eb] px-6 py-8 sm:px-10 sm:py-10 md:px-14 md:py-12">
+        {/* Card centered title matching image 2 */}
+        <h2 className="text-2xl sm:text-[26px] font-bold text-[#1a1a1a] text-center mb-8 sm:mb-12">
           Informações pessoais
         </h2>
 
@@ -139,10 +136,11 @@ export default function NovaContaPage() {
         )}
 
         <form onSubmit={handleSubmit} noValidate>
-          {/* Row 1: Nome Completo | Email */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-4 md:mb-5">
+          {/* 2-column grid matching image 2 */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 lg:gap-x-14 gap-y-6 sm:gap-y-8">
+            {/* Field 1: Nome Completo */}
             <div>
-              <label htmlFor="register-name" className="block text-xs sm:text-sm font-semibold text-[#1a1a1a] mb-1.5">
+              <label htmlFor="register-name" className="block text-base font-bold text-[#1a1a1a] mb-2">
                 Nome Completo
               </label>
               <input
@@ -152,18 +150,18 @@ export default function NovaContaPage() {
                 value={form.name}
                 onChange={(e) => handleChange('name', e.target.value)}
                 placeholder="Digite o nome completo"
-                className={`w-full border rounded-lg px-3 py-2.5 text-base sm:text-sm text-[#1a1a1a] placeholder:text-[#9ca3af] focus:outline-none focus:ring-2 transition-colors ${fieldErrors.name
-                  ? 'border-red-400 focus:border-red-400 focus:ring-red-100'
-                  : 'border-[#d1d5db] focus:border-[#f97316] focus:ring-[#f97316]/20'
-                  }`}
+                className={`w-full border rounded-lg px-4 py-3 text-sm text-[#1a1a1a] placeholder:text-[#9ca3af] focus:outline-none focus:border-[#f97316] focus:ring-1 focus:ring-[#f97316] transition-colors ${
+                  fieldErrors.name ? 'border-red-400 focus:border-red-400' : 'border-[#d1d5db]'
+                }`}
               />
               {fieldErrors.name && (
-                <p className="text-xs text-red-500 mt-1">{fieldErrors.name}</p>
+                <p className="text-xs text-red-500 mt-1.5">{fieldErrors.name}</p>
               )}
             </div>
 
+            {/* Field 2: Email */}
             <div>
-              <label htmlFor="register-email" className="block text-xs sm:text-sm font-semibold text-[#1a1a1a] mb-1.5">
+              <label htmlFor="register-email" className="block text-base font-bold text-[#1a1a1a] mb-2">
                 Email
               </label>
               <input
@@ -173,62 +171,39 @@ export default function NovaContaPage() {
                 value={form.email}
                 onChange={(e) => handleChange('email', e.target.value)}
                 placeholder="exemplo@uorderflow.com"
-                className={`w-full border rounded-lg px-3 py-2.5 text-base sm:text-sm text-[#1a1a1a] placeholder:text-[#9ca3af] focus:outline-none focus:ring-2 transition-colors ${fieldErrors.email
-                  ? 'border-red-400 focus:border-red-400 focus:ring-red-100'
-                  : 'border-[#d1d5db] focus:border-[#f97316] focus:ring-[#f97316]/20'
-                  }`}
+                className={`w-full border rounded-lg px-4 py-3 text-sm text-[#1a1a1a] placeholder:text-[#9ca3af] focus:outline-none focus:border-[#f97316] focus:ring-1 focus:ring-[#f97316] transition-colors ${
+                  fieldErrors.email ? 'border-red-400 focus:border-red-400' : 'border-[#d1d5db]'
+                }`}
               />
               {fieldErrors.email && (
-                <p className="text-xs text-red-500 mt-1">{fieldErrors.email}</p>
+                <p className="text-xs text-red-500 mt-1.5">{fieldErrors.email}</p>
               )}
             </div>
-          </div>
 
-          {/* Row 2: Senha | Função */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-4 md:mb-5">
+            {/* Field 3: Senha */}
             <div>
-              <label htmlFor="register-password" className="block text-xs sm:text-sm font-semibold text-[#1a1a1a] mb-1.5">
+              <label htmlFor="register-password" className="block text-base font-bold text-[#1a1a1a] mb-2">
                 Senha
               </label>
-              <div className="relative">
-                <input
-                  id="register-password"
-                  type={showPassword ? 'text' : 'password'}
-                  autoComplete="new-password"
-                  value={form.password}
-                  onChange={(e) => handleChange('password', e.target.value)}
-                  placeholder="Digite a senha"
-                  className={`w-full border rounded-lg px-3 py-2.5 pr-10 text-base sm:text-sm text-[#1a1a1a] placeholder:text-[#9ca3af] focus:outline-none focus:ring-2 transition-colors ${fieldErrors.password
-                    ? 'border-red-400 focus:border-red-400 focus:ring-red-100'
-                    : 'border-[#d1d5db] focus:border-[#f97316] focus:ring-[#f97316]/20'
-                    }`}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((v) => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9ca3af] hover:text-[#6b7280] p-1 cursor-pointer"
-                  aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
-                >
-                  {showPassword ? (
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24" />
-                      <line x1="1" y1="1" x2="23" y2="23" strokeLinecap="round" />
-                    </svg>
-                  ) : (
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                      <circle cx="12" cy="12" r="3" />
-                    </svg>
-                  )}
-                </button>
-              </div>
+              <input
+                id="register-password"
+                type="password"
+                autoComplete="new-password"
+                value={form.password}
+                onChange={(e) => handleChange('password', e.target.value)}
+                placeholder="Digite a sua senha"
+                className={`w-full border rounded-lg px-4 py-3 text-sm text-[#1a1a1a] placeholder:text-[#9ca3af] focus:outline-none focus:border-[#f97316] focus:ring-1 focus:ring-[#f97316] transition-colors ${
+                  fieldErrors.password ? 'border-red-400 focus:border-red-400' : 'border-[#d1d5db]'
+                }`}
+              />
               {fieldErrors.password && (
-                <p className="text-xs text-red-500 mt-1">{fieldErrors.password}</p>
+                <p className="text-xs text-red-500 mt-1.5">{fieldErrors.password}</p>
               )}
             </div>
 
+            {/* Field 4: Função */}
             <div>
-              <label htmlFor="register-role" className="block text-xs sm:text-sm font-semibold text-[#1a1a1a] mb-1.5">
+              <label htmlFor="register-role" className="block text-base font-bold text-[#1a1a1a] mb-2">
                 Função
               </label>
               <div className="relative">
@@ -236,97 +211,76 @@ export default function NovaContaPage() {
                   id="register-role"
                   value={form.role}
                   onChange={(e) => handleChange('role', e.target.value)}
-                  className={`w-full appearance-none border rounded-lg px-3 py-2.5 pr-8 text-base sm:text-sm focus:outline-none focus:ring-2 transition-colors bg-white cursor-pointer ${fieldErrors.role
-                    ? 'border-red-400 focus:border-red-400 focus:ring-red-100 text-[#1a1a1a]'
-                    : 'border-[#d1d5db] focus:border-[#f97316] focus:ring-[#f97316]/20'
-                    } ${form.role ? 'text-[#1a1a1a]' : 'text-[#9ca3af]'}`}
+                  className={`w-full appearance-none border rounded-lg px-4 py-3 pr-10 text-sm focus:outline-none focus:border-[#f97316] focus:ring-1 focus:ring-[#f97316] transition-colors bg-white cursor-pointer ${
+                    fieldErrors.role ? 'border-red-400 focus:border-red-400' : 'border-[#d1d5db]'
+                  } ${form.role ? 'text-[#1a1a1a]' : 'text-[#9ca3af]'}`}
                 >
                   <option value="" disabled>
-                    Selecione o cargo
+                    Selecione a categoria
                   </option>
                   {ROLE_OPTIONS.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
+                    <option key={opt.value} value={opt.value} className="text-[#1a1a1a]">
                       {opt.label}
                     </option>
                   ))}
                 </select>
                 <svg
-                  className="w-4 h-4 text-[#9ca3af] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"
-                  fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
+                  className="w-5 h-5 text-[#4b5563] absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
                 >
                   <polyline points="6 9 12 15 18 9" />
                 </svg>
               </div>
               {fieldErrors.role && (
-                <p className="text-xs text-red-500 mt-1">{fieldErrors.role}</p>
+                <p className="text-xs text-red-500 mt-1.5">{fieldErrors.role}</p>
+              )}
+            </div>
+
+            {/* Field 5: Confirmar Senha */}
+            <div>
+              <label htmlFor="register-confirm-password" className="block text-base font-bold text-[#1a1a1a] mb-2">
+                Confirmar Senha
+              </label>
+              <input
+                id="register-confirm-password"
+                type="password"
+                autoComplete="new-password"
+                value={form.confirmPassword}
+                onChange={(e) => handleChange('confirmPassword', e.target.value)}
+                placeholder="Digite a senha novamente"
+                className={`w-full border rounded-lg px-4 py-3 text-sm text-[#1a1a1a] placeholder:text-[#9ca3af] focus:outline-none focus:border-[#f97316] focus:ring-1 focus:ring-[#f97316] transition-colors ${
+                  fieldErrors.confirmPassword ? 'border-red-400 focus:border-red-400' : 'border-[#d1d5db]'
+                }`}
+              />
+              {fieldErrors.confirmPassword && (
+                <p className="text-xs text-red-500 mt-1.5">{fieldErrors.confirmPassword}</p>
               )}
             </div>
           </div>
 
-          {/* Row 3: Confirmar Senha | Ação */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
-            <div>
-              <label htmlFor="register-confirm-password" className="block text-xs sm:text-sm font-semibold text-[#1a1a1a] mb-1.5">
-                Confirmar Senha
-              </label>
-              <div className="relative">
-                <input
-                  id="register-confirm-password"
-                  type={showConfirm ? 'text' : 'password'}
-                  autoComplete="new-password"
-                  value={form.confirmPassword}
-                  onChange={(e) => handleChange('confirmPassword', e.target.value)}
-                  placeholder="Digite novamente a senha"
-                  className={`w-full border rounded-lg px-3 py-2.5 pr-10 text-base sm:text-sm text-[#1a1a1a] placeholder:text-[#9ca3af] focus:outline-none focus:ring-2 transition-colors ${fieldErrors.confirmPassword
-                    ? 'border-red-400 focus:border-red-400 focus:ring-red-100'
-                    : 'border-[#d1d5db] focus:border-[#f97316] focus:ring-[#f97316]/20'
-                    }`}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirm((v) => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9ca3af] hover:text-[#6b7280] p-1 cursor-pointer"
-                  aria-label={showConfirm ? 'Ocultar confirmação' : 'Mostrar confirmação'}
-                >
-                  {showConfirm ? (
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24" />
-                      <line x1="1" y1="1" x2="23" y2="23" strokeLinecap="round" />
-                    </svg>
-                  ) : (
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                      <circle cx="12" cy="12" r="3" />
-                    </svg>
-                  )}
-                </button>
-              </div>
-              {fieldErrors.confirmPassword && (
-                <p className="text-xs text-red-500 mt-1">{fieldErrors.confirmPassword}</p>
+          {/* Submit button at bottom-right matching image 2 */}
+          <div className="flex justify-end mt-10 sm:mt-12">
+            <button
+              id="register-submit-btn"
+              type="submit"
+              disabled={loading || success}
+              className="w-full sm:w-auto bg-[#f97316] hover:bg-[#ea580c] text-white font-bold px-8 py-3 rounded-xl text-sm transition-colors shadow-sm disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
+            >
+              {loading ? (
+                <>
+                  <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                  </svg>
+                  <span>Cadastrando...</span>
+                </>
+              ) : (
+                'Cadastrar Funcionário'
               )}
-            </div>
-
-            {/* Submit button */}
-            <div className="flex items-center md:items-end justify-start md:justify-end mt-2 md:mt-0">
-              <button
-                id="register-submit-btn"
-                type="submit"
-                disabled={loading || success}
-                className="w-full md:w-auto justify-center bg-[#f97316] hover:bg-[#ea6c0e] text-white font-semibold px-6 py-2.5 rounded-lg text-sm transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer min-h-[44px]"
-              >
-                {loading ? (
-                  <>
-                    <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                    </svg>
-                    Cadastrando...
-                  </>
-                ) : (
-                  'Cadastrar Funcionário'
-                )}
-              </button>
-            </div>
+            </button>
           </div>
         </form>
       </div>
