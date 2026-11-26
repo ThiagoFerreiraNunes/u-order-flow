@@ -6,6 +6,7 @@ import org.uorderflow.utils.FormatUtils;
 public record ProductSummaryResponseDTO(
         Long id,
         String name,
+        String description,
         String price,
         String image,
         String productCategory,
@@ -15,6 +16,7 @@ public record ProductSummaryResponseDTO(
         this(
                 product.getId(),
                 product.getName(),
+                product.getDescription(),
                 FormatUtils.formatToBRL(product.getPrice()),
                 product.getImage(),
                 product.getProductCategory().getName(),
