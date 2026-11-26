@@ -6,6 +6,7 @@ import {
   getBills,
   getBillById,
   createBill,
+  closeBill,
   payBill,
   cancelBill,
   getRestaurantTables,
@@ -298,11 +299,12 @@ export default function ComandasPage() {
   const closedCount = bills.filter((b) => b.status === 'CLOSED').length;
   const paidCount = bills.filter((b) => b.status === 'PAID').length;
 
-  async function handleAction(id: number, action: 'pay' | 'cancel') {
+  async function handleAction(id: number, action: 'close' | 'pay' | 'cancel') {
     setActionId(id);
     setError('');
     try {
-      if (action === 'pay') await payBill(id);
+      if (action === 'close') await closeBill(id);
+      else if (action === 'pay') await payBill(id);
       else await cancelBill(id);
       reload();
     } catch (err) {
@@ -503,10 +505,28 @@ export default function ComandasPage() {
                             <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
                           </svg>
                         </Link>
-                        {bill.status === 'CLOSED' && canManageBill && (
+                        {/* Fechar comanda */}
+                        {bill.status === 'OPEN' && canManageBill && (
                           <button
+                            type="button"
+                            onClick={() => handleAction(bill.id, 'close')}
+                            disabled={actionId === bill.id}
+                            aria-label="Fechar comanda"
+                            title="Fechar comanda"
+                            className="text-[#374151] hover:text-amber-600 transition-colors p-1 cursor-pointer disabled:opacity-60"
+                          >
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                            </svg>
+                          </button>
+                        )}
+                        {/* Pagar comanda */}
+                        {(bill.status === 'CLOSED' || bill.status === 'OPEN') && canManageBill && (
+                          <button
+                            type="button"
                             onClick={() => handleAction(bill.id, 'pay')}
                             disabled={actionId === bill.id}
+                            aria-label="Pagar comanda"
                             title="Pagar comanda"
                             className="text-[#374151] hover:text-green-600 transition-colors p-1 cursor-pointer disabled:opacity-60"
                           >
@@ -566,8 +586,29 @@ export default function ComandasPage() {
                         <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
                       </svg>
                     </Link>
-                    {bill.status === 'CLOSED' && canManageBill && (
-                      <button onClick={() => handleAction(bill.id, 'pay')} disabled={actionId === bill.id} className="p-1 text-[#374151] hover:text-green-600 disabled:opacity-60">
+                    {bill.status === 'OPEN' && canManageBill && (
+                      <button
+                        type="button"
+                        onClick={() => handleAction(bill.id, 'close')}
+                        disabled={actionId === bill.id}
+                        title="Fechar comanda"
+                        aria-label="Fechar comanda"
+                        className="p-1 text-[#374151] hover:text-amber-600 disabled:opacity-60 cursor-pointer"
+                      >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                        </svg>
+                      </button>
+                    )}
+                    {(bill.status === 'CLOSED' || bill.status === 'OPEN') && canManageBill && (
+                      <button
+                        type="button"
+                        onClick={() => handleAction(bill.id, 'pay')}
+                        disabled={actionId === bill.id}
+                        title="Pagar comanda"
+                        aria-label="Pagar comanda"
+                        className="p-1 text-[#374151] hover:text-green-600 disabled:opacity-60 cursor-pointer"
+                      >
                         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 14.93V18h-2v-1.07C9.14 16.57 8 15.42 8 14h2c0 .55.45 1 1 1h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-1.65 0-3-1.35-3-3 0-1.42 1.14-2.57 2.5-2.93V6h2v1.07C13.86 7.43 15 8.58 15 10h-2c0-.55-.45-1-1-1H10c-.55 0-1 .45-1 1s.45 1 1 1h2c1.65 0 3 1.35 3 3 0 1.42-1.14 2.57-2.5 2.93z" />
                         </svg>
