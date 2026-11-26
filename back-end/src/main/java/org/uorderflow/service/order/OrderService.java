@@ -9,6 +9,7 @@ import org.uorderflow.dto.order.OrderDetailsResponseDTO;
 import org.uorderflow.dto.order.OrderSummaryResponseDTO;
 import org.uorderflow.dto.order.OrderUpdateDTO;
 import org.uorderflow.dto.orderProduct.OrderProductCreateDTO;
+import org.uorderflow.enums.bill.BillAction;
 import org.uorderflow.enums.order.OrderAction;
 import org.uorderflow.infra.exception.BusinessRuleException;
 import org.uorderflow.model.*;
@@ -40,7 +41,7 @@ public class OrderService {
 
     @Transactional
     public OrderDetailsResponseDTO createOrder(Long billId, OrderCreateDTO data){
-        Bill bill = billValidation.validateBill(billId, null);
+        Bill bill = billValidation.validateBill(billId, BillAction.ADD_ORDER);
         User employee = userValidation.validateUser(data.employeeId());
         Order order = new Order(employee);
 
