@@ -1,5 +1,5 @@
 package org.uorderflow.enums.bill;
 
 public enum BillAction {
-    UPDATE, CANCEL, CLOSE, PAY
+    UPDATE, CANCEL, CLOSE, PAY, ADD_ORDER
 }
