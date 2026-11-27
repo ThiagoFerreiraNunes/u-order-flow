@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { getUsers, deleteUser } from '@/lib/api';
 import type { UserResponse, UserRole } from '@/types/user';
@@ -14,11 +14,24 @@ export default function ContasPage() {
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [search, setSearch] = useState('');
+  const [roleFilter, setRoleFilter] = useState('');
+  const [filterMenuOpen, setFilterMenuOpen] = useState(false);
+  const filterMenuRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
   const [reloadTrigger, setReloadTrigger] = useState(0);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (filterMenuRef.current && !filterMenuRef.current.contains(e.target as Node)) {
+        setFilterMenuOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     let ignore = false;
@@ -62,6 +75,10 @@ export default function ContasPage() {
       setDeletingId(null);
     }
   }
+
+  const displayedUsers = roleFilter
+    ? users.filter((u) => u.role === roleFilter)
+    : users;
 
   const rangeStart = total === 0 ? 0 : page * PAGE_SIZE + 1;
   const rangeEnd = Math.min((page + 1) * PAGE_SIZE, total);
@@ -108,16 +125,55 @@ export default function ContasPage() {
           </div>
 
           {/* Funnel / Filter icon */}
-          <button
-            type="button"
-            className="text-[#374151] hover:text-[#1a1a1a] p-2 transition-colors cursor-pointer"
-            aria-label="Filtrar"
-            title="Filtrar"
-          >
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z" />
-            </svg>
-          </button>
+          <div className="relative" ref={filterMenuRef}>
+            <button
+              type="button"
+              onClick={() => setFilterMenuOpen((v) => !v)}
+              className={`p-2 transition-colors cursor-pointer rounded-lg relative ${
+                roleFilter ? 'text-[#f97316] bg-[#fff1e8]' : 'text-[#374151] hover:text-[#1a1a1a]'
+              }`}
+              aria-label="Filtrar por função"
+              title="Filtrar por função"
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z" />
+              </svg>
+              {roleFilter && (
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#f97316]" />
+              )}
+            </button>
+
+            {filterMenuOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-[#e5e7eb] py-2 z-20">
+                <div className="px-3 py-1.5 text-xs font-semibold text-[#9ca3af] uppercase tracking-wider">
+                  Filtrar por cargo
+                </div>
+                <button
+                  type="button"
+                  onClick={() => { setRoleFilter(''); setFilterMenuOpen(false); }}
+                  className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-[#f9fafb] cursor-pointer ${
+                    roleFilter === '' ? 'text-[#f97316] font-semibold bg-[#fff7ed]' : 'text-[#374151]'
+                  }`}
+                >
+                  <span>Todos</span>
+                  {roleFilter === '' && <span>✓</span>}
+                </button>
+                {(['ADMIN', 'WAITER', 'COOK', 'CASHIER'] as UserRole[]).map((r) => (
+                  <button
+                    key={r}
+                    type="button"
+                    onClick={() => { setRoleFilter(r); setFilterMenuOpen(false); }}
+                    className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-[#f9fafb] cursor-pointer ${
+                      roleFilter === r ? 'text-[#f97316] font-semibold bg-[#fff7ed]' : 'text-[#374151]'
+                    }`}
+                  >
+                    <span>{USER_ROLE_LABELS[r]}</span>
+                    {roleFilter === r && <span>✓</span>}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Error banner */}
@@ -156,14 +212,14 @@ export default function ContasPage() {
                     </div>
                   </td>
                 </tr>
-              ) : users.length === 0 ? (
+              ) : displayedUsers.length === 0 ? (
                 <tr>
                   <td colSpan={4} className="px-6 py-12 text-center text-[#6b7280] text-sm">
                     Nenhum usuário encontrado.
                   </td>
                 </tr>
               ) : (
-                users.map((user) => (
+                displayedUsers.map((user) => (
                   <tr key={user.id} className="hover:bg-[#fafafa] transition-colors">
                     <td className="px-6 py-5 font-normal text-[#374151] text-left">
                       {user.name}
@@ -231,10 +287,10 @@ export default function ContasPage() {
         <div className="md:hidden divide-y divide-[#f3f4f6]">
           {loading ? (
             <div className="p-8 text-center text-[#6b7280] text-sm">Carregando...</div>
-          ) : users.length === 0 ? (
+          ) : displayedUsers.length === 0 ? (
             <div className="p-8 text-center text-[#6b7280] text-sm">Nenhum usuário encontrado.</div>
           ) : (
-            users.map((user) => (
+            displayedUsers.map((user) => (
               <div key={user.id} className="p-4 flex flex-col gap-2 hover:bg-[#fafafa] transition-colors">
                 <div className="flex items-start justify-between gap-2">
                   <div>

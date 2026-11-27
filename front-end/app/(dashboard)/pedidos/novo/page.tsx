@@ -16,12 +16,7 @@ interface CartItem {
   note: string;
 }
 
-function getErrorMessage(err: unknown, fallback: string): string {
-  if (err && typeof err === 'object' && 'message' in err && typeof err.message === 'string') {
-    return err.message;
-  }
-  return fallback;
-}
+import { getErrorMessage } from '@/lib/formatters';
 
 // Category badge colors — cycle through a palette
 const CATEGORY_COLORS: string[] = [
