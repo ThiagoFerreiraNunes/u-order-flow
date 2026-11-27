@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 import org.uorderflow.dto.user.UserPasswordUpdateDTO;
 import org.uorderflow.dto.user.UserResponseDTO;
@@ -35,7 +36,8 @@ public class UserController {
             Authentication authentication
     ){
         boolean isAdmin = authentication.getAuthorities().stream()
-                .anyMatch(role -> Objects.equals(role.getAuthority(), "ADMIN"));
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch("ROLE_ADMIN"::equals);
 
         return ResponseEntity.ok(userService.findAll(name, excludeRole, pageable, isAdmin));
     }

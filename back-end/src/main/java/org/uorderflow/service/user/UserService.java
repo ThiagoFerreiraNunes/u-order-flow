@@ -31,20 +31,32 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public Page<UserResponseDTO> findAll(String name, UserRole excludeRole, Pageable pageable, boolean isAdmin){
+    public Page<UserResponseDTO> findAll(
+            String name,
+            UserRole excludeRole,
+            Pageable pageable,
+            boolean isAdmin
+    ) {
+        if (!isAdmin && excludeRole == null) {
+            throw new AccessDeniedException(
+                    "Only ADMIN users can list all users."
+            );
+        }
+
         if (excludeRole != null) {
-            return userRepository.findAllPagedExcludingRole(excludeRole, pageable).map(UserResponseDTO::new);
+            return userRepository
+                    .findAllPagedExcludingRole(excludeRole, pageable)
+                    .map(UserResponseDTO::new);
         }
 
-        if (isAdmin) {
-            if (name != null && !name.isBlank()) {
-                return userRepository.findAllPagedByName(name, pageable).map(UserResponseDTO::new);
-            }
-
-            return userRepository.findAll(pageable).map(UserResponseDTO::new);
+        if (name != null && !name.isBlank()) {
+            return userRepository
+                    .findAllPagedByName(name, pageable)
+                    .map(UserResponseDTO::new);
         }
 
-        throw new AccessDeniedException("Only users with the ADMIN role can use the findAll method without the 'exclude-role' parameter.");
+        return userRepository.findAll(pageable)
+                .map(UserResponseDTO::new);
     }
 
     @Transactional(readOnly = true)
