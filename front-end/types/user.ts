@@ -19,6 +19,18 @@ export interface RegisterRequest {
   role: UserRole;
 }
 
+export interface UserUpdateRequest {
+  name?: string;
+  email?: string;
+  role?: UserRole;
+  isDeleted?: boolean;
+}
+
+export interface UserPasswordUpdateRequest {
+  currentPassword?: string;
+  newPassword: string;
+}
+
 export interface TokenResponse {
   token: string;
 }

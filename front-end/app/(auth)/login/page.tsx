@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { loginUser } from '@/lib/api';
-import { saveToken } from '@/lib/auth';
+import { saveUserSession } from '@/lib/auth';
 import type { ApiError } from '@/types/user';
 
 export default function LoginPage() {
@@ -20,9 +20,23 @@ export default function LoginPage() {
     setError('');
     setLoading(true);
     try {
-      const data = await loginUser({ email, password });
-      saveToken(data.token);
-      router.push('/inicio');
+      await loginUser({ email, password });
+      saveUserSession(email);
+
+      // Fetch session to determine role-based landing page
+      let landingPage = '/pedidos';
+      try {
+        const sessionRes = await fetch('/api/session', { cache: 'no-store' });
+        if (sessionRes.ok) {
+          const session = await sessionRes.json();
+          if (session.role === 'ADMIN') {
+            landingPage = '/inicio';
+          }
+        }
+      } catch {
+        // fallback to /pedidos — middleware will handle the redirect anyway
+      }
+      router.push(landingPage);
     } catch (err: unknown) {
       if (err && typeof err === 'object') {
         const apiError = err as ApiError;
@@ -40,28 +54,42 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-[#ebebeb] flex flex-col">
       {/* ── Top bar (matches dashboard header) ── */}
-      <header className="h-[52px] bg-[#3c3c3c] flex items-center px-6 shrink-0">
+      <header className="h-[52px] bg-[#3c3c3c] flex items-center px-4 sm:px-6 shrink-0">
         <div className="flex items-center gap-2.5">
           {/* Logo icon */}
-          <div className="w-9 h-9 flex items-center justify-center">
-            <img src="/logo-uorder.png" alt="UOrderFlow Logo" className="w-full h-full object-contain" />
+          <div className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center relative">
+            <Image
+              src="/logo-uorder.png"
+              alt="UOrderFlow Logo"
+              width={36}
+              height={36}
+              className="object-contain"
+              priority
+            />
           </div>
           <span className="text-white font-bold text-sm tracking-wide">UOrderFlow</span>
         </div>
       </header>
 
       {/* ── Centered login card ── */}
-      <div className="flex flex-1 items-center justify-center p-6">
+      <div className="flex flex-1 items-center justify-center p-4 sm:p-6">
         <div className="w-full max-w-sm">
           {/* Card */}
-          <div className="bg-white rounded-xl shadow-sm border border-[#e5e7eb] px-10 py-10">
+          <div className="bg-white rounded-xl shadow-sm border border-[#e5e7eb] px-5 py-7 sm:px-8 sm:py-9 md:px-10 md:py-10">
             {/* Brand */}
-            <div className="flex flex-col items-center mb-8">
-              <div className="w-48 h-24 flex items-center justify-center mb-3">
-                <img src="/logo-uorder.png" alt="UOrderFlow Logo" className="w-full h-full object-contain" />
+            <div className="flex flex-col items-center mb-6 sm:mb-8">
+              <div className="w-36 h-20 sm:w-48 sm:h-24 flex items-center justify-center mb-3 relative">
+                <Image
+                  src="/logo-uorder.png"
+                  alt="UOrderFlow Logo"
+                  width={192}
+                  height={96}
+                  className="object-contain"
+                  priority
+                />
               </div>
-              <h1 className="text-xl font-bold text-[#1a1a1a]">Bem-vindo!</h1>
-              <p className="text-sm text-[#6b7280] mt-1">Acesse sua conta para continuar</p>
+              <h1 className="text-lg sm:text-xl font-bold text-[#1a1a1a]">Bem-vindo!</h1>
+              <p className="text-xs sm:text-sm text-[#6b7280] mt-1 text-center">Acesse sua conta para continuar</p>
             </div>
 
             {/* Error banner */}
@@ -81,7 +109,7 @@ export default function LoginPage() {
             <form onSubmit={handleSubmit} className="space-y-4" noValidate>
               {/* Email */}
               <div>
-                <label htmlFor="login-email" className="block text-sm font-semibold text-[#1a1a1a] mb-1.5">
+                <label htmlFor="login-email" className="block text-xs sm:text-sm font-semibold text-[#1a1a1a] mb-1.5">
                   E-mail
                 </label>
                 <input
@@ -92,13 +120,13 @@ export default function LoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="exemplo@uorderflow.com"
                   required
-                  className="w-full border border-[#d1d5db] rounded-lg px-3 py-2.5 text-sm text-[#1a1a1a] placeholder:text-[#9ca3af] focus:outline-none focus:border-[#f97316] focus:ring-2 focus:ring-[#f97316]/20 transition-colors"
+                  className="w-full border border-[#d1d5db] rounded-lg px-3 py-2.5 text-base sm:text-sm text-[#1a1a1a] placeholder:text-[#9ca3af] focus:outline-none focus:border-[#f97316] focus:ring-2 focus:ring-[#f97316]/20 transition-colors"
                 />
               </div>
 
               {/* Password */}
               <div>
-                <label htmlFor="login-password" className="block text-sm font-semibold text-[#1a1a1a] mb-1.5">
+                <label htmlFor="login-password" className="block text-xs sm:text-sm font-semibold text-[#1a1a1a] mb-1.5">
                   Senha
                 </label>
                 <div className="relative">
@@ -111,7 +139,7 @@ export default function LoginPage() {
                     placeholder="Digite a senha"
                     required
                     minLength={6}
-                    className="w-full border border-[#d1d5db] rounded-lg px-3 py-2.5 pr-10 text-sm text-[#1a1a1a] placeholder:text-[#9ca3af] focus:outline-none focus:border-[#f97316] focus:ring-2 focus:ring-[#f97316]/20 transition-colors"
+                    className="w-full border border-[#d1d5db] rounded-lg px-3 py-2.5 pr-10 text-base sm:text-sm text-[#1a1a1a] placeholder:text-[#9ca3af] focus:outline-none focus:border-[#f97316] focus:ring-2 focus:ring-[#f97316]/20 transition-colors"
                   />
                   <button
                     type="button"
@@ -139,7 +167,7 @@ export default function LoginPage() {
                 id="login-submit-btn"
                 type="submit"
                 disabled={loading}
-                className="w-full bg-[#f97316] hover:bg-[#ea6c0e] text-white font-semibold py-2.5 rounded-lg transition-colors disabled:opacity-60 disabled:cursor-not-allowed mt-2 text-sm"
+                className="w-full bg-[#f97316] hover:bg-[#ea6c0e] text-white font-semibold py-2.5 rounded-lg transition-colors disabled:opacity-60 disabled:cursor-not-allowed mt-2 text-sm cursor-pointer min-h-[44px]"
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
