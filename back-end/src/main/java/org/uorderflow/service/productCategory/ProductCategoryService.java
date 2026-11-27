@@ -65,6 +65,7 @@ public class ProductCategoryService {
     @Transactional
     public void delete(Long id){
         ProductCategory productCategory = productCategoryValidation.validateProductCategory(id);
+        productCategoryValidation.validateCategoryDeletion(id);
         productCategory.delete();
     }
 }
