@@ -77,7 +77,7 @@ export default function ContasPage() {
   }
 
   const displayedUsers = roleFilter
-    ? users.filter((u) => u.role === roleFilter)
+    ? users.filter((u) => u.role.toUpperCase() === roleFilter)
     : users;
 
   const rangeStart = total === 0 ? 0 : page * PAGE_SIZE + 1;
@@ -228,7 +228,7 @@ export default function ContasPage() {
                       {user.email}
                     </td>
                     <td className="px-6 py-5 text-[#374151] text-center">
-                      {USER_ROLE_LABELS[user.role as UserRole] ?? user.role}
+                      {USER_ROLE_LABELS[user.role.toUpperCase() as UserRole] ?? user.role}
                     </td>
                     <td className="px-6 py-5 text-right">
                       <div className="flex items-center justify-end gap-3 text-[#374151]">
@@ -298,7 +298,7 @@ export default function ContasPage() {
                     <p className="text-xs text-[#6b7280] mt-0.5">{user.email}</p>
                   </div>
                   <span className="text-xs font-medium text-[#374151]">
-                    {USER_ROLE_LABELS[user.role as UserRole] ?? user.role}
+                    {USER_ROLE_LABELS[user.role.toUpperCase() as UserRole] ?? user.role}
                   </span>
                 </div>
 

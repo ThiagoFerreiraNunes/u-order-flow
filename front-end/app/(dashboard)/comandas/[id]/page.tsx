@@ -8,7 +8,6 @@ import {
   closeBill,
   payBill,
   getOrderById,
-  createBillOrder,
   updateOrder,
   cancelOrder,
   getProducts,
@@ -279,219 +278,6 @@ function EditOrderModal({ orderId, onClose, onSaved }: EditOrderModalProps) {
   );
 }
 
-// ─── Modal Adicionar Item / Novo Pedido na Comanda ─────────────────────────────
-interface NewOrderModalProps {
-  billId: number;
-  onClose: () => void;
-  onSaved: () => void;
-}
-
-function NewOrderModal({ billId, onClose, onSaved }: NewOrderModalProps) {
-  const [products, setProducts] = useState<ProductSummaryResponse[]>([]);
-  const [employees, setEmployees] = useState<UserResponse[]>([]);
-  const [employeeId, setEmployeeId] = useState<number | ''>('');
-  const [items, setItems] = useState<OrderItemCreateRequest[]>([]);
-  const [loadingData, setLoadingData] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState('');
-
-  useEffect(() => {
-    let ignore = false;
-    Promise.all([
-      getProducts({ size: 100 }),
-      getUsers({ excludeRole: 'COOK', size: 100 }),
-    ])
-      .then(([productsPage, usersPage]) => {
-        if (ignore) return;
-        const available = productsPage.content.filter((p) => p.isAvailable);
-        setProducts(available);
-        setEmployees(usersPage.content);
-        if (usersPage.content.length > 0) {
-          setEmployeeId(usersPage.content[0].id);
-        }
-        if (available.length > 0) {
-          setItems([{ productId: available[0].id, quantity: 1, note: '' }]);
-        }
-      })
-      .catch(() => {
-        if (!ignore) setError('Não foi possível carregar os dados para adicionar itens.');
-      })
-      .finally(() => {
-        if (!ignore) setLoadingData(false);
-      });
-    return () => { ignore = true; };
-  }, []);
-
-  function addItem() {
-    if (products.length === 0) return;
-    setItems((prev) => [...prev, { productId: products[0].id, quantity: 1, note: '' }]);
-  }
-
-  function updateItem(index: number, patch: Partial<OrderItemCreateRequest>) {
-    setItems((prev) => prev.map((item, idx) => (idx === index ? { ...item, ...patch } : item)));
-  }
-
-  function removeItem(index: number) {
-    if (items.length <= 1) return;
-    setItems((prev) => prev.filter((_, idx) => idx !== index));
-  }
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!employeeId) {
-      setError('Selecione o atendente responsável.');
-      return;
-    }
-    if (items.length === 0) {
-      setError('Adicione pelo menos 1 item ao pedido.');
-      return;
-    }
-    setSaving(true);
-    setError('');
-    try {
-      await createBillOrder(billId, {
-        employeeId: Number(employeeId),
-        items: items.map((i) => ({
-          productId: Number(i.productId),
-          quantity: Math.max(1, Number(i.quantity)),
-          note: i.note?.trim() || undefined,
-        })),
-      });
-      onSaved();
-    } catch (err) {
-      setError(getErrorMessage(err, 'Erro ao adicionar item ao pedido.'));
-    } finally {
-      setSaving(false);
-    }
-  }
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 py-6 overflow-y-auto">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h2 className="text-base font-semibold text-[#1a1a1a]">Adicionar Itens ao Pedido</h2>
-            <p className="text-xs text-[#6b7280] mt-0.5">Comanda #{billId}</p>
-          </div>
-          <button onClick={onClose} className="text-[#6b7280] hover:text-[#1a1a1a] transition-colors cursor-pointer">
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg px-4 py-2 mb-4">
-            {error}
-          </div>
-        )}
-
-        {loadingData ? (
-          <div className="flex justify-center py-10">
-            <div className="w-7 h-7 border-2 border-[#f97316] border-t-transparent rounded-full animate-spin" />
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Atendente */}
-            <div>
-              <label className="block text-xs font-medium text-[#374151] mb-1">Atendente *</label>
-              <select
-                className="w-full border border-[#d1d5db] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#f97316] bg-white"
-                value={employeeId}
-                onChange={(e) => setEmployeeId(e.target.value ? Number(e.target.value) : '')}
-              >
-                <option value="">Selecione</option>
-                {employees.map((emp) => (
-                  <option key={emp.id} value={emp.id}>
-                    {emp.name} ({USER_ROLE_LABELS[emp.role] ?? emp.role})
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Itens */}
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <label className="text-xs font-medium text-[#374151]">Itens do Pedido *</label>
-                <button
-                  type="button"
-                  onClick={addItem}
-                  className="text-xs text-[#f97316] font-semibold hover:underline cursor-pointer"
-                >
-                  + Adicionar item
-                </button>
-              </div>
-
-              {products.length === 0 ? (
-                <p className="text-xs text-[#9ca3af] py-4 text-center">Nenhum produto disponível no menu.</p>
-              ) : (
-                <div className="space-y-2">
-                  {items.map((item, idx) => (
-                    <div key={idx} className="p-3 bg-[#f9fafb] rounded-lg border border-[#e5e7eb] space-y-2">
-                      <div className="flex gap-2">
-                        <select
-                          className="flex-1 border border-[#d1d5db] rounded-lg px-2.5 py-1.5 text-sm bg-white"
-                          value={item.productId}
-                          onChange={(e) => updateItem(idx, { productId: Number(e.target.value) })}
-                        >
-                          {products.map((p) => (
-                            <option key={p.id} value={p.id}>
-                              {p.name} — {p.price}
-                            </option>
-                          ))}
-                        </select>
-                        <input
-                          type="number"
-                          min={1}
-                          className="w-16 border border-[#d1d5db] rounded-lg px-2 py-1.5 text-sm bg-white text-center font-medium"
-                          value={item.quantity}
-                          onChange={(e) => updateItem(idx, { quantity: Number(e.target.value) || 1 })}
-                        />
-                        <button
-                          type="button"
-                          onClick={() => removeItem(idx)}
-                          disabled={items.length <= 1}
-                          className="px-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer disabled:opacity-30"
-                          title="Remover item"
-                        >
-                          ✕
-                        </button>
-                      </div>
-                      <input
-                        className="w-full border border-[#d1d5db] rounded-lg px-2.5 py-1.5 text-xs bg-white"
-                        placeholder="Observação (opcional)"
-                        value={item.note ?? ''}
-                        onChange={(e) => updateItem(idx, { note: e.target.value })}
-                      />
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div className="flex justify-end gap-2 pt-2">
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-4 py-2 text-sm border border-[#d1d5db] text-[#374151] rounded-lg hover:bg-[#f9fafb] transition-colors cursor-pointer"
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                disabled={saving || products.length === 0}
-                className="px-4 py-2 text-sm bg-[#f97316] hover:bg-[#ea580c] text-white rounded-lg transition-colors disabled:opacity-60 cursor-pointer font-semibold"
-              >
-                {saving ? 'Adicionando...' : 'Adicionar ao Pedido'}
-              </button>
-            </div>
-          </form>
-        )}
-      </div>
-    </div>
-  );
-}
-
 // ─── Modal de Confirmação de Cancelamento ──────────────────────────────────────
 interface CancelConfirmModalProps {
   orderId: number;
@@ -579,7 +365,6 @@ export default function ComandaDetailPage() {
 
   const [editOrderId, setEditOrderId] = useState<number | null>(null);
   const [cancelOrderId, setCancelOrderId] = useState<number | null>(null);
-  const [newOrderModal, setNewOrderModal] = useState(false);
 
   const reload = useCallback(() => {
     setLoading(true);
@@ -647,16 +432,6 @@ export default function ComandaDetailPage() {
   return (
     <div className="max-w-6xl mx-auto">
       {/* Modais */}
-      {newOrderModal && (
-        <NewOrderModal
-          billId={billId}
-          onClose={() => setNewOrderModal(false)}
-          onSaved={() => {
-            setNewOrderModal(false);
-            reload();
-          }}
-        />
-      )}
       {editOrderId !== null && (
         <EditOrderModal
           orderId={editOrderId}
@@ -741,16 +516,15 @@ export default function ComandaDetailPage() {
             {/* Ações da Comanda */}
             <div className="flex flex-wrap items-center gap-3">
               {canManage && bill.status === 'OPEN' && (
-                <button
-                  type="button"
-                  onClick={() => setNewOrderModal(true)}
+                <Link
+                  href={`/pedidos/novo?billId=${bill.id}`}
                   className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold bg-[#f97316] hover:bg-[#ea580c] text-white rounded-xl transition-colors shadow-sm cursor-pointer"
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                   </svg>
-                  Adicionar Item ao Pedido
-                </button>
+                  Adicionar Pedido
+                </Link>
               )}
               {canManageBill && (
                 <>
@@ -805,7 +579,17 @@ export default function ComandaDetailPage() {
                   {pagedOrders.length === 0 ? (
                     <tr>
                       <td colSpan={6} className="px-6 py-14 text-center text-[#6b7280] text-sm">
-                        Nenhum pedido lançado nesta comanda.
+                        <p>Nenhum pedido lançado nesta comanda.</p>
+                        {canManage && bill.status === 'OPEN' && (
+                          <div className="mt-3">
+                            <Link
+                              href={`/pedidos/novo?billId=${bill.id}`}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-[#f97316] text-white rounded-lg hover:bg-[#ea580c] transition-colors"
+                            >
+                              + Adicionar Pedido
+                            </Link>
+                          </div>
+                        )}
                       </td>
                     </tr>
                   ) : (
@@ -886,7 +670,17 @@ export default function ComandaDetailPage() {
             <div className="md:hidden divide-y divide-[#f3f4f6]">
               {pagedOrders.length === 0 ? (
                 <div className="p-8 text-center text-[#6b7280] text-sm">
-                  Nenhum pedido lançado nesta comanda.
+                  <p>Nenhum pedido lançado nesta comanda.</p>
+                  {canManage && bill.status === 'OPEN' && (
+                    <div className="mt-3">
+                      <Link
+                        href={`/pedidos/novo?billId=${bill.id}`}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-[#f97316] text-white rounded-lg hover:bg-[#ea580c] transition-colors"
+                      >
+                        + Adicionar Pedido
+                      </Link>
+                    </div>
+                  )}
                 </div>
               ) : (
                 pagedOrders.map((order) => (

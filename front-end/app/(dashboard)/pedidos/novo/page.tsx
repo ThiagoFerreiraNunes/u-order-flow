@@ -1,12 +1,14 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, useMemo, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
-import { getBills, getUsers, getProducts, createBillOrder } from '@/lib/api';
+import { getBills, getBillById, getUsers, getProducts, createBillOrder } from '@/lib/api';
+import { useSession } from '@/lib/use-session';
 import type { BillSummaryResponse } from '@/types/bill';
 import type { UserResponse } from '@/types/user';
 import type { ProductSummaryResponse } from '@/types/product';
+import { getErrorMessage } from '@/lib/formatters';
 
 const PAGE_SIZE = 10;
 
@@ -15,8 +17,6 @@ interface CartItem {
   quantity: number;
   note: string;
 }
-
-import { getErrorMessage } from '@/lib/formatters';
 
 // Category badge colors — cycle through a palette
 const CATEGORY_COLORS: string[] = [
@@ -36,8 +36,11 @@ function categoryColor(name: string): string {
   return CATEGORY_COLORS[Math.abs(hash) % CATEGORY_COLORS.length];
 }
 
-export default function NovoPedidoPage() {
+function NovoPedidoContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const billIdParam = searchParams.get('billId');
+  const { id: sessionUserId } = useSession();
 
   // ─── Form Data ───────────────────────────────────────────────────────────────
   const [bills, setBills] = useState<BillSummaryResponse[]>([]);
@@ -61,18 +64,53 @@ export default function NovoPedidoPage() {
     let ignore = false;
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoadingData(true);
+    const billIdNumber = billIdParam ? Number(billIdParam) : null;
+
     Promise.all([
       getBills({ size: 100 }),
       getUsers({ excludeRole: 'COOK', size: 100 }),
       getProducts({ size: 200 }),
+      billIdNumber ? getBillById(billIdNumber).catch(() => null) : Promise.resolve(null),
     ])
-      .then(([billsData, usersData, productsData]) => {
+      .then(([billsData, usersData, productsData, targetBill]) => {
         if (ignore) return;
-        const openBills = billsData.content.filter((b) => b.status === 'OPEN');
+        let openBills = billsData.content.filter((b) => b.status === 'OPEN');
+
+        if (targetBill) {
+          if (targetBill.status !== 'OPEN') {
+            setError(`A comanda #${targetBill.id} não está aberta para novos pedidos (status: ${targetBill.status}).`);
+          } else {
+            const alreadyInList = openBills.some((b) => b.id === targetBill.id);
+            if (!alreadyInList) {
+              const summaryBill: BillSummaryResponse = {
+                id: targetBill.id,
+                customer: targetBill.customer,
+                restaurantTable: targetBill.restaurantTable,
+                status: targetBill.status,
+                totalPrice: targetBill.totalPrice,
+                createdAt: targetBill.createdAt,
+              };
+              openBills = [summaryBill, ...openBills];
+            }
+          }
+        }
+
         setBills(openBills);
-        if (openBills.length > 0) setSelectedBillId(openBills[0].id);
+
+        if (billIdNumber && openBills.some((b) => b.id === billIdNumber)) {
+          setSelectedBillId(billIdNumber);
+        } else if (openBills.length > 0) {
+          setSelectedBillId(openBills[0].id);
+        }
+
         setEmployees(usersData.content);
-        if (usersData.content.length > 0) setSelectedEmployeeId(usersData.content[0].id);
+        if (usersData.content.length > 0) {
+          const foundEmp = sessionUserId
+            ? usersData.content.find((u) => u.id === sessionUserId)
+            : undefined;
+          const defaultEmp = foundEmp ?? usersData.content[0];
+          setSelectedEmployeeId(defaultEmp.id);
+        }
         setProducts(productsData.content.filter((p) => p.isAvailable));
       })
       .catch(() => {
@@ -82,7 +120,7 @@ export default function NovoPedidoPage() {
         if (!ignore) setLoadingData(false);
       });
     return () => { ignore = true; };
-  }, []);
+  }, [billIdParam, sessionUserId]);
 
   // ─── Derived state ───────────────────────────────────────────────────────────
   const selectedBill = bills.find((b) => b.id === selectedBillId) ?? null;
@@ -177,7 +215,11 @@ export default function NovoPedidoPage() {
           note: (item.note || globalNote).trim() || undefined,
         })),
       });
-      router.push('/pedidos');
+      if (billIdParam) {
+        router.push(`/comandas/${billIdParam}`);
+      } else {
+        router.push('/pedidos');
+      }
     } catch (err) {
       setError(getErrorMessage(err, 'Erro ao criar o pedido. Tente novamente.'));
       setSaving(false);
@@ -191,15 +233,23 @@ export default function NovoPedidoPage() {
       <div className="flex items-center gap-3 mb-6">
         <button
           type="button"
-          onClick={() => router.push('/pedidos')}
+          onClick={() => {
+            if (billIdParam) {
+              router.push(`/comandas/${billIdParam}`);
+            } else {
+              router.push('/pedidos');
+            }
+          }}
           className="text-[#1a1a1a] hover:text-[#f97316] transition-colors cursor-pointer"
-          aria-label="Voltar para Pedidos"
+          aria-label={billIdParam ? 'Voltar para Comanda' : 'Voltar para Pedidos'}
         >
           <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
           </svg>
         </button>
-        <h1 className="text-2xl sm:text-3xl font-bold text-[#1a1a1a]">Novo Pedido</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-[#1a1a1a]">
+          Novo Pedido{selectedBill && billIdParam ? ` · Comanda #${selectedBill.id}` : ''}
+        </h1>
       </div>
 
       {/* Error banner */}
@@ -231,7 +281,10 @@ export default function NovoPedidoPage() {
                   </label>
                   <div className="relative">
                     <select
-                      className="w-full appearance-none border border-[#d1d5db] rounded-xl px-4 py-3 pr-10 text-sm text-[#1a1a1a] bg-white focus:outline-none focus:ring-2 focus:ring-[#f97316] focus:border-[#f97316] transition-colors cursor-pointer"
+                      disabled={Boolean(billIdParam)}
+                      className={`w-full appearance-none border border-[#d1d5db] rounded-xl px-4 py-3 pr-10 text-sm text-[#1a1a1a] focus:outline-none focus:ring-2 focus:ring-[#f97316] focus:border-[#f97316] transition-colors ${
+                        billIdParam ? 'bg-gray-100 cursor-not-allowed opacity-90' : 'bg-white cursor-pointer'
+                      }`}
                       value={selectedBillId}
                       onChange={(e) => setSelectedBillId(e.target.value ? Number(e.target.value) : '')}
                     >
@@ -243,17 +296,23 @@ export default function NovoPedidoPage() {
                         </option>
                       ))}
                     </select>
-                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#9ca3af]">
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </span>
+                    {!billIdParam && (
+                      <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#9ca3af]">
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </span>
+                    )}
                   </div>
-                  {bills.length === 0 && (
+                  {billIdParam ? (
+                    <p className="text-xs text-[#6b7280] mt-1">
+                      Pedido vinculado à comanda #{billIdParam}.
+                    </p>
+                  ) : bills.length === 0 ? (
                     <p className="text-xs text-amber-600 mt-1">
                       Nenhuma comanda aberta. Crie uma em Comandas.
                     </p>
-                  )}
+                  ) : null}
                 </div>
 
                 {/* Funcionário Select */}
@@ -591,5 +650,20 @@ export default function NovoPedidoPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function NovoPedidoPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex flex-col items-center justify-center py-24 text-[#6b7280]">
+          <div className="w-8 h-8 border-2 border-[#f97316] border-t-transparent rounded-full animate-spin mb-3" />
+          <p className="text-sm">Carregando...</p>
+        </div>
+      }
+    >
+      <NovoPedidoContent />
+    </Suspense>
   );
 }

@@ -7,7 +7,7 @@ export const USER_ROLE_LABELS: Record<string, string> = {
 
 export function formatUserRole(role?: string | null): string {
   if (!role) return '';
-  return USER_ROLE_LABELS[role] ?? role;
+  return USER_ROLE_LABELS[role.toUpperCase()] ?? role;
 }
 
 export const BILL_STATUS_LABELS: Record<string, string> = {

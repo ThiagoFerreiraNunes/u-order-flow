@@ -88,6 +88,55 @@ class OrderRepositoryTest {
     }
 
     @Test
+    @DisplayName("Should return orders whose bills have no restaurant table in findAllPaged")
+    void shouldFindAllPagedWhenBillHasNoRestaurantTable() {
+        User employee = createUser("Mariana");
+        Bill bill = createBill("SemMesa", null);
+
+        Order order = new Order(employee);
+        order.setBill(bill);
+        entityManager.persist(order);
+        entityManager.flush();
+        entityManager.clear();
+
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Order> result = orderRepository.findAllPaged(pageable);
+
+        assertThat(result).isNotEmpty();
+        assertThat(result.getContent()).hasSize(1);
+        assertThat(result.getContent().get(0).getBill().getRestaurantTable()).isNull();
+        assertThat(result.getContent().get(0).getBill().getCustomer()).isEqualTo("SemMesa");
+    }
+
+    @Test
+    @DisplayName("Should return order with details when bill has no restaurant table in findByIdWithDetails")
+    void shouldFindByIdWithDetailsWhenBillHasNoRestaurantTable() {
+        User employee = createUser("Mariana");
+        Bill bill = createBill("SemMesa", null);
+
+        Order order = new Order(employee);
+        bill.addOrder(order);
+
+        ProductCategory category = createProductCategory("Snacks");
+        Product product = createProduct("Batata Frita", new BigDecimal("15.00"), category);
+
+        OrderProductCreateDTO itemDTO = new OrderProductCreateDTO(product.getId(), "Sem sal", 1);
+        OrderProduct item = new OrderProduct(itemDTO, product);
+        order.addItem(item);
+
+        entityManager.persist(order);
+        entityManager.flush();
+        entityManager.clear();
+
+        Optional<Order> result = orderRepository.findByIdWithDetails(order.getId());
+
+        assertThat(result).isPresent();
+        assertThat(result.get().getBill().getRestaurantTable()).isNull();
+        assertThat(result.get().getBill().getCustomer()).isEqualTo("SemMesa");
+        assertThat(result.get().getItems()).hasSize(1);
+    }
+
+    @Test
     @DisplayName("Should return an empty Optional when fetching by a non-existent order ID")
     void shouldNotFindByIdWhenItDoesNotExist() {
         Optional<Order> result = orderRepository.findByIdWithDetails(999L);
@@ -131,7 +180,7 @@ class OrderRepositoryTest {
     }
 
     private Bill createBill(String customer, RestaurantTable table) {
-        Bill bill = new Bill(new BillCreateDTO(customer, table.getId()), table);
+        Bill bill = new Bill(new BillCreateDTO(customer, table != null ? table.getId() : null), table);
         entityManager.persist(bill);
         return bill;
     }
