@@ -81,6 +81,7 @@ public class ProductService {
     @Transactional
     public void delete(Long id){
         Product product = productValidation.validateProduct(id);
+        productValidation.validateProductDeletion(id);
         product.delete();
     }
 }

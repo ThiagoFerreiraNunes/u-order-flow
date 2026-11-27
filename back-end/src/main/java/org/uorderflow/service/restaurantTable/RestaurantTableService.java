@@ -65,6 +65,7 @@ public class RestaurantTableService {
     @Transactional
     public void delete(Long id){
         RestaurantTable restaurantTable = restaurantTableValidation.validateRestaurantTable(id);
+        restaurantTableValidation.validateTableDeletion(id);
         restaurantTable.delete();
     }
 }
