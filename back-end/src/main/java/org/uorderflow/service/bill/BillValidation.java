@@ -39,18 +39,20 @@ public class BillValidation {
                     throw new BusinessRuleException("A bill cannot be cancelled if its status is PAID.");
                 }
 
-                boolean hasNonDeliveredOrders = bill.getOrders().stream()
-                        .anyMatch(order -> order.getStatus() != OrderStatus.DELIVERED);
+                boolean hasDeliveredOrders = bill.getOrders().stream()
+                        .anyMatch(order -> order.getStatus() == OrderStatus.DELIVERED);
 
-                if (!hasNonDeliveredOrders && !bill.getOrders().isEmpty()) {
-                    throw new BusinessRuleException("Cannot cancel a bill with delivered orders. Please close and pay the bill instead.");
+                if (hasDeliveredOrders) {
+                    throw new BusinessRuleException("Cannot cancel a bill that has delivered orders. Please close and (or) pay the bill instead.");
                 }
 
-                for (Order order : bill.getOrders()) {
-                    if (order.getStatus() == OrderStatus.WAITING || order.getStatus() == OrderStatus.PREPARING) {
-                        order.cancelOrder();
-                    }
+                boolean hasActiveOrders = bill.getOrders().stream()
+                        .anyMatch(order -> order.getStatus() == OrderStatus.WAITING || order.getStatus() == OrderStatus.PREPARING);
+
+                if (hasActiveOrders) {
+                    throw new BusinessRuleException("Cannot cancel a bill while it has pending orders (Waiting or Preparing). Please cancel the individual orders first.");
                 }
+
             }
             case CLOSE -> {
                 if(bill.getStatus() == BillStatus.CANCELLED){
