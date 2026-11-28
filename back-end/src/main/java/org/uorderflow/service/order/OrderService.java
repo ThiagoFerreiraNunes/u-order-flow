@@ -18,6 +18,9 @@ import org.uorderflow.service.bill.BillValidation;
 import org.uorderflow.service.product.ProductValidation;
 import org.uorderflow.service.user.UserValidation;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Service
 public class OrderService {
 
@@ -62,8 +65,20 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public Page<OrderSummaryResponseDTO> findAll(Pageable pageable){
-        return orderRepository.findAllPaged(pageable).map(OrderSummaryResponseDTO::new);
+    public Page<OrderSummaryResponseDTO> findAll(LocalDate date, Pageable pageable) {
+        if (date != null) {
+            LocalDateTime startOfDay = date.atStartOfDay();
+            LocalDateTime endExclusive = date.plusDays(1).atStartOfDay();
+
+            return orderRepository.findAllPagedByDate(
+                    startOfDay,
+                    endExclusive,
+                    pageable
+            ).map(OrderSummaryResponseDTO::new);
+        }
+
+        return orderRepository.findAllPaged(pageable)
+                .map(OrderSummaryResponseDTO::new);
     }
 
     @Transactional(readOnly = true)

@@ -20,6 +20,23 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             countQuery = "SELECT count(o) FROM Order o")
     Page<Order> findAllPaged(Pageable pageable);
 
+    @Query(
+            value = "SELECT o FROM Order o " +
+                    "JOIN FETCH o.employee " +
+                    "JOIN FETCH o.bill b " +
+                    "LEFT JOIN FETCH b.restaurantTable " +
+                    "WHERE o.createdAt >= :startOfDay " +
+                    "AND o.createdAt < :endExclusive",
+            countQuery = "SELECT COUNT(o) FROM Order o " +
+                    "WHERE o.createdAt >= :startOfDay " +
+                    "AND o.createdAt < :endExclusive"
+    )
+    Page<Order> findAllPagedByDate(
+            @Param("startOfDay") LocalDateTime startOfDay,
+            @Param("endExclusive") LocalDateTime endExclusive,
+            Pageable pageable
+    );
+
     @Query("SELECT DISTINCT o FROM Order o " +
             "JOIN FETCH o.employee " +
             "JOIN FETCH o.bill b " +

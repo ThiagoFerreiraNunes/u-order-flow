@@ -5,12 +5,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.uorderflow.dto.order.OrderDetailsResponseDTO;
 import org.uorderflow.dto.order.OrderSummaryResponseDTO;
 import org.uorderflow.dto.order.OrderUpdateDTO;
 import org.uorderflow.service.order.OrderService;
+
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -23,8 +26,19 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<OrderSummaryResponseDTO>> findAll(@PageableDefault(page = 0, size = 30, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable){
-        return ResponseEntity.ok(orderService.findAll(pageable));
+    public ResponseEntity<Page<OrderSummaryResponseDTO>> findAll(
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate date,
+
+            @PageableDefault(
+                    page = 0,
+                    size = 30,
+                    sort = "createdAt",
+                    direction = Sort.Direction.DESC
+            ) Pageable pageable
+    ) {
+        return ResponseEntity.ok(orderService.findAll(date, pageable));
     }
 
     @GetMapping("/{id}")
