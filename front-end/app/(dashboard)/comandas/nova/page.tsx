@@ -117,10 +117,10 @@ export default function NovaComandaPage() {
                 disabled={loadingTables}
                 className="w-full appearance-none border border-[#d1d5db] rounded-lg px-4 py-3 pr-10 text-sm focus:outline-none focus:border-[#f97316] focus:ring-1 focus:ring-[#f97316] transition-colors bg-white cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed text-[#1a1a1a]"
               >
-                <option value="" className="text-[#9ca3af]">
-                  {loadingTables ? 'Carregando mesas...' : 'Selecione o número da mesa'}
+                <option value="" className="text-[#1a1a1a] font-medium">
+                  {loadingTables ? 'Carregando mesas...' : 'Sem Mesa (Balcão / Viagem)'}
                 </option>
-                {tables.map((t) => (
+                {tables.filter((t) => t.number > 0).map((t) => (
                   <option key={t.id} value={t.id} className="text-[#1a1a1a]">
                     Mesa {t.number}
                   </option>

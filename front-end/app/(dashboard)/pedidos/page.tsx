@@ -66,12 +66,7 @@ const STATUS_DETAILS: Record<
   },
 };
 
-function getErrorMessage(err: unknown, fallback: string): string {
-  if (err && typeof err === 'object' && 'message' in err && typeof err.message === 'string') {
-    return err.message;
-  }
-  return fallback;
-}
+import { getErrorMessage, USER_ROLE_LABELS } from '@/lib/formatters';
 
 // ─── Modal Detalhes / Edição de Pedido ───────────────────────────────────────
 interface OrderModalProps {
@@ -80,6 +75,70 @@ interface OrderModalProps {
   onClose: () => void;
   onSaved: () => void;
   onActionComplete: () => void;
+}
+
+interface ItemsPaginationProps {
+  currentPage: number;
+  totalPages: number;
+  rangeStart: number;
+  rangeEnd: number;
+  total: number;
+  onPageChange: (newPage: number) => void;
+}
+
+function ItemsPagination({
+  currentPage,
+  totalPages,
+  rangeStart,
+  rangeEnd,
+  total,
+  onPageChange,
+}: ItemsPaginationProps) {
+  return (
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3 border-t border-[#f3f4f6] bg-white">
+      <span className="text-xs text-[#6b7280]">
+        {total === 0
+          ? 'Nenhum registro'
+          : `Mostrando ${rangeStart} a ${rangeEnd} de ${total} registros`}
+      </span>
+      <div className="flex items-center gap-1.5 shrink-0">
+        <button
+          type="button"
+          onClick={() => onPageChange(Math.max(0, currentPage - 1))}
+          disabled={currentPage === 0}
+          className="w-7 h-7 flex items-center justify-center rounded border border-[#e5e7eb] text-[#6b7280] hover:text-[#1a1a1a] hover:border-gray-400 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer bg-white"
+        >
+          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+        </button>
+        {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => i).map((i) => (
+          <button
+            key={i}
+            type="button"
+            onClick={() => onPageChange(i)}
+            className={`w-7 h-7 flex items-center justify-center rounded text-xs font-medium transition-colors border cursor-pointer ${
+              currentPage === i
+                ? 'bg-[#fff1e8] text-[#f97316] border-[#fde0cf]'
+                : 'bg-white text-[#4b5563] border-[#e5e7eb] hover:border-gray-400'
+            }`}
+          >
+            {i + 1}
+          </button>
+        ))}
+        <button
+          type="button"
+          onClick={() => onPageChange(Math.min(totalPages - 1, currentPage + 1))}
+          disabled={currentPage >= totalPages - 1}
+          className="w-7 h-7 flex items-center justify-center rounded border border-[#e5e7eb] text-[#6b7280] hover:text-[#1a1a1a] hover:border-gray-400 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer bg-white"
+        >
+          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  );
 }
 
 function OrderModal({
@@ -218,66 +277,6 @@ function OrderModal({
   const editRangeStart = items.length === 0 ? 0 : editItemsCurrentPage * ITEMS_PAGE_SIZE + 1;
   const editRangeEnd = Math.min((editItemsCurrentPage + 1) * ITEMS_PAGE_SIZE, items.length);
 
-  function ItemsPagination({
-    currentPage,
-    totalPages,
-    rangeStart,
-    rangeEnd,
-    total,
-  }: {
-    currentPage: number;
-    totalPages: number;
-    rangeStart: number;
-    rangeEnd: number;
-    total: number;
-  }) {
-    return (
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3 border-t border-[#f3f4f6] bg-white">
-        <span className="text-xs text-[#6b7280]">
-          {total === 0
-            ? 'Nenhum registro'
-            : `Mostrando ${rangeStart} a ${rangeEnd} de ${total} registros`}
-        </span>
-        <div className="flex items-center gap-1.5 shrink-0">
-          <button
-            type="button"
-            onClick={() => setItemsPage((p) => Math.max(0, p - 1))}
-            disabled={currentPage === 0}
-            className="w-7 h-7 flex items-center justify-center rounded border border-[#e5e7eb] text-[#6b7280] hover:text-[#1a1a1a] hover:border-gray-400 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer bg-white"
-          >
-            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <polyline points="15 18 9 12 15 6" />
-            </svg>
-          </button>
-          {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => i).map((i) => (
-            <button
-              key={i}
-              type="button"
-              onClick={() => setItemsPage(i)}
-              className={`w-7 h-7 flex items-center justify-center rounded text-xs font-medium transition-colors border cursor-pointer ${
-                currentPage === i
-                  ? 'bg-[#fff1e8] text-[#f97316] border-[#fde0cf]'
-                  : 'bg-white text-[#4b5563] border-[#e5e7eb] hover:border-gray-400'
-              }`}
-            >
-              {i + 1}
-            </button>
-          ))}
-          <button
-            type="button"
-            onClick={() => setItemsPage((p) => Math.min(totalPages - 1, p + 1))}
-            disabled={currentPage >= totalPages - 1}
-            className="w-7 h-7 flex items-center justify-center rounded border border-[#e5e7eb] text-[#6b7280] hover:text-[#1a1a1a] hover:border-gray-400 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer bg-white"
-          >
-            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <polyline points="9 18 15 12 9 6" />
-            </svg>
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 py-6 overflow-y-auto">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto">
@@ -402,6 +401,7 @@ function OrderModal({
                 rangeStart={itemsRangeStart}
                 rangeEnd={itemsRangeEnd}
                 total={orderItems.length}
+                onPageChange={setItemsPage}
               />
             </div>
 
@@ -467,7 +467,7 @@ function OrderModal({
               >
                 {employees.map((emp) => (
                   <option key={emp.id} value={emp.id}>
-                    {emp.name} ({emp.role})
+                    {emp.name} ({USER_ROLE_LABELS[emp.role] ?? emp.role})
                   </option>
                 ))}
               </select>
@@ -557,6 +557,7 @@ function OrderModal({
                   rangeStart={editRangeStart}
                   rangeEnd={editRangeEnd}
                   total={items.length}
+                  onPageChange={setItemsPage}
                 />
               </div>
             </div>

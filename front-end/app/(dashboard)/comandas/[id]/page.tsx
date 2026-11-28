@@ -65,12 +65,7 @@ function isOrderCancellable(status: string): boolean {
   return isOrderWaiting(status) || status === 'Preparing' || status === 'PREPARING';
 }
 
-function getErrorMessage(err: unknown, fallback: string): string {
-  if (err && typeof err === 'object' && 'message' in err && typeof err.message === 'string') {
-    return err.message;
-  }
-  return fallback;
-}
+import { getErrorMessage, USER_ROLE_LABELS } from '@/lib/formatters';
 
 // ─── Modal Editar Pedido ───────────────────────────────────────────────────────
 interface EditOrderModalProps {
@@ -196,7 +191,7 @@ function EditOrderModal({ orderId, onClose, onSaved }: EditOrderModalProps) {
                 <option value="">Selecione</option>
                 {employees.map((emp) => (
                   <option key={emp.id} value={emp.id}>
-                    {emp.name} ({emp.role})
+                    {emp.name} ({USER_ROLE_LABELS[emp.role] ?? emp.role})
                   </option>
                 ))}
               </select>
@@ -423,6 +418,7 @@ export default function ComandaDetailPage() {
       router.push('/comandas');
       return;
     }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     reload();
   }, [billId, reload, router]);
 
@@ -498,7 +494,7 @@ export default function ComandaDetailPage() {
               <div>
                 <p className="text-xs text-[#9ca3af] mb-0.5">Mesa</p>
                 <p className="text-sm font-semibold text-[#1a1a1a]">
-                  {bill.restaurantTable ? `Mesa ${bill.restaurantTable}` : '—'}
+                  {bill.restaurantTable ? `Mesa ${bill.restaurantTable}` : 'Sem mesa'}
                 </p>
               </div>
               <div>
@@ -518,36 +514,49 @@ export default function ComandaDetailPage() {
             </div>
 
             {/* Ações da Comanda */}
-            {canManageBill && (
-              <div className="flex items-center gap-3">
-                {bill.status === 'OPEN' && (
-                  <button
-                    type="button"
-                    onClick={handleCloseBill}
-                    disabled={billActionLoading}
-                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold bg-amber-500 hover:bg-amber-600 text-white rounded-xl transition-colors shadow-sm disabled:opacity-60 cursor-pointer"
-                  >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
-                    </svg>
-                    Fechar Comanda
-                  </button>
-                )}
-                {(bill.status === 'OPEN' || bill.status === 'CLOSED') && (
-                  <button
-                    type="button"
-                    onClick={handlePayBill}
-                    disabled={billActionLoading}
-                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold bg-green-600 hover:bg-green-700 text-white rounded-xl transition-colors shadow-sm disabled:opacity-60 cursor-pointer"
-                  >
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 14.93V18h-2v-1.07C9.14 16.57 8 15.42 8 14h2c0 .55.45 1 1 1h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-1.65 0-3-1.35-3-3 0-1.42 1.14-2.57 2.5-2.93V6h2v1.07C13.86 7.43 15 8.58 15 10h-2c0-.55-.45-1-1-1H10c-.55 0-1 .45-1 1s.45 1 1 1h2c1.65 0 3 1.35 3 3 0 1.42-1.14 2.57-2.5 2.93z" />
-                    </svg>
-                    Pagar Comanda
-                  </button>
-                )}
-              </div>
-            )}
+            <div className="flex flex-wrap items-center gap-3">
+              {canManage && bill.status === 'OPEN' && (
+                <Link
+                  href={`/pedidos/novo?billId=${bill.id}`}
+                  className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold bg-[#f97316] hover:bg-[#ea580c] text-white rounded-xl transition-colors shadow-sm cursor-pointer"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                  </svg>
+                  Adicionar Pedido
+                </Link>
+              )}
+              {canManageBill && (
+                <>
+                  {bill.status === 'OPEN' && (
+                    <button
+                      type="button"
+                      onClick={handleCloseBill}
+                      disabled={billActionLoading}
+                      className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold bg-amber-500 hover:bg-amber-600 text-white rounded-xl transition-colors shadow-sm disabled:opacity-60 cursor-pointer"
+                    >
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                      </svg>
+                      Fechar Comanda
+                    </button>
+                  )}
+                  {(bill.status === 'OPEN' || bill.status === 'CLOSED') && (
+                    <button
+                      type="button"
+                      onClick={handlePayBill}
+                      disabled={billActionLoading}
+                      className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold bg-green-600 hover:bg-green-700 text-white rounded-xl transition-colors shadow-sm disabled:opacity-60 cursor-pointer"
+                    >
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 14.93V18h-2v-1.07C9.14 16.57 8 15.42 8 14h2c0 .55.45 1 1 1h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-1.65 0-3-1.35-3-3 0-1.42 1.14-2.57 2.5-2.93V6h2v1.07C13.86 7.43 15 8.58 15 10h-2c0-.55-.45-1-1-1H10c-.55 0-1 .45-1 1s.45 1 1 1h2c1.65 0 3 1.35 3 3 0 1.42-1.14 2.57-2.5 2.93z" />
+                      </svg>
+                      Pagar Comanda
+                    </button>
+                  )}
+                </>
+              )}
+            </div>
           </div>
 
           {/* Card da tabela */}
@@ -570,7 +579,17 @@ export default function ComandaDetailPage() {
                   {pagedOrders.length === 0 ? (
                     <tr>
                       <td colSpan={6} className="px-6 py-14 text-center text-[#6b7280] text-sm">
-                        Nenhum pedido lançado nesta comanda.
+                        <p>Nenhum pedido lançado nesta comanda.</p>
+                        {canManage && bill.status === 'OPEN' && (
+                          <div className="mt-3">
+                            <Link
+                              href={`/pedidos/novo?billId=${bill.id}`}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-[#f97316] text-white rounded-lg hover:bg-[#ea580c] transition-colors"
+                            >
+                              + Adicionar Pedido
+                            </Link>
+                          </div>
+                        )}
                       </td>
                     </tr>
                   ) : (
@@ -651,7 +670,17 @@ export default function ComandaDetailPage() {
             <div className="md:hidden divide-y divide-[#f3f4f6]">
               {pagedOrders.length === 0 ? (
                 <div className="p-8 text-center text-[#6b7280] text-sm">
-                  Nenhum pedido lançado nesta comanda.
+                  <p>Nenhum pedido lançado nesta comanda.</p>
+                  {canManage && bill.status === 'OPEN' && (
+                    <div className="mt-3">
+                      <Link
+                        href={`/pedidos/novo?billId=${bill.id}`}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-[#f97316] text-white rounded-lg hover:bg-[#ea580c] transition-colors"
+                      >
+                        + Adicionar Pedido
+                      </Link>
+                    </div>
+                  )}
                 </div>
               ) : (
                 pagedOrders.map((order) => (

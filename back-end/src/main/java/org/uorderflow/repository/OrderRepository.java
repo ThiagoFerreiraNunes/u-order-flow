@@ -16,14 +16,14 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query(value = "SELECT o FROM Order o " +
             "JOIN FETCH o.employee " +
             "JOIN FETCH o.bill b " +
-            "JOIN FETCH b.restaurantTable ",
+            "LEFT JOIN FETCH b.restaurantTable ",
             countQuery = "SELECT count(o) FROM Order o")
     Page<Order> findAllPaged(Pageable pageable);
 
     @Query("SELECT DISTINCT o FROM Order o " +
             "JOIN FETCH o.employee " +
             "JOIN FETCH o.bill b " +
-            "JOIN FETCH b.restaurantTable " +
+            "LEFT JOIN FETCH b.restaurantTable " +
             "JOIN FETCH o.items " +
             "WHERE o.id = :id")
     Optional<Order> findByIdWithDetails(@Param("id") Long id);

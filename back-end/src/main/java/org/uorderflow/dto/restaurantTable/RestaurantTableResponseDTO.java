@@ -7,6 +7,9 @@ public record RestaurantTableResponseDTO(
         Integer number
 ) {
     public RestaurantTableResponseDTO(RestaurantTable restaurantTable){
-        this(restaurantTable.getId(), restaurantTable.getNumber());
+        this(
+                restaurantTable != null ? restaurantTable.getId() : null,
+                restaurantTable != null ? restaurantTable.getNumber() : null
+        );
     }
 }

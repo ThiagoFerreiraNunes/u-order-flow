@@ -29,7 +29,9 @@ public record OrderDetailsResponseDTO(
                 resolveDeliveredAt(order),
                 order.getBill().getCustomer(),
                 new UserResponseDTO(order.getEmployee()),
-                new RestaurantTableResponseDTO(order.getBill().getRestaurantTable()),
+                order.getBill().getRestaurantTable() != null
+                        ? new RestaurantTableResponseDTO(order.getBill().getRestaurantTable())
+                        : null,
                 FormatUtils.formatToBRL(order.getItems().stream()
                         .map(item -> item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
                         .reduce(BigDecimal.ZERO, BigDecimal::add)),

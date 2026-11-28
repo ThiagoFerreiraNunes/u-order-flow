@@ -78,12 +78,12 @@ export default function LoginPage() {
           <div className="bg-white rounded-xl shadow-sm border border-[#e5e7eb] px-5 py-7 sm:px-8 sm:py-9 md:px-10 md:py-10">
             {/* Brand */}
             <div className="flex flex-col items-center mb-6 sm:mb-8">
-              <div className="w-36 h-20 sm:w-48 sm:h-24 flex items-center justify-center mb-3 relative">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 bg-[#1a1a1a] rounded-2xl flex items-center justify-center p-3 mb-4 shadow-sm relative">
                 <Image
                   src="/logo-uorder.png"
                   alt="UOrderFlow Logo"
-                  width={192}
-                  height={96}
+                  width={72}
+                  height={72}
                   className="object-contain"
                   priority
                 />

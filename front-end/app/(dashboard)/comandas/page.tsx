@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import {
   getBills,
@@ -36,14 +36,13 @@ const ORDER_STATUS_LABEL: Record<string, string> = {
   Preparing: 'Preparando',
   Delivered: 'Entregue',
   Cancelled: 'Cancelado',
+  WAITING: 'Aguardando preparo',
+  PREPARING: 'Preparando',
+  DELIVERED: 'Entregue',
+  CANCELLED: 'Cancelado',
 };
 
-function getErrorMessage(err: unknown, fallback: string): string {
-  if (err && typeof err === 'object' && 'message' in err && typeof err.message === 'string') {
-    return err.message;
-  }
-  return fallback;
-}
+import { getErrorMessage } from '@/lib/formatters';
 
 // ─── Modal Nova Comanda ───────────────────────────────────────────────────────
 interface NewBillModalProps {
@@ -253,8 +252,20 @@ export default function ComandasPage() {
   const [detailsBillId, setDetailsBillId] = useState<number | null>(null);
   const [actionId, setActionId] = useState<number | null>(null);
   const [search, setSearch] = useState('');
+  const [filterMenuOpen, setFilterMenuOpen] = useState(false);
+  const filterMenuRef = useRef<HTMLDivElement>(null);
 
   const reload = useCallback(() => setReloadTrigger((n) => n + 1), []);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (filterMenuRef.current && !filterMenuRef.current.contains(e.target as Node)) {
+        setFilterMenuOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     getRestaurantTables().then(setTables).catch(() => {});
@@ -422,16 +433,82 @@ export default function ComandasPage() {
             />
           </div>
 
-          <button
-            type="button"
-            className="text-[#374151] hover:text-[#1a1a1a] p-2 transition-colors cursor-pointer"
-            aria-label="Filtrar"
-            title="Filtrar"
-          >
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z" />
-            </svg>
-          </button>
+          <div className="relative" ref={filterMenuRef}>
+            <button
+              type="button"
+              onClick={() => setFilterMenuOpen((v) => !v)}
+              className={`p-2 transition-colors cursor-pointer rounded-lg relative ${
+                filterStatus ? 'text-[#f97316] bg-[#fff1e8]' : 'text-[#374151] hover:text-[#1a1a1a]'
+              }`}
+              aria-label="Filtrar"
+              title="Filtrar por status"
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z" />
+              </svg>
+              {filterStatus && (
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#f97316]" />
+              )}
+            </button>
+
+            {filterMenuOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-[#e5e7eb] py-2 z-20">
+                <div className="px-3 py-1.5 text-xs font-semibold text-[#9ca3af] uppercase tracking-wider">
+                  Filtrar por status
+                </div>
+                <button
+                  type="button"
+                  onClick={() => { setFilterStatus(''); setFilterMenuOpen(false); }}
+                  className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-[#f9fafb] cursor-pointer ${
+                    filterStatus === '' ? 'text-[#f97316] font-semibold bg-[#fff7ed]' : 'text-[#374151]'
+                  }`}
+                >
+                  <span>Todas</span>
+                  {filterStatus === '' && <span>✓</span>}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setFilterStatus('OPEN'); setFilterMenuOpen(false); }}
+                  className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-[#f9fafb] cursor-pointer ${
+                    filterStatus === 'OPEN' ? 'text-[#f97316] font-semibold bg-[#fff7ed]' : 'text-[#374151]'
+                  }`}
+                >
+                  <span>Abertas</span>
+                  {filterStatus === 'OPEN' && <span>✓</span>}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setFilterStatus('CLOSED'); setFilterMenuOpen(false); }}
+                  className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-[#f9fafb] cursor-pointer ${
+                    filterStatus === 'CLOSED' ? 'text-[#f97316] font-semibold bg-[#fff7ed]' : 'text-[#374151]'
+                  }`}
+                >
+                  <span>Fechadas</span>
+                  {filterStatus === 'CLOSED' && <span>✓</span>}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setFilterStatus('PAID'); setFilterMenuOpen(false); }}
+                  className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-[#f9fafb] cursor-pointer ${
+                    filterStatus === 'PAID' ? 'text-[#f97316] font-semibold bg-[#fff7ed]' : 'text-[#374151]'
+                  }`}
+                >
+                  <span>Pagas</span>
+                  {filterStatus === 'PAID' && <span>✓</span>}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setFilterStatus('CANCELLED'); setFilterMenuOpen(false); }}
+                  className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-[#f9fafb] cursor-pointer ${
+                    filterStatus === 'CANCELLED' ? 'text-[#f97316] font-semibold bg-[#fff7ed]' : 'text-[#374151]'
+                  }`}
+                >
+                  <span>Canceladas</span>
+                  {filterStatus === 'CANCELLED' && <span>✓</span>}
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Error banner */}
@@ -475,7 +552,7 @@ export default function ComandasPage() {
                 filteredBySearch.map((bill) => (
                   <tr key={bill.id} className="hover:bg-[#fafafa] transition-colors">
                     <td className="px-6 py-5 font-semibold text-[#1a1a1a] text-center">#{String(bill.id).padStart(3, '0')}</td>
-                    <td className="px-6 py-5 text-[#374151] text-center">{bill.restaurantTable ? bill.restaurantTable : '—'}</td>
+                    <td className="px-6 py-5 text-[#374151] text-center">{bill.restaurantTable ? `Mesa ${bill.restaurantTable}` : 'Sem mesa'}</td>
                     <td className="px-6 py-5 font-normal text-[#374151] text-center">{bill.customer}</td>
                     <td className="px-6 py-5 text-center">
                       <span className={`text-xs px-2.5 py-1 rounded font-medium inline-block ${STATUS_COLOR[bill.status]}`}>

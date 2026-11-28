@@ -9,12 +9,12 @@ import {
 } from '@/lib/api';
 import type { RestaurantTableResponse } from '@/types/table';
 
-function getErrorMessage(err: unknown, fallback: string): string {
-  if (err && typeof err === 'object' && 'message' in err && typeof err.message === 'string') {
-    return err.message;
-  }
-  return fallback;
-}
+import { getErrorMessage } from '@/lib/formatters';
+
+const SEM_MESA_TABLE: RestaurantTableResponse = {
+  id: 0,
+  number: 0,
+};
 
 export default function MesasPage() {
   const [tables, setTables] = useState<RestaurantTableResponse[]>([]);
@@ -42,11 +42,18 @@ export default function MesasPage() {
     getRestaurantTables()
       .then((data) => {
         if (!ignore) {
-          setTables([...data].sort((a, b) => a.number - b.number));
+          const list = data.some((t) => t.id === 0 || t.number === 0)
+            ? data
+            : [SEM_MESA_TABLE, ...data];
+          setTables([...list].sort((a, b) => a.number - b.number));
         }
       })
       .catch(() => {
-        if (!ignore) setError('Não foi possível carregar as mesas.');
+        if (!ignore) {
+          // Garante que pelo menos a opção Sem Mesa seja exibida mesmo em falha de conexão
+          setTables([SEM_MESA_TABLE]);
+          setError('Não foi possível carregar as demais mesas.');
+        }
       })
       .finally(() => {
         if (!ignore) setLoading(false);
@@ -61,6 +68,10 @@ export default function MesasPage() {
     e.preventDefault();
     const num = Number(newNumber);
     if (!newNumber.trim() || !Number.isInteger(num) || num <= 0) {
+      if (num === 0) {
+        setError('A opção "Sem Mesa" já existe como padrão fixo do sistema.');
+        return;
+      }
       setError('Informe um número de mesa válido (maior que 0).');
       return;
     }
@@ -79,6 +90,10 @@ export default function MesasPage() {
   }
 
   async function handleUpdate(id: number) {
+    if (id === 0) {
+      setError('A opção "Sem Mesa" não pode ser editada.');
+      return;
+    }
     const num = Number(editNumber);
     if (!editNumber.trim() || !Number.isInteger(num) || num <= 0) {
       setError('Informe um número de mesa válido (maior que 0).');
@@ -99,6 +114,10 @@ export default function MesasPage() {
   }
 
   async function handleDelete(id: number) {
+    if (id === 0) {
+      setError('A opção "Sem Mesa" não pode ser excluída.');
+      return;
+    }
     setDeletingId(id);
     setError('');
     try {
@@ -181,13 +200,16 @@ export default function MesasPage() {
           {tables.map((table) => {
             const isEditing = editingId === table.id;
             const isDeleting = confirmDeleteId === table.id;
+            const isSemMesa = table.id === 0 || table.number === 0;
 
             return (
               <div
                 key={table.id}
-                className="bg-white rounded-xl border border-[#e5e7eb] p-4 shadow-sm flex flex-col justify-between gap-3"
+                className={`bg-white rounded-xl border p-4 shadow-sm flex flex-col justify-between gap-3 ${
+                  isSemMesa ? 'border-amber-200 bg-amber-50/20 ring-1 ring-amber-100' : 'border-[#e5e7eb]'
+                }`}
               >
-                {isEditing ? (
+                {isEditing && !isSemMesa ? (
                   <div className="space-y-2">
                     <label className="block text-xs font-medium text-[#374151]">Novo número</label>
                     <input
@@ -217,6 +239,32 @@ export default function MesasPage() {
                       </button>
                     </div>
                   </div>
+                ) : isSemMesa ? (
+                  <>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="flex items-center gap-1.5">
+                          <p className="text-base font-bold text-[#1a1a1a]">Sem Mesa</p>
+                          <span className="text-[10px] bg-amber-100 text-amber-800 font-semibold px-2 py-0.5 rounded-full">
+                            Padrão
+                          </span>
+                        </div>
+                        <p className="text-xs text-[#6b7280] mt-0.5">Balcão / Viagem / Múltiplas Comandas</p>
+                      </div>
+                      <div className="w-9 h-9 rounded-lg bg-amber-100 flex items-center justify-center text-amber-700">
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009 9c.697 0 1.343-.238 1.875-.64a3 3 0 004.25 0c.532.402 1.178.64 1.875.64.697 0 1.343-.238 1.875-.64a3 3 0 003.75.614m-16.5 0a3.004 3.004 0 01-.621-4.72L4.318 3.44A1.5 1.5 0 015.378 3h13.243a1.5 1.5 0 011.06.44l1.19 1.189a3 3 0 01-.621 4.72m-13.5 8.65h3.75a.75.75 0 00.75-.75V13.5a.75.75 0 00-.75-.75H6.75a.75.75 0 00-.75.75v3.15c0 .414.336.75.75.75z" />
+                        </svg>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-2 border-t border-[#f3f4f6] text-[11px] text-[#6b7280]">
+                      <span>Várias comandas vinculadas</span>
+                      <span className="font-medium text-[#9ca3af] bg-[#f3f4f6] px-1.5 py-0.5 rounded">
+                        Não editável
+                      </span>
+                    </div>
+                  </>
                 ) : (
                   <>
                     <div className="flex items-center justify-between">
